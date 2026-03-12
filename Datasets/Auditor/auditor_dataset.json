@@ -1,0 +1,1952 @@
+[
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A simple blog. Architecture: The React frontend directly connects to a MySQL database to fetch posts. User comments are stored as raw HTML in the database.",
+    "output": [
+      {
+        "flaw_id": "SEC-01",
+        "flaw_type": "Security (OWASP A03: Injection)",
+        "description": "Storing raw HTML from user comments directly in the database exposes the application to Cross-Site Scripting (XSS) attacks.",
+        "recommendation": "Sanitize all user input on the backend. Store comments as plain text and render them safely on the frontend, or use a library like DOMPurify."
+      },
+      {
+        "flaw_id": "ARC-01",
+        "flaw_type": "Architectural Best Practice",
+        "description": "The frontend should never connect directly to a database. This exposes database credentials and bypasses all business logic and security checks.",
+        "recommendation": "Implement a backend API (e.g., using FastAPI or Express.js) to act as an intermediary between the frontend and the database."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A university course registration portal. Architecture: Student passwords are encrypted using a simple MD5 hash before being stored in the database.",
+    "output": [
+      {
+        "flaw_id": "SEC-02",
+        "flaw_type": "Security (OWASP A02: Cryptographic Failures)",
+        "description": "MD5 is an outdated and insecure hashing algorithm, vulnerable to collision attacks and rainbow table attacks. It is not suitable for password storage.",
+        "recommendation": "Use a modern, strong, and salted hashing algorithm like Argon2, scrypt, or at a minimum, bcrypt, to store user passwords."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A mobile app backend for a social media feed. Architecture: To get a user's feed, the system first fetches all posts, then for each post, it makes a separate database query to get the author's details and another to get the like count.",
+    "output": [
+      {
+        "flaw_id": "PERF-01",
+        "flaw_type": "Performance (N+1 Query Problem)",
+        "description": "The system makes 1 query for posts, and then N additional queries for author details and N for likes, leading to extremely poor performance as the number of posts grows.",
+        "recommendation": "Use a single, more complex query with SQL JOINs to fetch posts along with their author details and like counts in one database roundtrip. Alternatively, use a data loader pattern."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: An e-commerce site. Architecture: The application uses a single monolithic server that handles the web store, payment processing, and inventory management. The database is also on the same server.",
+    "output": [
+      {
+        "flaw_id": "SCALE-01",
+        "flaw_type": "Scalability & Reliability",
+        "description": "This monolithic design has a single point of failure. If any component (e.g., payment processing) crashes, the entire application goes down. It is also difficult to scale individual components.",
+        "recommendation": "Adopt a microservices architecture. Separate the web store, payment gateway, and inventory management into independent services. Use a managed, separate database instance for better reliability and scalability."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: An internal admin dashboard. Architecture: The user role (e.g., 'admin', 'viewer') is determined by a value stored in a client-side cookie. The frontend shows or hides UI elements based on this cookie.",
+    "output": [
+      {
+        "flaw_id": "SEC-03",
+        "flaw_type": "Security (OWASP A01: Broken Access Control)",
+        "description": "Relying on a client-side cookie for authorization is insecure. A malicious user can easily modify their cookie to escalate their privileges to 'admin' and access restricted functionality.",
+        "recommendation": "Authorization checks must always be performed on the backend. The server should validate the user's session and role on every sensitive request, ignoring any role information sent from the client."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A document upload service. Architecture: The Node.js server receives a file upload and saves it directly to the local filesystem of the server instance.",
+    "output": [
+      {
+        "flaw_id": "SCALE-02",
+        "flaw_type": "Scalability & Statefulness",
+        "description": "Storing uploaded files on the local filesystem makes the server stateful. This prevents horizontal scaling, as a user's file would only exist on the specific server instance they uploaded it to. It also risks data loss if the server instance is terminated.",
+        "recommendation": "Use a dedicated, stateless object storage service like Amazon S3, Google Cloud Storage, or MinIO. The server should upload the file to this service and store a reference (URL) in the database."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A REST API for a mobile app. Architecture: The API keys for third-party services (e.g., Stripe, SendGrid) are hardcoded directly into the Python source code.",
+    "output": [
+      {
+        "flaw_id": "SEC-04",
+        "flaw_type": "Security (OWASP A05: Security Misconfiguration)",
+        "description": "Hardcoding secrets like API keys into source code is a major security risk. If the code is ever leaked or checked into a public repository, the keys will be compromised.",
+        "recommendation": "Store secrets in environment variables or use a dedicated secret management service (e.g., HashiCorp Vault, AWS Secrets Manager). The application should load these secrets at runtime."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A data processing pipeline. Architecture: A script fetches a large 2GB CSV file from an FTP server, loads the entire file into memory using a Pandas DataFrame, processes it, and then writes the result.",
+    "output": [
+      {
+        "flaw_id": "PERF-02",
+        "flaw_type": "Performance & Memory Management",
+        "description": "Loading a very large file entirely into memory is inefficient and can easily cause the application to crash with an Out-of-Memory error, especially in constrained environments.",
+        "recommendation": "Process the file in chunks or streams. Read the CSV file line-by-line or in smaller batches, process each batch, and append the results, without ever holding the entire file in memory."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A user profile page. Database Schema: The `users` table has a `hobbies` column of type VARCHAR(255) that stores a comma-separated list of hobbies (e.g., 'reading,hiking,coding').",
+    "output": [
+      {
+        "flaw_id": "DB-01",
+        "flaw_type": "Data Modeling",
+        "description": "Storing multiple values in a single column violates the First Normal Form (1NF) of database normalization. This makes it very difficult and inefficient to query for users with a specific hobby.",
+        "recommendation": "Create a separate `hobbies` table and a `user_hobbies` join table (many-to-many relationship) to link users to their hobbies. This allows for efficient querying and data integrity."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A web application. Architecture: The application connects to the database using the 'root' user with all privileges.",
+    "output": [
+      {
+        "flaw_id": "SEC-05",
+        "flaw_type": "Security (Principle of Least Privilege)",
+        "description": "Using the 'root' database user for the application is extremely risky. If the application is compromised, the attacker will have full control over the entire database server, including the ability to drop databases or access other applications' data.",
+        "recommendation": "Create a dedicated, non-root database user for the application with the minimum set of privileges required (e.g., only SELECT, INSERT, UPDATE, DELETE on specific tables)."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A public API. Architecture: There are no limits on how many requests a single user or IP address can make to the API.",
+    "output": [
+      {
+        "flaw_id": "SCALE-03",
+        "flaw_type": "Reliability & Security",
+        "description": "The absence of rate limiting makes the API vulnerable to Denial-of-Service (DoS) attacks and resource exhaustion, whether malicious or accidental. A single misbehaving client could bring down the service for all users.",
+        "recommendation": "Implement rate limiting based on IP address, API key, or user account. A common strategy is a token bucket or leaky bucket algorithm. Return HTTP 429 'Too Many Requests' when the limit is exceeded."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A user registration form. Architecture: The form takes a username. The backend checks if the username exists by running the query: `SELECT * FROM users WHERE username = '\" + username + \"';`",
+    "output": [
+      {
+        "flaw_id": "SEC-06",
+        "flaw_type": "Security (OWASP A03: Injection)",
+        "description": "The system is building an SQL query by concatenating a raw user input string. This is a classic SQL Injection vulnerability. A user could input `' OR '1'='1` to bypass security checks.",
+        "recommendation": "Always use parameterized queries (prepared statements). The database driver will safely handle the user input, preventing it from being interpreted as SQL code."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A web application that needs to send welcome emails. Architecture: When a user signs up, the API request handler connects to an SMTP server and sends the email directly within the same request-response cycle.",
+    "output": [
+      {
+        "flaw_id": "PERF-03",
+        "flaw_type": "Performance & User Experience",
+        "description": "Making a blocking network call to an external SMTP service within the API request handler will significantly slow down the response time for the user. If the email service is slow or down, the user's registration request may time out.",
+        "recommendation": "Decouple the email sending process. The API handler should publish a 'user_signed_up' event to a message queue (e.g., RabbitMQ, SQS). A separate background worker process will consume from this queue and handle the email sending asynchronously."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: An online voting system. Architecture: A user's vote is recorded in the database. To prevent double voting, a cookie is set in the user's browser after they vote.",
+    "output": [
+      {
+        "flaw_id": "SEC-07",
+        "flaw_type": "Security (Insecure Design)",
+        "description": "Relying on a client-side cookie to prevent double voting is completely insecure. A user can simply clear their cookies, use a different browser, or use incognito mode to vote multiple times.",
+        "recommendation": "The system must have a robust server-side mechanism to prevent double voting. This typically involves requiring user authentication and recording in the database that the authenticated user has already voted for a specific poll."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A web server that serves static assets (CSS, JS, images). Architecture: The Node.js/Express application server is responsible for serving all static files.",
+    "output": [
+      {
+        "flaw_id": "PERF-04",
+        "flaw_type": "Performance & Best Practice",
+        "description": "Using a dynamic application server like Node.js to serve static files is inefficient. It ties up the application process, which is better used for handling dynamic requests. This doesn't scale well under high traffic.",
+        "recommendation": "Offload static asset serving to a dedicated, highly-optimized web server like Nginx or use a Content Delivery Network (CDN). The application server should only handle API calls and dynamic content generation."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A logging mechanism for a distributed system. Architecture: Each microservice writes its logs to a local file on its own container.",
+    "output": [
+      {
+        "flaw_id": "SCALE-04",
+        "flaw_type": "Observability & Maintainability",
+        "description": "Logging to local files in a distributed system makes logs inaccessible, difficult to aggregate, and they are lost when a container is terminated. It's impossible to trace a request across multiple services.",
+        "recommendation": "Implement centralized logging. Services should log to `stdout`/`stderr`. A log aggregator (like Fluentd or Logstash) should collect these logs and forward them to a centralized logging platform (like Elasticsearch/Kibana (ELK), Graylog, or Datadog)."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: An API that returns user data. Architecture: The `/users/{id}` endpoint returns all columns from the `users` table, including `password_hash`, `salt`, and `security_question_answer`.",
+    "output": [
+      {
+        "flaw_id": "SEC-08",
+        "flaw_type": "Security (OWASP A04: Insecure Design - Excessive Data Exposure)",
+        "description": "The API endpoint is exposing sensitive security-related data to the client. Even though the password is hashed, exposing the hash and salt increases the attack surface for offline cracking attempts.",
+        "recommendation": "Use a Data Transfer Object (DTO) or a similar pattern to explicitly define and control what data is returned by the API. The API should only return non-sensitive, necessary information (e.g., `id`, `username`, `full_name`)."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A configuration management system. Architecture: All configuration settings for development, staging, and production environments are stored in a single `config.json` file checked into the Git repository.",
+    "output": [
+      {
+        "flaw_id": "ARC-02",
+        "flaw_type": "Architectural Best Practice",
+        "description": "Storing configuration for all environments in a single file is brittle and error-prone. It's easy to accidentally use development settings in production. It also violates the principle of keeping config separate from code.",
+        "recommendation": "Follow the Twelve-Factor App methodology. Store configuration in environment variables. For local development, use `.env` files (which are not checked into version control). For staging/production, use the hosting platform's environment variable management system."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A search functionality for products. Database Schema: The `products` table has a `description` column of type TEXT. The search query uses `SELECT * FROM products WHERE description LIKE '%search_term%';`",
+    "output": [
+      {
+        "flaw_id": "PERF-05",
+        "flaw_type": "Performance & Scalability",
+        "description": "Using a `LIKE` query with a leading wildcard (`%`) on a TEXT column is extremely inefficient. It forces a full table scan, as database indexes cannot be used, and performance will degrade rapidly as the number of products grows.",
+        "recommendation": "For robust search functionality, use a dedicated full-text search engine like Elasticsearch, OpenSearch, or MeiliSearch. Alternatively, use the full-text search capabilities built into your database (e.g., PostgreSQL's FTS)."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A user session management system. Architecture: After a user logs in, their `user_id` is stored in `localStorage` in the browser. This `user_id` is sent with every API request to identify the user.",
+    "output": [
+      {
+        "flaw_id": "SEC-09",
+        "flaw_type": "Security (OWASP A01: Broken Authentication)",
+        "description": "Storing the `user_id` in `localStorage` is insecure. It's easily accessible via JavaScript (XSS vulnerability) and can be trivially manipulated by a user to impersonate another user by simply changing the ID.",
+        "recommendation": "Implement a proper session management system. After login, the server should generate a secure, random, and opaque session token. This token should be stored in a secure, HttpOnly cookie on the client and validated on the server for every request."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A financial application. Database Schema: The `transactions` table stores currency amounts in a `FLOAT` data type column.",
+    "output": [
+      {
+        "flaw_id": "DB-02",
+        "flaw_type": "Data Modeling & Precision",
+        "description": "Using floating-point numbers (`FLOAT`, `DOUBLE`) for currency is dangerous due to potential rounding errors and lack of precision. This can lead to incorrect financial calculations.",
+        "recommendation": "Store currency values using a fixed-point `DECIMAL` or `NUMERIC` data type, which provides exact precision. Alternatively, store the amount as an integer representing the smallest currency unit (e.g., cents)."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: An API that allows file downloads. Architecture: The endpoint for downloading a file takes a `filename` parameter from the URL and reads the file from a path like `/var/www/uploads/` + `filename`.",
+    "output": [
+      {
+        "flaw_id": "SEC-10",
+        "flaw_type": "Security (OWASP A01: Path Traversal)",
+        "description": "The application is vulnerable to Path Traversal (or Directory Traversal) attacks. A malicious user could provide a filename like `../../../../etc/passwd` to read sensitive system files outside of the intended directory.",
+        "recommendation": "Sanitize and validate all user-supplied input used in file paths. Ensure the resolved path is within the intended base directory. Better yet, avoid using user input in file paths directly; use a file ID to look up the path from a database."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that processes user-uploaded images to create thumbnails. Architecture: The main web server process handles the image resizing synchronously upon upload.",
+    "output": [
+      {
+        "flaw_id": "SCALE-05",
+        "flaw_type": "Scalability & Performance",
+        "description": "Image processing is a CPU-intensive task. Performing it synchronously within the web server process will block the event loop (in Node.js) or tie up a worker thread, drastically reducing the server's ability to handle other requests and leading to poor user experience.",
+        "recommendation": "Offload image processing to a separate, asynchronous background job queue. The web server should accept the upload, place a 'process_image' job onto a queue (like RabbitMQ or SQS), and immediately return a response to the user. A dedicated pool of worker processes will handle the CPU-intensive work."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A web application that communicates with its backend API. Architecture: The frontend and backend are served from different domains. The backend API has CORS configured with `Access-Control-Allow-Origin: *`.",
+    "output": [
+      {
+        "flaw_id": "SEC-11",
+        "flaw_type": "Security (Security Misconfiguration)",
+        "description": "Using a wildcard (`*`) for `Access-Control-Allow-Origin` in a production environment is dangerous. It allows any website on the internet to make requests to your API from a user's browser, potentially leading to data exfiltration if the user is logged in.",
+        "recommendation": "Configure CORS to be as restrictive as possible. Explicitly whitelist the specific domain(s) of your frontend application. For example: `Access-Control-Allow-Origin: https://my-frontend-app.com`."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A service that provides data to a dashboard. Architecture: The dashboard makes a single API call that joins 10 tables in the database to get all possible data at once.",
+    "output": [
+      {
+        "flaw_id": "PERF-06",
+        "flaw_type": "Performance",
+        "description": "A single, massive query with numerous joins is often highly inefficient and slow. It puts a heavy load on the database and transfers a large, potentially unnecessary, amount of data.",
+        "recommendation": "Break down the data fetching. Create several smaller, more targeted API endpoints. The dashboard can make multiple parallel requests to fetch only the data it needs for the current view. This improves performance and modularity."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A user management system. Architecture: When a user requests to delete their account, the system performs a 'soft delete' by setting an `is_deleted` flag in the `users` table to true.",
+    "output": [
+      {
+        "flaw_id": "ARC-03",
+        "flaw_type": "Architectural Best Practice (Data Privacy)",
+        "description": "This plan is a good start for data recovery but fails to address data privacy regulations like GDPR's 'Right to be Forgotten'. A soft delete retains all of the user's Personally Identifiable Information (PII) indefinitely.",
+        "recommendation": "Implement a two-stage deletion process. Perform a soft delete initially. After a grace period (e.g., 30 days), a scheduled background job should perform a hard delete or anonymize the user's PII to comply with privacy regulations."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: An API that returns a list of items. Architecture: The API has no pagination. The `/items` endpoint returns all items from the database in a single response.",
+    "output": [
+      {
+        "flaw_id": "SCALE-06",
+        "flaw_type": "Scalability & Performance",
+        "description": "Returning all records at once is not scalable. As the number of items grows, the response size will become enormous, leading to high memory usage on both server and client, slow network transfer, and potential application crashes.",
+        "recommendation": "Implement cursor-based or offset-based pagination. The API should accept parameters like `page` and `limit` (or `after_cursor` and `limit`) and return a limited, manageable subset of data per request."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A password reset feature. Architecture: A user requests a reset. The system generates a reset token that is a Base64 encoding of the user's email and a timestamp. The link is sent to the user.",
+    "output": [
+      {
+        "flaw_id": "SEC-12",
+        "flaw_type": "Security (OWASP A07: Identification and Authentication Failures)",
+        "description": "The password reset token is predictable and not random. An attacker could easily generate valid tokens for any user if they know their email address, allowing them to take over accounts.",
+        "recommendation": "Generate a long, cryptographically secure random string for the password reset token. Store a hash of this token in the database with an expiration date and the associated user ID. The link sent to the user should contain the raw token."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A microservices-based application. Architecture: Each service communicates with others by making direct, synchronous HTTP requests to them.",
+    "output": [
+      {
+        "flaw_id": "SCALE-07",
+        "flaw_type": "Reliability (Coupling)",
+        "description": "This architecture creates tight coupling and cascading failures. If a downstream service (e.g., Inventory Service) is slow or unavailable, all upstream services that depend on it (e.g., Order Service) will also fail or become slow.",
+        "recommendation": "Implement asynchronous communication using a message broker (e.g., RabbitMQ, Kafka). Services publish events instead of making direct requests. This decouples services, improves fault tolerance, and allows services to function even if others are temporarily down."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A database schema for products. Schema: The `products` table has columns for `name`, `price`, `image_url1`, `image_url2`, `image_url3`.",
+    "output": [
+      {
+        "flaw_id": "DB-03",
+        "flaw_type": "Data Modeling",
+        "description": "This design violates First Normal Form (1NF) by having repeating groups of columns (`image_url1`, `image_url2`, etc.). It's not flexible; what if a product needs a fourth image? It also makes querying for images difficult.",
+        "recommendation": "Create a separate `product_images` table with a foreign key back to the `products` table. Each row in this new table would store a single image URL, allowing a product to have any number of associated images."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A health check endpoint for a service. Architecture: The `/health` endpoint returns `200 OK` if the web server process is running.",
+    "output": [
+      {
+        "flaw_id": "ARC-04",
+        "flaw_type": "Reliability & Observability",
+        "description": "This health check is too basic. It only confirms the web server is running, but not if the service is actually functional. The service could be running but unable to connect to its database or other critical dependencies.",
+        "recommendation": "Implement a deep health check. The `/health` endpoint should verify its connections to all critical downstream dependencies (e.g., database, message queue, external APIs) before returning a `200 OK`. This gives a true picture of the service's health."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A web application that displays error messages. Architecture: If a database query fails, the detailed database error message, including the failed SQL query, is sent back to the frontend and displayed to the user.",
+    "output": [
+      {
+        "flaw_id": "SEC-13",
+        "flaw_type": "Security (Information Exposure)",
+        "description": "Exposing detailed technical error messages to the client can leak sensitive information about the application's internals, such as database schema, table names, and query structures. This information is valuable to an attacker.",
+        "recommendation": "Catch all exceptions on the server. Log the detailed error message for debugging purposes. Return a generic, user-friendly error message to the client along with a unique error ID. The user can report the ID for support."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A user invitation feature. Architecture: An admin can invite a new user by providing their email. The system creates a new user account with a default, temporary password like 'Welcome123' and emails it to the new user.",
+    "output": [
+      {
+        "flaw_id": "SEC-14",
+        "flaw_type": "Security (Insecure Design)",
+        "description": "Sending passwords, even temporary ones, over email is insecure as email is not an encrypted channel. It also relies on the user to change the password, which they may not do. An attacker could intercept the email and gain access.",
+        "recommendation": "Do not send passwords. Instead, generate a secure, single-use invitation link (with a short expiry) and email that to the user. When the user clicks the link, they are directed to a page where they can set their own password to activate their account."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A caching layer for an API. Architecture: The system uses an in-memory dictionary or map within the application process to cache database query results.",
+    "output": [
+      {
+        "flaw_id": "SCALE-08",
+        "flaw_type": "Scalability & Consistency",
+        "description": "In-memory caching within the application process does not work in a multi-server environment. Each server instance would have its own separate, inconsistent cache. The cache is also lost every time the process restarts.",
+        "recommendation": "Use a distributed, external cache like Redis or Memcached. All application servers connect to this central cache, ensuring data consistency across the cluster and persistence beyond the life of a single process."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A database schema for storing user addresses. Schema: The `users` table has columns for `address_line_1`, `address_line_2`, `city`, `state`, `zip_code`.",
+    "output": [
+      {
+        "flaw_id": "DB-04",
+        "flaw_type": "Data Modeling (Flexibility)",
+        "description": "This design assumes a user has only one address. This is often not the case (e.g., shipping vs. billing address). It is not flexible and leads to adding more columns (`shipping_city`, etc.) which is poor design.",
+        "recommendation": "Create a separate `addresses` table with a foreign key to the `users` table. This creates a one-to-many relationship, allowing a single user to have multiple addresses, each with a type (e.g., 'shipping', 'billing')."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A file upload API. Architecture: The API does not validate the `Content-Type` header of the uploaded file.",
+    "output": [
+      {
+        "flaw_id": "SEC-15",
+        "flaw_type": "Security (Unrestricted File Upload)",
+        "description": "Failing to validate the file type allows an attacker to upload malicious executable files (e.g., a PHP shell, a virus). If these files are ever served from the web root, they could be executed on the server, leading to a full system compromise.",
+        "recommendation": "Implement a strict allow-list of permitted `Content-Type` headers and file extensions on the server. Do not rely on the client-sent `Content-Type` alone; if possible, inspect the file's magic numbers to verify its actual type. Store user-uploaded content in a separate, non-executable location."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A shopping cart feature. Architecture: The contents of the user's shopping cart are stored entirely in the browser's `localStorage`.",
+    "output": [
+      {
+        "flaw_id": "ARC-05",
+        "flaw_type": "Architectural Best Practice (User Experience)",
+        "description": "Storing the cart only in `localStorage` means the cart is tied to a single browser on a single device. The user cannot start shopping on their phone and continue on their laptop. The cart is also lost if the user clears their browser data.",
+        "recommendation": "For authenticated users, store the shopping cart data on the server, linked to their user account. For anonymous users, `localStorage` can be used initially, but the cart should be merged with their server-side cart upon login."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A deployment strategy. Architecture: Developers push code directly to the `main` branch, which automatically triggers a deployment to the production server.",
+    "output": [
+      {
+        "flaw_id": "ARC-06",
+        "flaw_type": "Reliability & Collaboration",
+        "description": "This workflow is extremely risky. It bypasses code review and testing, allowing bugs and incomplete features to be deployed directly to production, causing outages. It also makes collaboration difficult.",
+        "recommendation": "Implement a Gitflow or similar branching strategy. Developers work on feature branches. Code is merged into a `develop` or `staging` branch via Pull Requests, which require code review and automated tests to pass. Only stable, tested code from the `staging` branch is merged to `main` for production deployment."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that needs to run a task every night at midnight. Architecture: The system uses a `while(true)` loop with a `sleep(60)` call inside a running process to check if it's time to run the task.",
+    "output": [
+      {
+        "flaw_id": "ARC-07",
+        "flaw_type": "Architectural Best Practice (Task Scheduling)",
+        "description": "This is a brittle and inefficient way to schedule tasks. The process could die, the clock could be inaccurate, and it needlessly consumes resources by running constantly. It's not a reliable scheduling mechanism.",
+        "recommendation": "Use a proper job scheduler. For simple cases, use the operating system's built-in scheduler (e.g., `cron` on Linux). For more complex, distributed systems, use a dedicated scheduling library or service (e.g., Celery Beat, Quartz, AWS EventBridge)."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A user profile picture upload. Architecture: The uploaded image is renamed to `{user_id}.jpg` and stored in a public `/uploads/images/` directory.",
+    "output": [
+      {
+        "flaw_id": "SEC-16",
+        "flaw_type": "Security (Insecure Direct Object Reference - IDOR)",
+        "description": "Using a predictable, sequential identifier like `user_id` as the filename creates an IDOR vulnerability. An attacker can easily enumerate filenames (`1.jpg`, `2.jpg`, `3.jpg`) to discover and view the profile pictures of all users, even if their profiles are private.",
+        "recommendation": "Use a non-guessable identifier for the filename. Generate a random UUID (Universally Unique Identifier) for each uploaded file and store the mapping between the UUID and the user in the database."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A database for a multi-tenant SaaS application. Architecture: Data for all tenants (customers) is stored together in the same set of tables, with a `tenant_id` column in each table to distinguish the data.",
+    "output": [
+      {
+        "flaw_id": "DB-05",
+        "flaw_type": "Data Modeling & Security (Multi-Tenancy)",
+        "description": "While the pooled data model is common, this description is missing a critical security component. Without strict, application-level checks on every single query to ensure it includes a `WHERE tenant_id = ?` clause, there is a high risk of data leakage between tenants.",
+        "recommendation": "The plan must explicitly state that all database queries will be automatically and mandatorily scoped by the current user's `tenant_id` at a low level in the data access layer to prevent any possibility of cross-tenant data access."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A logging system. Architecture: The application logs sensitive user data, such as credit card numbers or passwords, to its log files in plain text.",
+    "output": [
+      {
+        "flaw_id": "SEC-17",
+        "flaw_type": "Security (OWASP A09: Security Logging and Monitoring Failures)",
+        "description": "Logging sensitive data in plain text is a severe security violation. Log files are often accessible to more people than the production database and may be retained for long periods, creating a high-risk target for attackers.",
+        "recommendation": "Implement data masking or filtering in the logging framework. Ensure that any sensitive PII (Personally Identifiable Information) or financial data is redacted or tokenized before it is written to the logs."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A feature flag system. Architecture: Feature flags are managed by updating a JSON file in the application's source code and redeploying the application.",
+    "output": [
+      {
+        "flaw_id": "ARC-08",
+        "flaw_type": "Architectural Best Practice (Agility)",
+        "description": "This approach is inflexible and slow. Toggling a feature requires a full code deployment, which is a slow and risky process. It prevents non-technical users (like product managers) from controlling feature rollouts.",
+        "recommendation": "Use a dedicated feature flag service (e.g., LaunchDarkly, Optimizely) or a simple database-backed solution. The application should fetch the current state of feature flags at startup or periodically, allowing for dynamic, real-time control without redeployment."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A web application that needs to be highly available. Architecture: The application is deployed to a single, large virtual machine in a single availability zone.",
+    "output": [
+      {
+        "flaw_id": "SCALE-09",
+        "flaw_type": "Reliability (Single Point of Failure)",
+        "description": "Deploying to a single server in a single availability zone creates multiple single points of failure. If the server hardware fails or the data center has an outage, the entire application will go down.",
+        "recommendation": "Design for high availability. Deploy the application across multiple availability zones. Use a load balancer to distribute traffic between at least two server instances in different zones. The database should also have a multi-AZ replica."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A password reset API endpoint. Architecture: The `POST /reset-password` endpoint accepts the user's email, their old password, and their new password.",
+    "output": [
+      {
+        "flaw_id": "ARC-09",
+        "flaw_type": "Architectural Best Practice (API Design)",
+        "description": "This endpoint is misnamed. It's a 'change password' endpoint, not a 'reset password' endpoint, as it requires the user to know their old password. A 'reset' implies the user has forgotten their password.",
+        "recommendation": "Rename the endpoint to `POST /change-password` to accurately reflect its function. A true password reset flow would involve an out-of-band communication channel like email to verify the user's identity."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A search API. Architecture: The API endpoint URL for search is `GET /search?query=my-search-term`.",
+    "output": [
+      {
+        "flaw_id": "SEC-18",
+        "flaw_type": "Security (Information Exposure via Server Logs)",
+        "description": "Placing sensitive search terms directly in the URL query string means they will be stored in plaintext in server access logs, browser history, and potentially in network appliance logs. This can expose sensitive user searches.",
+        "recommendation": "For searches that may contain sensitive information, use a `POST` request instead of `GET`. The search query should be sent in the request body, which is typically not logged by default."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system for storing user-uploaded documents. Database Schema: The document file itself (e.g., the binary content of a PDF) is stored in a `BLOB` column in the main `documents` table.",
+    "output": [
+      {
+        "flaw_id": "PERF-07",
+        "flaw_type": "Performance & Scalability",
+        "description": "Storing large binary files (BLOBs) directly in the database is generally inefficient. It bloats the database size, slows down backups and queries (even on other columns), and can quickly hit database size limits.",
+        "recommendation": "Store the files in a dedicated object storage service (like S3 or MinIO). The database should only store metadata about the file, including a URL or identifier that points to the file in the object store."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A mobile app API. Architecture: The API has a single version, `/api/`. When a breaking change is needed, the existing endpoints are modified, and all mobile apps must be updated immediately.",
+    "output": [
+      {
+        "flaw_id": "ARC-10",
+        "flaw_type": "Architectural Best Practice (Evolvability)",
+        "description": "This lack of versioning forces all clients to update simultaneously and makes backward compatibility impossible. It's a brittle strategy that will lead to older versions of the mobile app breaking.",
+        "recommendation": "Implement API versioning. A common approach is to include the version in the URL (e.g., `/api/v1/`, `/api/v2/`). When a breaking change is needed, introduce a new version (`v2`) while maintaining the old version (`v1`) for a deprecation period. This allows clients to upgrade at their own pace."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A real-time chat application. Architecture: The client polls the server every 2 seconds with an HTTP request to check for new messages.",
+    "output": [
+      {
+        "flaw_id": "PERF-08",
+        "flaw_type": "Performance & Efficiency",
+        "description": "Short polling is very inefficient. It generates a huge number of unnecessary HTTP requests, creating significant overhead on the server and wasting bandwidth, especially when there are no new messages.",
+        "recommendation": "Use a more efficient real-time communication protocol. WebSockets are the standard for bidirectional, persistent connections. Alternatively, consider Server-Sent Events (SSE) for server-to-client streaming if client-to-server communication is less frequent."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A database connection pool. Architecture: The application is configured with a maximum connection pool size of 500, even though the database server can only handle 100 concurrent connections.",
+    "output": [
+      {
+        "flaw_id": "SCALE-10",
+        "flaw_type": "Reliability (Resource Exhaustion)",
+        "description": "Configuring the application's connection pool to be larger than what the database can handle will lead to connection errors and database server instability under load. The application will try to open more connections than the database can accept.",
+        "recommendation": "The connection pool size in the application should always be less than or equal to the maximum number of connections supported by the database server. The two must be configured in coordination."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A test plan for a new API. Plan: Our QA team will manually test the API using Postman after every deployment.",
+    "output": [
+      {
+        "flaw_id": "TEST-01",
+        "flaw_type": "Testing Strategy",
+        "description": "Relying solely on manual testing is slow, error-prone, and not scalable. It cannot efficiently catch regressions in a CI/CD environment and provides slow feedback to developers.",
+        "recommendation": "Implement a comprehensive automated testing strategy. Create a suite of unit tests for business logic, integration tests for service interactions, and a small set of end-to-end contract tests. Automate this suite to run on every commit."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A CI/CD pipeline for a monorepo. Plan: The pipeline rebuilds and redeploys all 10 microservices whenever a commit is pushed to the main branch, regardless of what changed.",
+    "output": [
+      {
+        "flaw_id": "CICD-01",
+        "flaw_type": "CI/CD Efficiency",
+        "description": "Rebuilding all services for a change in one is extremely inefficient, slow, and costly. It negates the agility benefits of a microservice architecture and leads to long feedback cycles.",
+        "recommendation": "Implement path-based filtering in your CI/CD pipeline. The pipeline should detect which service's code has changed and only trigger the build and deploy process for that specific service."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A REST API. Design: We use `POST /getUser` to retrieve a user's data and `GET /updateUser?name=new` to modify it.",
+    "output": [
+      {
+        "flaw_id": "API-01",
+        "flaw_type": "API Design (REST Conventions)",
+        "description": "The API violates fundamental REST principles for HTTP methods. GET should be used for idempotent retrieval, and POST/PUT/PATCH for state changes. Using verbs in URL paths is an anti-pattern.",
+        "recommendation": "Follow RESTful conventions. Use `GET /users/{id}` for retrieval and `PUT /users/{id}` or `PATCH /users/{id}` for updates. The action should be indicated by the HTTP method, not the URL."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A web app secured by a Web Application Firewall (WAF). Plan: We have enabled the WAF with its default rule set, so our application code does not need input validation.",
+    "output": [
+      {
+        "flaw_id": "SEC-19",
+        "flaw_type": "Security (Defense in Depth)",
+        "description": "Relying solely on a WAF provides a false sense of security. It is a critical layer, but not a substitute for secure coding practices. Sophisticated attacks can bypass WAFs, especially with default configurations.",
+        "recommendation": "Practice defense in depth. The WAF is the outer layer. The application itself must still perform its own strict input validation, sanitization, and use parameterized queries as the inner layer of defense."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that generates PDF reports. Architecture: When a user requests a report, the main API thread generates the PDF and waits for it to complete before sending the file in the HTTP response.",
+    "output": [
+      {
+        "flaw_id": "PERF-09",
+        "flaw_type": "Performance & User Experience",
+        "description": "PDF generation is a long-running, CPU and memory-intensive task. Performing this synchronously in the request-response cycle will lead to very long wait times for the user and likely cause request timeouts. It also ties up server resources, reducing overall throughput.",
+        "recommendation": "Handle report generation asynchronously. The API should accept the request, add a 'generate_report' job to a background queue, and immediately return a `202 Accepted` response. When the report is ready, notify the user via email with a download link or through a notification on the web app."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A database schema for storing event data. Schema: The `events` table uses a standard auto-incrementing integer as its primary key.",
+    "output": [
+      {
+        "flaw_id": "DB-06",
+        "flaw_type": "Data Modeling (Distributed Systems)",
+        "description": "While fine for a single database, auto-incrementing integer keys are problematic in a distributed or sharded database environment. They can lead to key collisions and make it difficult to merge data from different nodes.",
+        "recommendation": "Use a non-sequential, globally unique identifier as the primary key. A UUID (Universally Unique Identifier) is the standard choice for this, as it can be generated independently on any node without risk of collision."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A JWT authentication system. Plan: We store the JWT in `localStorage` on the client-side.",
+    "output": [
+      {
+        "flaw_id": "SEC-20",
+        "flaw_type": "Security (OWASP A03: Injection - XSS)",
+        "description": "Storing JWTs in `localStorage` makes them accessible to any JavaScript code running on the page. This makes the application highly vulnerable to Cross-Site Scripting (XSS) attacks, where a malicious script can steal the token and impersonate the user.",
+        "recommendation": "Store JWTs in secure, `HttpOnly` cookies. This prevents them from being accessed by client-side JavaScript, providing significant protection against XSS-based token theft."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A microservice that needs data from another microservice. Architecture: The services call each other's REST endpoints. To avoid latency, there are no retries configured for failed requests.",
+    "output": [
+      {
+        "flaw_id": "SCALE-11",
+        "flaw_type": "Reliability (Transient Failures)",
+        "description": "In a distributed system, transient network failures are common. Not implementing a retry mechanism means that temporary glitches will result in permanent failures for user requests, making the system brittle.",
+        "recommendation": "Implement a retry mechanism with exponential backoff and jitter. When a request fails, wait a short, randomized interval and try again, increasing the wait time after each subsequent failure up to a maximum limit. This makes the system resilient to transient faults."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: An API for a web app. Design: All API endpoints, including public ones and admin-only ones, are located under the same `/api/` prefix.",
+    "output": [
+      {
+        "flaw_id": "ARC-11",
+        "flaw_type": "Architectural Best Practice (Security & Management)",
+        "description": "Mixing public and private/admin endpoints makes it harder to apply broad security policies at the infrastructure level (e.g., in an API gateway or load balancer). It's easier to accidentally expose an admin endpoint publicly.",
+        "recommendation": "Segregate endpoints by privilege level. For example, use `/api/public/` for public data and `/api/admin/` for administrative functions. This allows you to easily apply stricter authentication and IP whitelisting rules to the entire `/api/admin/` path."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that uses a third-party payment API. Plan: Our code does not check the status of the transaction after redirecting the user back from the payment page. We assume if they are redirected, the payment was successful.",
+    "output": [
+      {
+        "flaw_id": "SEC-21",
+        "flaw_type": "Security (Transaction Integrity)",
+        "description": "This is a critical flaw. A user can close their browser after payment authorization but before the payment gateway confirms it, or a malicious user could simply navigate to the 'success' URL without paying. This leads to providing goods or services for free.",
+        "recommendation": "Never trust the client's redirection as proof of payment. Implement a server-to-server verification mechanism. Use webhooks from the payment gateway to receive a definitive success or failure status, or have your server make a separate API call to the gateway to confirm the transaction status before marking the order as complete."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A database schema. Schema: The `users` table has a boolean flag `is_premium`. The `orders` table also has a boolean flag `is_premium_user_order`.",
+    "output": [
+      {
+        "flaw_id": "DB-07",
+        "flaw_type": "Data Modeling (Denormalization)",
+        "description": "The `is_premium_user_order` flag is redundant data. It duplicates information that can be derived from the `users` table. If a user's premium status changes, you might forget to update this flag in all their past orders, leading to data inconsistency.",
+        "recommendation": "Remove the redundant flag from the `orders` table. The premium status of an order can always be determined by joining the `orders` table with the `users` table on `user_id`. Only denormalize for specific, measured performance reasons."
+      }
+    ]
+  },
+    {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A webhook processing service. Architecture: When an incoming webhook is received, the service immediately calls an external URL provided in the webhook's payload to send a status update.",
+    "output": [
+      {
+        "flaw_id": "SEC-19",
+        "flaw_type": "Security (OWASP A10: Server-Side Request Forgery - SSRF)",
+        "description": "The service makes a request to a URL provided by an external user without validation. An attacker could provide an internal network address (e.g., 'http://169.254.169.254/latest/meta-data' or 'http://localhost:8080/admin') to scan the internal network or access sensitive cloud metadata.",
+        "recommendation": "Implement a strict allow-list for all outgoing requests triggered by user input. Only permit requests to known, trusted domains and IP addresses. Never allow requests to internal or private network ranges."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: An online forum. Database Schema: The `posts` table has a `user_id` column. To get a user's post count, the application runs `SELECT COUNT(*) FROM posts WHERE user_id = ?` every time the user's profile is viewed.",
+    "output": [
+      {
+        "flaw_id": "PERF-09",
+        "flaw_type": "Performance (Denormalization)",
+        "description": "Calculating the post count with a `COUNT(*)` query on a potentially large table for every profile view is inefficient and puts unnecessary load on the database.",
+        "recommendation": "Denormalize the data. Add a `post_count` column to the `users` table. Use a database trigger or application logic to increment this counter when a new post is created and decrement it when a post is deleted. This makes fetching the count a simple and fast column read."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A Java application that uses serialization. Architecture: The application accepts a serialized Java object from an untrusted client, deserializes it, and then casts it to an expected object type.",
+    "output": [
+      {
+        "flaw_id": "SEC-20",
+        "flaw_type": "Security (Insecure Deserialization)",
+        "description": "Deserializing data from an untrusted source without validation is extremely dangerous. An attacker can craft a malicious serialized object that, when deserialized, executes arbitrary code on the server before the application even has a chance to inspect it (e.g., via a gadget chain).",
+        "recommendation": "Avoid native Java serialization with untrusted data. Use a safe, text-based serialization format like JSON. If binary serialization is required, use a format that does not support arbitrary code execution, like Protocol Buffers."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A microservices application. Architecture: The Order service needs user data, so it directly queries the User service's database.",
+    "output": [
+      {
+        "flaw_id": "ARC-11",
+        "flaw_type": "Architectural Best Practice (Coupling)",
+        "description": "This pattern is known as a 'shared database' anti-pattern in microservices. It creates tight coupling between services. If the User service changes its database schema, the Order service will break. It violates the principle of service autonomy and bounded context.",
+        "recommendation": "The Order service should never directly access another service's database. It must communicate via a well-defined, stable API provided by the User service. This ensures loose coupling and allows each service to evolve independently."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A mobile app API authentication. Architecture: The API uses JWTs for authentication. The JWT payload contains the `user_id` and is set to never expire.",
+    "output": [
+      {
+        "flaw_id": "SEC-21",
+        "flaw_type": "Security (JWT Handling)",
+        "description": "Non-expiring JWTs are a significant security risk. If a token is ever compromised, it becomes a permanent credential for the attacker, as it can never be invalidated on the server side (since JWTs are stateless).",
+        "recommendation": "Implement a short expiry time (e.g., 15 minutes) for access tokens. Use a long-lived refresh token to obtain new access tokens without requiring the user to log in again. This allows for token revocation by invalidating the refresh token."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A service that communicates with another internal service. Architecture: The client service has no timeout configured for its HTTP requests to the downstream service.",
+    "output": [
+      {
+        "flaw_id": "SCALE-11",
+        "flaw_type": "Reliability (Cascading Failures)",
+        "description": "Lack of timeouts is a primary cause of cascading failures. If the downstream service is slow or unresponsive, the client service's request threads will be blocked indefinitely, waiting for a response. This will exhaust the client's thread pool, making it unable to serve any other requests.",
+        "recommendation": "Always configure aggressive but reasonable timeouts for all network requests. Implement a circuit breaker pattern to stop making requests to a service that is known to be failing, allowing it time to recover."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A React single-page application (SPA). Architecture: The API key for a third-party mapping service (like Google Maps) is stored in the React application's configuration file and included in the bundled JavaScript.",
+    "output": [
+      {
+        "flaw_id": "SEC-22",
+        "flaw_type": "Security (Client-Side Secret Exposure)",
+        "description": "Secrets embedded in client-side JavaScript are publicly visible to anyone who views the page source. An attacker can easily steal this API key and use it, potentially incurring huge costs on your account.",
+        "recommendation": "Never store secrets on the client side. The frontend should make requests to your own backend, which then securely makes the request to the third-party service using the API key stored safely on the server."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A data-intensive application using an ORM like Hibernate or SQLAlchemy. Architecture: The application fetches a list of 100 parent objects, then iterates through them in a loop, accessing a lazy-loaded collection on each one.",
+    "output": [
+      {
+        "flaw_id": "PERF-10",
+        "flaw_type": "Performance (N+1 Query Problem with ORM)",
+        "description": "This is a classic N+1 query problem caused by lazy loading. The ORM will execute 1 query for the parent objects, and then N (100 in this case) additional queries inside the loop to fetch the related collections, resulting in 101 database roundtrips.",
+        "recommendation": "Use eager loading. Configure the initial query to fetch the parent objects and their required collections in a single, efficient query using a JOIN. Most ORMs provide mechanisms like `JOIN FETCH` (JPA) or `joinedload` (SQLAlchemy) for this purpose."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A CI/CD pipeline. Architecture: The pipeline builds the application, runs unit tests, and deploys to production. There is no integration testing stage.",
+    "output": [
+      {
+        "flaw_id": "ARC-12",
+        "flaw_type": "Architectural Best Practice (Testing Strategy)",
+        "description": "Relying solely on unit tests is insufficient. While unit tests verify components in isolation, they do not catch bugs that arise from the interaction between components (e.g., API client and server, service and database).",
+        "recommendation": "Implement a dedicated integration testing stage in the CI/CD pipeline. This stage should spin up the application and its dependencies (like a database) to test the interactions between components and validate key user workflows end-to-end."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: An application that stores dates and times. Database Schema: All date/time columns are stored in the database using the local timezone of the application server.",
+    "output": [
+      {
+        "flaw_id": "DB-06",
+        "flaw_type": "Data Modeling (Timezone Handling)",
+        "description": "Storing timestamps in a local timezone is a major source of bugs and ambiguity, especially if servers are in different geographic locations or if the server's timezone changes. It makes comparisons and calculations across timezones error-prone.",
+        "recommendation": "Standardize on Coordinated Universal Time (UTC). Store all timestamps in the database in UTC. The application layer should be responsible for converting the UTC time to the user's local timezone for display purposes only."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: An API using JWTs. Architecture: A user's permissions and roles are embedded directly within the JWT payload to avoid database lookups.",
+    "output": [
+      {
+        "flaw_id": "SEC-23",
+        "flaw_type": "Security (Stale Data)",
+        "description": "While performant, this design means that permission changes are not reflected until the JWT expires and a new one is issued. If an admin revokes a user's permissions, the user can still access protected resources using their old, still-valid JWT.",
+        "recommendation": "For applications requiring immediate permission revocation, JWTs alone are insufficient. Maintain a server-side revocation list (e.g., in Redis) of invalidated tokens or user sessions. Check this list on every request."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that generates PDF reports. Architecture: A synchronous API endpoint `/generate-report` generates a large, complex report and returns it as a download. The process can take up to 2 minutes.",
+    "output": [
+      {
+        "flaw_id": "SCALE-12",
+        "flaw_type": "Reliability & User Experience",
+        "description": "Long-running synchronous HTTP requests are unreliable. They are prone to timeouts from clients, load balancers, and proxies. This also provides a poor user experience, as the user's browser is stuck waiting.",
+        "recommendation": "Use an asynchronous workflow. The `/generate-report` endpoint should accept the request, place a job on a background queue, and immediately return a `202 Accepted` response with a link to a status-check endpoint. When the report is ready, the user can be notified (e.g., via email or websocket) or download it from the status page."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: An application that requires random numbers for security purposes (e.g., password reset tokens). Architecture: The application uses the standard `Math.random()` function.",
+    "output": [
+      {
+        "flaw_id": "SEC-24",
+        "flaw_type": "Security (Weak Randomness)",
+        "description": "Standard pseudo-random number generators like `Math.random()` are not cryptographically secure. Their output can be predicted, allowing an attacker to guess 'random' tokens.",
+        "recommendation": "Always use a cryptographically secure pseudo-random number generator (CSPRNG) for any security-sensitive context. In JavaScript, use `crypto.getRandomValues()`. In Python, use the `secrets` module."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A caching strategy for a web application. Architecture: The API does not set any caching-related HTTP headers like `Cache-Control` or `ETag` on its responses.",
+    "output": [
+      {
+        "flaw_id": "PERF-11",
+        "flaw_type": "Performance (Caching)",
+        "description": "Without caching headers, browsers and intermediary proxies cannot cache responses. This forces the client to re-fetch the same data from the server on every request, increasing latency, bandwidth usage, and server load.",
+        "recommendation": "Implement proper HTTP caching. Use the `Cache-Control` header to specify caching policy (e.g., `max-age`). Use the `ETag` header with a hash of the response body to allow clients to perform conditional requests using `If-None-Match`, avoiding data re-transfer if it hasn't changed."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system where users can be 'friends' with each other. Database Choice: A relational database (e.g., PostgreSQL) is used. The query to find friends-of-friends involves multiple self-joins and is very slow.",
+    "output": [
+      {
+        "flaw_id": "DB-07",
+        "flaw_type": "Data Modeling (Wrong Tool for the Job)",
+        "description": "While possible, modeling and querying highly interconnected graph data (like social networks) in a relational database is inefficient and complex. Recursive queries or multiple joins perform poorly as the depth and breadth of the network grow.",
+        "recommendation": "For graph-heavy workloads, use a dedicated graph database (e.g., Neo4j, Amazon Neptune). These databases are optimized for traversing relationships, making queries like 'friends-of-friends' simple and extremely fast."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A service that needs to send notifications. Architecture: The notification logic (e.g., formatting email templates, deciding whether to send a push notification or an SMS) is tightly coupled within the business logic of various services like 'OrderService' and 'UserService'.",
+    "output": [
+      {
+        "flaw_id": "ARC-13",
+        "flaw_type": "Architectural Best Practice (Separation of Concerns)",
+        "description": "Embedding notification logic within multiple business services violates the Single Responsibility Principle and DRY (Don't Repeat Yourself). It makes the notification system difficult to manage, update, and test.",
+        "recommendation": "Create a dedicated, centralized 'Notification Service'. Other services should publish generic events (e.g., 'order_shipped') to a message queue. The Notification Service consumes these events and encapsulates all logic related to how, when, and what to send."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: An application that uses a NoSQL database like MongoDB. Architecture: The application frequently needs to query for users based on a non-indexed field in a large collection.",
+    "output": [
+      {
+        "flaw_id": "PERF-12",
+        "flaw_type": "Performance (Missing Index)",
+        "description": "Querying on a non-indexed field in a NoSQL database (or any database) forces a full collection scan. This is one of the most common causes of poor performance in MongoDB and can bring an application to a halt as the dataset grows.",
+        "recommendation": "Identify all common query patterns and ensure that there are appropriate indexes on the fields used for filtering and sorting. Use the database's query execution analysis tools to verify that indexes are being used effectively."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: An API that is publicly accessible. Architecture: The API returns detailed and verbose error messages in its responses, including stack traces when an unhandled exception occurs.",
+    "output": [
+      {
+        "flaw_id": "SEC-25",
+        "flaw_type": "Security (Information Exposure)",
+        "description": "Exposing stack traces and detailed internal error messages can provide attackers with valuable information about the application's underlying framework, libraries, and internal structure, which can be used to craft more targeted attacks.",
+        "recommendation": "Implement a global exception handler. Log the detailed stack trace on the server for debugging. For the client, return a standardized, generic error response with an HTTP 500 status code and a unique request ID that can be used to look up the detailed error in the logs."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that uses a distributed cache (like Redis). Architecture: All cache keys are simple strings, like the ID of the object being cached (e.g., 'user:123').",
+    "output": [
+      {
+        "flaw_id": "SCALE-13",
+        "flaw_type": "Reliability (Cache Invalidation)",
+        "description": "This simple caching strategy makes targeted cache invalidation difficult. If the data model for a user changes, how do you invalidate all cached items related to that user (e.g., profile, posts, comments) without knowing all the keys? This often leads to stale data.",
+        "recommendation": "Develop a structured cache key schema and use techniques like versioning or sets. For example, cache `user:123:v2:profile`. When the user's profile changes, increment the version number to `v3`, which automatically invalidates all old cache entries. Alternatively, store all keys related to a user in a Redis set for easy bulk invalidation."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A mobile application backend. Architecture: The API is protected by rate limiting based on the client's IP address.",
+    "output": [
+      {
+        "flaw_id": "SEC-26",
+        "flaw_type": "Security (Ineffective Controls)",
+        "description": "Rate limiting by IP address is often ineffective for mobile clients. Many users on the same cellular network may share a small pool of IP addresses through Carrier-Grade NAT (CG-NAT). One abusive user could trigger the rate limit for many other legitimate users.",
+        "recommendation": "For authenticated traffic, the primary rate-limiting key should be the user's account ID or API key. IP-based rate limiting can be used as a secondary defense, especially for unauthenticated endpoints, but should not be the only mechanism."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A database schema. Schema: A `users` table contains a `user_type` column, and a `profiles` table has columns for `student_id`, `teacher_id`, `alumni_year`. The correct profile columns are populated based on the `user_type`.",
+    "output": [
+      {
+        "flaw_id": "DB-08",
+        "flaw_type": "Data Modeling (Polymorphic Association)",
+        "description": "This design leads to sparse tables with many NULL values and violates normalization rules. It makes it difficult to enforce data integrity (e.g., ensuring a 'student' has a `student_id`) and complicates queries.",
+        "recommendation": "Use a proper polymorphic association pattern. The classic approach is to have separate tables: `student_profiles`, `teacher_profiles`, etc. A `profiles` table could then have a `profile_id` and `profile_type` to link to the correct specific profile table."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that processes events from a Kafka topic. Architecture: A single consumer instance is responsible for processing all messages from a topic with 10 partitions.",
+    "output": [
+      {
+        "flaw_id": "SCALE-14",
+        "flaw_type": "Scalability",
+        "description": "This design completely negates the parallelism offered by Kafka partitions. A single consumer can only process messages sequentially, creating a bottleneck. The throughput of the system is limited to what one consumer can handle, regardless of the number of partitions.",
+        "recommendation": "To achieve parallel processing, run multiple instances of the consumer within the same consumer group. Kafka will automatically assign different partitions to different consumer instances, allowing the load to be distributed and processed in parallel, up to the number of partitions."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: An application using a database connection pool. Architecture: The application code does not reliably close database connections after use, relying on the garbage collector to eventually close them.",
+    "output": [
+      {
+        "flaw_id": "PERF-13",
+        "flaw_type": "Performance (Connection Leak)",
+        "description": "This is a classic connection leak. Failing to close connections means they are not returned to the pool. The application will quickly exhaust all available connections in the pool, leading to it becoming unresponsive and unable to serve any new requests that require a database connection.",
+        "recommendation": "Ensure that database connections are always closed in a `finally` block or by using a `try-with-resources` statement (in Java) or a `with` statement (in Python). This guarantees that the connection is returned to the pool even if an error occurs."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A user content submission form. Architecture: The form allows users to use Markdown for formatting. The backend converts the Markdown to HTML and stores it in the database. The frontend renders this HTML directly.",
+    "output": [
+      {
+        "flaw_id": "SEC-27",
+        "flaw_type": "Security (Cross-Site Scripting - XSS)",
+        "description": "Even with Markdown, users can submit malicious input, such as `[click me](javascript:alert('XSS'))`. If the Markdown-to-HTML converter is not properly configured to sanitize the output, this can lead to stored XSS vulnerabilities when the resulting HTML is rendered.",
+        "recommendation": "Never trust user-generated HTML. After converting Markdown to HTML on the backend, run the output through a robust HTML sanitization library (like DOMPurify or Bleach) to strip out any potentially dangerous tags (`<script>`) and attributes (`onclick`)."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A Node.js application. Architecture: A single, long-running CPU-intensive calculation (e.g., data analysis) is performed directly in an API request handler.",
+    "output": [
+      {
+        "flaw_id": "PERF-14",
+        "flaw_type": "Performance (Blocking the Event Loop)",
+        "description": "Node.js is single-threaded. Performing a long-running, synchronous CPU-bound task directly on the event loop will block it completely. The server will be unable to handle any other incoming requests until the calculation is finished, leading to catastrophic performance degradation.",
+        "recommendation": "Offload CPU-intensive work from the main event loop. Use worker threads (`worker_threads` module) to run the calculation in a separate thread. For more complex scenarios, use a dedicated job queue and background worker processes."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that sends analytics events to a third-party service. Architecture: For every event (e.g., a page view), the application makes a direct, blocking HTTP request to the analytics provider's API.",
+    "output": [
+      {
+        "flaw_id": "ARC-14",
+        "flaw_type": "Architectural Best Practice (Resilience)",
+        "description": "Making direct, blocking calls for non-critical operations like analytics couples the application's performance and stability to the third-party service. If the analytics provider is slow or down, your application will also become slow or unstable.",
+        "recommendation": "Decouple analytics tracking. Send events asynchronously. A good pattern is to log events to a local agent or a message queue. A separate process can then batch these events and send them to the third-party service, with retries, without impacting the main application."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A user settings page. Architecture: The page has a form with 20 different settings. The 'Save' button makes 20 separate API calls (`PUT /settings/email`, `PUT /settings/timezone`, etc.), one for each setting.",
+    "output": [
+      {
+        "flaw_id": "PERF-15",
+        "flaw_type": "Performance (Chatty API)",
+        "description": "Making numerous small API calls is inefficient. It creates significant overhead from network latency and HTTP request/response cycles. It also makes transactional updates impossible.",
+        "recommendation": "Design a bulk or batch update endpoint. The 'Save' button should make a single API call (e.g., `PATCH /settings`) with a request body containing all the settings that have changed. This is far more efficient and allows the update to be performed atomically on the backend."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system for managing hierarchical data, like a category tree. Database Schema: A `categories` table has a `parent_id` column, representing an adjacency list.",
+    "output": [
+      {
+        "flaw_id": "DB-09",
+        "flaw_type": "Data Modeling (Hierarchical Data)",
+        "description": "While the adjacency list model is simple to understand, it is very inefficient to query for all descendants of a given node (a subtree). Doing so requires a recursive query or multiple roundtrips to the database, which does not scale well.",
+        "recommendation": "For efficient querying of hierarchical data in a relational database, consider alternative models like Nested Set, Path Enumeration (Materialized Path), or Closure Table. Each has different trade-offs for reads vs. writes, but all are generally better for subtree queries than an adjacency list."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A feature that lets users upload a custom avatar. Architecture: The application does not resize or compress the uploaded image.",
+    "output": [
+      {
+        "flaw_id": "PERF-16",
+        "flaw_type": "Performance & Cost",
+        "description": "Storing and serving large, unoptimized images is wasteful. It leads to high storage costs, high bandwidth usage, and slow page load times for all users who view the avatar. A user could upload a 10MB photo to be used as a 50x50 pixel avatar.",
+        "recommendation": "Implement an image processing pipeline. After upload, automatically resize the image to the various required dimensions (e.g., thumbnail, profile view). Also, run the images through a compression/optimization tool (like ImageMagick or a web service) to reduce file size without significant quality loss."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that uses a database replica (read replica) for scaling reads. Architecture: The application sends all write and read queries to the primary database.",
+    "output": [
+      {
+        "flaw_id": "SCALE-15",
+        "flaw_type": "Scalability",
+        "description": "The read replica is completely unused. The system is paying for a resource that provides no benefit. All load is still being directed to the primary database, negating the entire purpose of read scaling.",
+        "recommendation": "Modify the application's data access layer to direct all write operations (`INSERT`, `UPDATE`, `DELETE`) to the primary database and route all read operations (`SELECT`) to the read replica(s). This is a fundamental pattern for scaling database reads."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that requires a secret key for an algorithm. Architecture: The secret key is generated once and is the same for all users and environments.",
+    "output": [
+      {
+        "flaw_id": "SEC-28",
+        "flaw_type": "Security (Key Management)",
+        "description": "Using a single, static secret key is a major security flaw. If the key is ever compromised, the entire system is compromised, and there is no way to easily rotate it. It also makes testing and development environments less secure.",
+        "recommendation": "Use a key management system. Keys should be unique per environment (dev, staging, prod). Implement a key rotation policy where keys are periodically and automatically changed. For data encryption, consider using envelope encryption with per-user or per-object data keys."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: An API that provides data from multiple sources. Architecture: The API uses a single monolithic GraphQL endpoint that exposes the entire database schema.",
+    "output": [
+      {
+        "flaw_id": "SEC-29",
+        "flaw_type": "Security (Information Exposure)",
+        "description": "Exposing the entire database schema via a GraphQL API without proper authorization checks is dangerous. It can allow attackers to perform introspection to learn the entire data model and craft queries to exfiltrate data they shouldn't have access to.",
+        "recommendation": "Implement robust, field-level authorization in the GraphQL resolver layer. Do not simply expose the database schema directly. Design a specific GraphQL schema for your API's purpose and disable introspection in production environments."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A web application with a front-end router. Architecture: The application performs authorization checks only on the front end by showing or hiding links based on the user's role.",
+    "output": [
+      {
+        "flaw_id": "SEC-30",
+        "flaw_type": "Security (Broken Access Control)",
+        "description": "Client-side authorization is purely for UI/UX convenience and provides no actual security. A savvy user can easily bypass these checks by crafting their own requests to the backend API endpoints directly, completely bypassing the UI.",
+        "recommendation": "Authorization must be enforced on the server. Every API endpoint must be protected by a server-side check that verifies the authenticated user has the necessary permissions to perform the requested action."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A distributed system with multiple microservices. Architecture: Each service has its own configuration file with hardcoded IP addresses for the other services it needs to call.",
+    "output": [
+      {
+        "flaw_id": "SCALE-16",
+        "flaw_type": "Reliability & Maintainability",
+        "description": "Hardcoding IP addresses makes the system extremely brittle and difficult to manage. If a service's IP changes (e.g., due to a new deployment or failure), all services that call it must be reconfigured and redeployed. It also prevents dynamic scaling.",
+        "recommendation": "Implement a service discovery mechanism. Services should register themselves with a central registry (like Consul or Eureka). Client services query the registry to find the current location of the services they need to call. This allows for dynamic scaling and resilience to changes."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: An API endpoint that returns a list of objects. Architecture: The JSON serialization process converts all data types to strings.",
+    "output": [
+      {
+        "flaw_id": "ARC-15",
+        "flaw_type": "Architectural Best Practice (API Contract)",
+        "description": "Converting all values to strings destroys data type information. Numbers become strings, booleans become 'true' or 'false'. This forces the client to perform unnecessary parsing and type conversion, and it is very error-prone.",
+        "recommendation": "Respect data types in JSON serialization. Numbers should be JSON numbers, booleans should be JSON booleans, and nulls should be JSON nulls. This provides a clear and easy-to-use API contract for clients."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system using a NoSQL database like DynamoDB. Architecture: A table uses the user's email address as the partition key. The system needs to support a 'login with company' feature where thousands of users have the same company email.",
+    "output": [
+      {
+        "flaw_id": "PERF-17",
+        "flaw_type": "Performance (Hot Partition)",
+        "description": "Using a low-cardinality attribute like a shared company email as a partition key will create a 'hot partition'. All traffic for that company will be directed to a single physical partition on the database, overwhelming its provisioned throughput and causing throttling for all users of that company.",
+        "recommendation": "Choose a high-cardinality partition key. A better key would be the unique `user_id`. To look up by email, create a Global Secondary Index (GSI) with the email address as its partition key. This allows for efficient lookups without creating a hot partition on the main table."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that must comply with data residency laws (e.g., data must stay in a specific country). Architecture: The system uses a global CDN to cache user data and a single database located in another country.",
+    "output": [
+      {
+        "flaw_id": "ARC-16",
+        "flaw_type": "Architectural Best Practice (Compliance)",
+        "description": "This architecture violates data residency requirements. The CDN will cache sensitive user data in servers around the world, and the primary database is not located in the required region. This can lead to severe legal and financial penalties.",
+        "recommendation": "The architecture must be designed for data residency from the ground up. Use cloud provider regions located within the specified country for all databases and application servers. Configure the CDN to only use edge locations within that country or not to cache sensitive user data at all."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that uses an ORM. Architecture: To update a single field on an object, the application code fetches the entire object from the database, changes one property, and then saves the entire object back.",
+    "output": [
+      {
+        "flaw_id": "PERF-18",
+        "flaw_type": "Performance (Inefficient Update)",
+        "description": "This 'read-before-write' pattern is inefficient, especially for large objects. It causes unnecessary data transfer from the database and can lead to race conditions in a concurrent environment (a 'lost update' problem if another process modifies the object in between the read and write).",
+        "recommendation": "For simple updates, issue a direct update query that modifies only the required field (e.g., `UPDATE products SET price = ? WHERE id = ?`). Most ORMs provide a way to do this without fetching the full object, which is far more efficient."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that processes a stream of events. Architecture: The processing logic for an event involves making three sequential, blocking network calls to three other microservices.",
+    "output": [
+      {
+        "flaw_id": "PERF-19",
+        "flaw_type": "Performance (Latency)",
+        "description": "Performing multiple network calls sequentially adds up their latencies, making the total processing time for a single event very long. This will severely limit the throughput of the event stream processor.",
+        "recommendation": "Parallelize independent I/O operations. If the three network calls do not depend on each other's results, they should be executed in parallel. Use asynchronous programming patterns (like `Promise.all` in JavaScript) to initiate all calls simultaneously and wait for them all to complete."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that needs to retry failed operations. Architecture: The retry logic is a simple loop that immediately retries the operation as soon as it fails.",
+    "output": [
+      {
+        "flaw_id": "SCALE-17",
+        "flaw_type": "Reliability (Retry Storm)",
+        "description": "Immediate retries on failure can be dangerous. If a downstream service is temporarily overloaded, a flood of immediate retries from multiple clients (a 'retry storm') will exacerbate the problem and prevent it from recovering. It's effectively a self-inflicted DDoS attack.",
+        "recommendation": "Implement an exponential backoff with jitter strategy. After a failure, wait for a small delay before retrying. Double the delay for each subsequent failure, up to a maximum. Add a small random element ('jitter') to the delay to prevent clients from retrying in synchronized waves."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A database schema for storing product inventory. Schema: A `products` table has an `inventory_count` column. There is no mechanism to prevent this count from becoming negative.",
+    "output": [
+      {
+        "flaw_id": "DB-10",
+        "flaw_type": "Data Modeling (Data Integrity)",
+        "description": "Allowing inventory to become negative indicates a lack of data integrity constraints. This can lead to selling products that are not in stock and other business logic failures.",
+        "recommendation": "Enforce data integrity at the database level. Add a `CHECK` constraint to the table to ensure the `inventory_count` column is always greater than or equal to zero (e.g., `CHECK (inventory_count >= 0)`). This provides a strong guarantee that application bugs cannot corrupt the data."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A user authentication system. Architecture: The system uses HTTP Basic Authentication over a standard, unencrypted HTTP connection.",
+    "output": [
+      {
+        "flaw_id": "SEC-31",
+        "flaw_type": "Security (Cleartext Credentials)",
+        "description": "HTTP Basic Authentication simply Base64-encodes the username and password, which is easily reversible. Sending this over unencrypted HTTP means the user's credentials are being transmitted in plaintext, where they can be easily intercepted by anyone on the network (e.g., via Wi-Fi sniffing).",
+        "recommendation": "All communication involving authentication must occur over an encrypted channel (HTTPS/TLS). While Basic Auth over HTTPS is secure in transit, a more robust token-based authentication (like OAuth2) is generally preferred for modern applications."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: An application that handles money. Architecture: The business logic for financial calculations is implemented in the JavaScript frontend.",
+    "output": [
+      {
+        "flaw_id": "ARC-17",
+        "flaw_type": "Architectural Best Practice (Security & Integrity)",
+        "description": "Performing authoritative business logic, especially financial calculations, on the client side is fundamentally insecure. A malicious user can easily manipulate the client-side code to change prices, discounts, or totals before submitting them to the backend.",
+        "recommendation": "The client side should only be used for provisional calculations and user experience. The backend must be the single source of truth. All critical business logic and calculations must be performed or re-validated on the server, using data fetched securely from the database."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A content management system. Architecture: The system is composed of tightly coupled modules. The 'Articles' module directly calls functions inside the 'Users' module, which in turn calls functions in the 'Comments' module.",
+    "output": [
+      {
+        "flaw_id": "ARC-18",
+        "flaw_type": "Architectural Best Practice (Cyclic Dependencies)",
+        "description": "This design creates cyclic dependencies, where Module A depends on B, and B depends on A (or A -> B -> C -> A). This leads to a 'big ball of mud' architecture. It makes the system difficult to understand, test, and maintain, as changing one module can have unexpected ripple effects across the entire system.",
+        "recommendation": "Break the cycles by applying the Dependency Inversion Principle. Introduce interfaces or event-based communication. For example, instead of the 'Users' module calling the 'Comments' module, it could publish a 'user_deleted' event, which the 'Comments' module subscribes to in order to clean up the user's comments."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that allows users to query data by date range. Architecture: The query uses `BETWEEN` on a `DATETIME` column.",
+    "output": [
+      {
+        "flaw_id": "PERF-20",
+        "flaw_type": "Performance (Query Logic)",
+        "description": "Using `BETWEEN` for date ranges can be problematic and lead to off-by-one errors, especially with `DATETIME` or `TIMESTAMP` types that include time. It's often unclear whether the endpoints are inclusive or exclusive.",
+        "recommendation": "Use an explicit half-open interval for date range queries. For example, instead of `BETWEEN '2023-01-01' AND '2023-01-31'`, use `date_column >= '2023-01-01' AND date_column < '2023-02-01'`. This pattern is unambiguous, works correctly regardless of the time component, and is generally more efficient."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A service mesh architecture. Architecture: All inter-service communication is encrypted by the service mesh (mTLS), but the services themselves communicate with the local sidecar proxy over unencrypted HTTP.",
+    "output": [
+      {
+        "flaw_id": "SEC-32",
+        "flaw_type": "Security (Defense in Depth)",
+        "description": "While mTLS between sidecars is good, this architecture leaves a gap. An attacker who gains access to the host machine could potentially sniff the unencrypted traffic between the application and its local sidecar proxy.",
+        "recommendation": "For high-security environments, implement defense in depth. Continue using mTLS at the mesh level, but also enable TLS for the local communication between the service and the sidecar proxy. This ensures traffic is encrypted at every step."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that uses a Content Delivery Network (CDN). Architecture: The `Cache-Control` header for dynamic, user-specific API responses is set to `public, max-age=3600`.",
+    "output": [
+      {
+        "flaw_id": "SEC-33",
+        "flaw_type": "Security (Information Leak via Cache)",
+        "description": "Setting `Cache-Control: public` on user-specific content is a critical information leak. It tells the CDN and any other shared caches that it's safe to store this response and serve it to other users. This could result in one user seeing another user's private data.",
+        "recommendation": "For user-specific content, the `Cache-Control` header must be set to `private`. This indicates that the response can be cached by the user's private browser cache but not by any intermediary shared cache like a CDN."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A high-traffic application. Architecture: The application's database connection pool is configured to have a very short idle timeout (e.g., 1 second).",
+    "output": [
+      {
+        "flaw_id": "PERF-21",
+        "flaw_type": "Performance (Connection Churn)",
+        "description": "A very short idle timeout will cause constant 'connection churn'. The pool will continuously close idle connections and then have to re-establish new ones when traffic picks up. Establishing a database connection is an expensive operation involving a network roundtrip and authentication.",
+        "recommendation": "Configure a longer idle timeout for the connection pool. This allows idle connections to be kept open and reused, which is much more efficient than constantly creating new ones. The timeout should be shorter than the database server's `wait_timeout` to prevent using stale connections."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system where users can have one of three roles: 'admin', 'editor', 'viewer'. Database Schema: The `users` table has three boolean columns: `is_admin`, `is_editor`, `is_viewer`.",
+    "output": [
+      {
+        "flaw_id": "DB-11",
+        "flaw_type": "Data Modeling",
+        "description": "This design does not enforce the constraint that a user can only have one role. It's possible for a row to have both `is_admin` and `is_editor` set to true, which can lead to ambiguous or conflicting application logic. It also makes it difficult to add new roles.",
+        "recommendation": "Use a single `role` column of type `ENUM('admin', 'editor', 'viewer')` or a foreign key to a `roles` table. This ensures that a user has exactly one role from a defined set and makes the schema easier to understand and extend."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: An order processing system. Architecture: The entire process of validating an order, charging a credit card, updating inventory, and sending a confirmation email happens in a single, long database transaction.",
+    "output": [
+      {
+        "flaw_id": "SCALE-18",
+        "flaw_type": "Scalability & Performance",
+        "description": "Long-running transactions are harmful to database performance. They hold locks on rows for an extended period, blocking other concurrent operations. A slow external call (like credit card processing) within the transaction will cause significant contention and performance degradation.",
+        "recommendation": "Keep database transactions as short as possible. The transaction should only cover the atomic database updates (e.g., creating the order record and decrementing inventory). Use patterns like the Saga pattern to manage the overall workflow across multiple transactions and external calls, handling compensation logic if a step fails."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: An application that needs to store and query JSON documents. Architecture: The JSON documents are stored in a `TEXT` column in a relational database (e.g., MySQL 5.6).",
+    "output": [
+      {
+        "flaw_id": "PERF-22",
+        "flaw_type": "Performance (Inefficient JSON Handling)",
+        "description": "Storing JSON as plain text prevents the database from understanding its structure. To query for a value within the JSON, the application must fetch the entire text blob and parse it, which is extremely inefficient and doesn't use indexes.",
+        "recommendation": "Use a database with native JSON support. Modern versions of PostgreSQL and MySQL offer a `JSON` or `JSONB` data type with functions and indexing capabilities to efficiently query and manipulate attributes within the JSON document directly in the database."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A password reset page. Architecture: The page asks for the user's email. If the email exists, the API returns a `200 OK`. If it doesn't, it returns a `404 Not Found`.",
+    "output": [
+      {
+        "flaw_id": "SEC-34",
+        "flaw_type": "Security (User Enumeration)",
+        "description": "The API's different responses allow an attacker to perform user enumeration. They can use this endpoint to test a list of email addresses to find out which ones are registered users of the application, which is a privacy leak.",
+        "recommendation": "The endpoint should always return the same generic success response, regardless of whether the email address exists in the system or not. For example, 'If an account with this email exists, a password reset link has been sent.'"
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system using a database with a primary and a standby replica. Architecture: The application connects directly to the primary database's IP address.",
+    "output": [
+      {
+        "flaw_id": "SCALE-19",
+        "flaw_type": "Reliability (Failover)",
+        "description": "By connecting directly to the primary's IP, the application has no automatic failover capability. If the primary database fails, a manual intervention is required to reconfigure the application to point to the standby's IP address, resulting in significant downtime.",
+        "recommendation": "Use a virtual IP, a load balancer, or a database driver that supports automatic failover. The application should connect to a stable endpoint that will automatically redirect traffic to the newly promoted standby server in the event of a failure."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A file upload feature. Architecture: The server checks the `Content-Type` header sent by the browser to validate that the uploaded file is an image.",
+    "output": [
+      {
+        "flaw_id": "SEC-35",
+        "flaw_type": "Security (Insufficient Validation)",
+        "description": "The `Content-Type` header is user-controlled and can be easily spoofed. An attacker can upload a malicious script but set the `Content-Type` to `image/jpeg`. Relying solely on this header provides no real security.",
+        "recommendation": "Perform server-side validation of the file's contents. At a minimum, check the file's extension against an allow-list. For better security, inspect the file's 'magic numbers' (the first few bytes of the file) to verify its actual type. Never serve user-uploaded content from the same domain as the main application."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A library or framework. Architecture: The library logs errors by printing them directly to standard output (`console.log` or `System.out.println`).",
+    "output": [
+      {
+        "flaw_id": "ARC-19",
+        "flaw_type": "Architectural Best Practice (Library Design)",
+        "description": "A library should not decide how or where to log. Printing directly to stdout 'pollutes' the output of the host application and takes control away from the application's developer, who may want to use a structured logging framework like Log4j or Winston.",
+        "recommendation": "The library should use a logging abstraction layer (like SLF4J in Java) or simply not perform logging at all, instead propagating errors via exceptions or return values. This allows the host application to control its own logging strategy."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that needs to ensure a task is executed only once. Architecture: The system uses a 'read-then-write' check. It first checks a flag in the database to see if the task has run, and if not, it runs the task and then sets the flag.",
+    "output": [
+      {
+        "flaw_id": "SCALE-20",
+        "flaw_type": "Reliability (Race Condition)",
+        "description": "This approach has a race condition in a concurrent environment. Two processes could both read the flag as 'not set', both run the task, and then both try to set the flag. This defeats the 'execute-once' requirement.",
+        "recommendation": "Use a database lock or a conditional update to make the check-and-set operation atomic. For example, use `UPDATE tasks SET status='running' WHERE id=? AND status='pending'`. This query will only succeed for the first process that tries it. Alternatively, use a distributed lock manager like ZooKeeper or Redis for coordination."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system for storing audit logs. Database Choice: The audit logs are stored in a relational database table that is heavily indexed to allow searching by user, action, and date.",
+    "output": [
+      {
+        "flaw_id": "DB-12",
+        "flaw_type": "Data Modeling (Write-Heavy Workload)",
+        "description": "Audit logging is a very write-heavy workload. Relational database indexes can become a performance bottleneck under high write throughput, as every `INSERT` requires updating multiple B-tree structures. This can slow down the entire application.",
+        "recommendation": "Consider using a database optimized for high-volume, append-only writes. Time-series databases (like InfluxDB) or log-structured storage systems (like Apache Kafka or Elasticsearch) are often better suited for this type of workload than a traditional relational database."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A third-party integration. Architecture: The application makes a call to a partner API and passes along a user's session cookie from the main application.",
+    "output": [
+      {
+        "flaw_id": "SEC-36",
+        "flaw_type": "Security (Cookie Leaking)",
+        "description": "Session cookies are highly sensitive and intended only for the application that issued them. Forwarding them to a third-party service is a major security breach. If the third party is compromised, the user's session in the main application can be hijacked.",
+        "recommendation": "Never share session cookies with third parties. Use a secure, standard protocol like OAuth2 or SAML for delegated authentication and authorization. The application should obtain a separate access token to make requests to the partner API on behalf of the user."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A data export feature. Architecture: The feature generates a CSV file by iterating through a database cursor and writing to the HTTP response stream one line at a time.",
+    "output": [
+      {
+        "flaw_id": "PERF-23",
+        "flaw_type": "Performance (Buffering)",
+        "description": "While streaming is good for memory, writing to the TCP socket for every single line is inefficient due to the overhead of system calls and TCP packets. This results in very slow download speeds for large files.",
+        "recommendation": "Implement buffering. Read a batch of rows from the database (e.g., 1000 rows), format them into a string, and write the entire chunk to the response stream at once. This drastically reduces the number of `write` system calls and allows TCP to work more efficiently."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A distributed database cluster (e.g., Cassandra, Elasticsearch). Architecture: The application sends all its requests to a single node in the cluster.",
+    "output": [
+      {
+        "flaw_id": "SCALE-21",
+        "flaw_type": "Reliability & Scalability",
+        "description": "This completely defeats the purpose of having a distributed cluster. It creates a single point of failure (if that node goes down, the application stops working) and a performance bottleneck, as it doesn't take advantage of the cluster's distributed power.",
+        "recommendation": "Use a cluster-aware database driver. The driver should be configured with the addresses of multiple nodes in the cluster. It will then automatically handle load balancing requests across all available nodes and route around nodes that have failed."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A confirmation token (e.g., for email verification). Architecture: The token is generated and stored in the database. There is no expiration date associated with the token.",
+    "output": [
+      {
+        "flaw_id": "SEC-37",
+        "flaw_type": "Security (Stale Tokens)",
+        "description": "Non-expiring tokens represent a long-term security risk. If an old email account is compromised, an attacker could search for old verification emails and use the perpetual token to take over the associated application account.",
+        "recommendation": "All single-use verification tokens must have a short and strictly enforced expiration time (e.g., 1 hour or 24 hours). Store an `expires_at` timestamp in the database along with the token and validate it before allowing the token to be used."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: An application with many features. Architecture: All application features and business logic are contained within a single Git repository and deployed as a single monolithic unit.",
+    "output": [
+      {
+        "flaw_id": "ARC-20",
+        "flaw_type": "Architectural Best Practice (Monolith Issues)",
+        "description": "While simple to start, a large monolith makes development velocity slow. The codebase becomes hard to understand, testing is slow, and a bug in one minor feature can bring down the entire application. It's difficult for multiple teams to work independently.",
+        "recommendation": "For large applications, consider breaking the monolith down into smaller, independent services (microservices) or modules organized around business capabilities. This allows teams to develop, test, and deploy their services independently, improving velocity and resilience."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that tracks changes to data over time. Database Schema: The application updates records in place. For example, to change a product's price, it runs `UPDATE products SET price = ? WHERE id = ?`.",
+    "output": [
+      {
+        "flaw_id": "DB-13",
+        "flaw_type": "Data Modeling (Temporal Data)",
+        "description": "Updating data in place destroys historical information. The system has no record of what the price was yesterday or last week. This makes auditing, debugging, and historical analysis impossible.",
+        "recommendation": "Use an immutable, event-sourcing, or temporal data model. Instead of updating a record, insert a new record representing the new state with a `valid_from` and `valid_to` timestamp. The current state is the record with the most recent `valid_from` timestamp. This preserves a full history of all changes."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system using gRPC for communication. Architecture: The API uses a large, deeply nested message structure for all requests and responses.",
+    "output": [
+      {
+        "flaw_id": "PERF-24",
+        "flaw_type": "Performance (Serialization Overhead)",
+        "description": "While gRPC and Protobuf are efficient, serializing and deserializing massive, complex message structures on every call adds significant CPU overhead and latency. It also creates a rigid and bloated API contract.",
+        "recommendation": "Design lean and focused Protobuf messages. Create specific messages for each RPC method that contain only the necessary fields. For lists of data, use streaming responses rather than returning a single giant message with a repeated field containing millions of entries."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system with a service that depends on two other services, A and B. Architecture: The service has no fallback or graceful degradation mechanism if service B fails.",
+    "output": [
+      {
+        "flaw_id": "SCALE-22",
+        "flaw_type": "Reliability (Graceful Degradation)",
+        "description": "If service B is a non-critical dependency (e.g., a recommendation service), its failure should not cause the entire parent service to fail. Without graceful degradation, a minor outage in a dependency can cascade into a major outage.",
+        "recommendation": "Implement logic to handle failures in non-critical dependencies gracefully. If service B fails, the parent service should catch the error, log it, and continue functioning with reduced capability (e.g., by returning default data or simply hiding the part of the UI that depends on B)."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A dependency management strategy. Architecture: The application does not use a lock file (like `package-lock.json` or `yarn.lock`) for its dependencies.",
+    "output": [
+      {
+        "flaw_id": "ARC-21",
+        "flaw_type": "Architectural Best Practice (Reproducible Builds)",
+        "description": "Without a lock file, builds are not reproducible. Different developers or CI/CD environments might install slightly different versions of transitive dependencies, leading to 'works on my machine' bugs that are very difficult to track down.",
+        "recommendation": "Always commit the package manager's lock file to the source control repository. The build process should use this lock file to install the exact same version of every dependency, ensuring consistent and reproducible builds across all environments."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that allows users to create reports. Architecture: The report generation is triggered by a user, and the system tries to generate it indefinitely, with no timeout or limit on execution time.",
+    "output": [
+      {
+        "flaw_id": "SCALE-23",
+        "flaw_type": "Reliability (Resource Guarding)",
+        "description": "A user could craft a report request that is computationally massive, intentionally or not. Without a timeout, this single request could consume an unbounded amount of CPU and memory resources for hours or days, starving all other operations.",
+        "recommendation": "Implement resource guarding. Set a hard timeout on all complex, user-triggered operations. If the task exceeds the timeout, it should be terminated gracefully, and an error should be returned to the user. This protects the system's stability."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system using a relational database. Database Schema: The schema uses composite primary keys for all tables, but foreign keys only reference the first part of the composite key.",
+    "output": [
+      {
+        "flaw_id": "DB-14",
+        "flaw_type": "Data Modeling (Referential Integrity)",
+        "description": "This violates referential integrity. A foreign key to a composite primary key must include all columns of the composite key. Referencing only part of the key does not uniquely identify a parent row and allows for orphan rows to be created, corrupting the data.",
+        "recommendation": "Ensure that all foreign key constraints that reference a table with a composite primary key include all the columns of that composite key, in the correct order."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A login form. Architecture: The login form is not protected against automated brute-force attacks.",
+    "output": [
+      {
+        "flaw_id": "SEC-38",
+        "flaw_type": "Security (Credential Stuffing / Brute Force)",
+        "description": "An unprotected login endpoint is vulnerable to credential stuffing attacks, where attackers use lists of stolen passwords from other breaches to try and gain access, and brute-force attacks on weak passwords.",
+        "recommendation": "Implement multiple layers of protection. Use a CAPTCHA after a small number of failed attempts. Implement account lockout or progressive delays (e.g., wait 1 second, then 2, then 4) after repeated failed logins for a specific username or IP address."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system using a distributed cache like Redis. Architecture: The application serializes complex Java objects using native Java serialization and stores the resulting byte array in Redis.",
+    "output": [
+      {
+        "flaw_id": "ARC-22",
+        "flaw_type": "Architectural Best Practice (Interoperability)",
+        "description": "Using language-specific serialization formats like Java's native serialization locks the data into a single language ecosystem. It becomes very difficult for another service written in a different language (e.g., Python, Go) to read or write to the same cache.",
+        "recommendation": "Use a language-agnostic data serialization format for shared caches. JSON is a common and highly interoperable choice. For higher performance, consider formats like Protocol Buffers or MessagePack."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A session management system. Architecture: The session ID is passed as a URL parameter (e.g., `.../?session_id=xyz123`).",
+    "output": [
+      {
+        "flaw_id": "SEC-39",
+        "flaw_type": "Security (Session ID Leakage)",
+        "description": "Passing session IDs in the URL is dangerous. The URL is logged in browser history, server logs, and can be leaked to third parties through the `Referer` header when a user clicks on an external link. This allows for session hijacking.",
+        "recommendation": "Session IDs must be transmitted using a secure, HttpOnly cookie. This prevents them from being accessed by client-side scripts and ensures they are not leaked in the same ways as URL parameters."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that needs to ensure data consistency between two different services. Architecture: The system uses a two-phase commit (2PC) protocol coordinated between the services over HTTP.",
+    "output": [
+      {
+        "flaw_id": "SCALE-24",
+        "flaw_type": "Reliability & Complexity",
+        "description": "While two-phase commit provides strong consistency, it is a blocking protocol that is extremely brittle in a distributed environment with unreliable networks. If the coordinator fails, the participating services can be left with locked resources indefinitely. It's generally considered an anti-pattern for modern microservices.",
+        "recommendation": "Avoid distributed transactions. Use an event-driven approach with eventual consistency, such as the Saga pattern. Each service commits its own local transaction and publishes an event. Subsequent services consume these events to perform their part of the workflow, with compensating transactions to handle failures."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: An application that displays a list of items and their prices. Architecture: The currency formatting (e.g., adding the '$' sign, commas) is done on the backend before sending the data to the client.",
+    "output": [
+      {
+        "flaw_id": "ARC-23",
+        "flaw_type": "Architectural Best Practice (Internationalization)",
+        "description": "Hardcoding currency formatting on the backend prevents proper internationalization (i18n). Different locales have different currency symbols, decimal separators, and formatting rules. This logic belongs closer to the user.",
+        "recommendation": "The backend should send raw, unformatted numeric data (e.g., `{ 'amount': 1234.56, 'currency': 'USD' }`). The frontend should be responsible for formatting the number according to the user's locale, ideally using the browser's built-in `Intl.NumberFormat` API, which handles these rules correctly."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that uses a load balancer. Architecture: The load balancer does not have 'sticky sessions' (session affinity) enabled, and the application servers store user session state in their local memory.",
+    "output": [
+      {
+        "flaw_id": "SCALE-25",
+        "flaw_type": "Reliability (Statelessness)",
+        "description": "This is a recipe for intermittent user logouts. Without sticky sessions, each request from a user can be routed to a different server. Since the session state is stored in local memory, if a request lands on a server that doesn't have that user's session, the user will appear to be logged out.",
+        "recommendation": "The best practice is to design stateless application servers. Store session state in a centralized, external store like Redis or a database. This allows any server to handle any request. If you must use in-memory sessions, then you must enable sticky sessions on the load balancer, but this is a less scalable and less resilient approach."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system with a complex business object. Architecture: The object's constructor requires 15 parameters.",
+    "output": [
+      {
+        "flaw_id": "ARC-24",
+        "flaw_type": "Architectural Best Practice (Code Smell)",
+        "description": "A constructor with a large number of parameters is a code smell. It's hard to read, easy to make mistakes (e.g., swapping parameter order), and indicates that the object likely has too many responsibilities.",
+        "recommendation": "Use the Builder pattern to construct complex objects. A builder provides a fluent API for setting properties, making the code more readable and less error-prone. Also, consider if the object can be refactored into smaller, more focused objects that adhere to the Single Responsibility Principle."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that stores personally identifiable information (PII). Database Schema: The PII (e.g., social security number) is stored in plain text in the database.",
+    "output": [
+      {
+        "flaw_id": "SEC-40",
+        "flaw_type": "Security (OWASP A02: Cryptographic Failures)",
+        "description": "Storing highly sensitive PII in plain text is a critical security failure. If the database is breached through any means (e.g., SQL injection, backup theft), all PII will be exposed, leading to massive liability and user harm.",
+        "recommendation": "All sensitive PII must be encrypted at rest in the database. Use a strong, authenticated encryption algorithm (like AES-GCM). Manage the encryption keys securely using a dedicated key management service (KMS or HSM)."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system for searching geographic data. Architecture: The system stores latitude and longitude in two separate `FLOAT` columns in a relational database and calculates distance using the Haversine formula in the `WHERE` clause of a query.",
+    "output": [
+      {
+        "flaw_id": "PERF-25",
+        "flaw_type": "Performance (Geospatial Queries)",
+        "description": "Performing complex trigonometric calculations like the Haversine formula on every row of a table is extremely inefficient. This approach cannot use indexes and will result in a full table scan, making it unusable for large datasets.",
+        "recommendation": "Use a database with native geospatial support and indexing. Databases like PostgreSQL (with the PostGIS extension) or Elasticsearch provide special geospatial data types and indexes (like R-trees) that can perform 'find within radius' queries extremely efficiently."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that handles user uploads. Architecture: The application has a hardcoded limit of 10MB for file uploads.",
+    "output": [
+      {
+        "flaw_id": "ARC-25",
+        "flaw_type": "Architectural Best Practice (Configuration)",
+        "description": "Hardcoding configuration values like upload limits directly in the code is inflexible. Changing the limit requires a code change and a full redeployment.",
+        "recommendation": "Externalize all configuration. Values like upload limits, timeouts, and feature flags should be stored in a configuration file or environment variables, allowing them to be changed easily without modifying the application code."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A click-tracking service. Architecture: For every click, the system performs a database `UPDATE` to increment a counter on a single row in a 'stats' table.",
+    "output": [
+      {
+        "flaw_id": "SCALE-26",
+        "flaw_type": "Scalability (Database Contention)",
+        "description": "This design creates massive database contention and a write hotspot on a single row. Under high traffic, thousands of concurrent requests will try to acquire a lock on the same row to update it, effectively serializing all operations and creating a major bottleneck.",
+        "recommendation": "Do not update a central counter in real-time. Use an approach that avoids contention. A good pattern is to write each click event as a separate row to a log table or a message queue. A separate, asynchronous batch process can then aggregate these events periodically to update the summary statistics."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system with a web front-end and a mobile app client. Architecture: The business logic is duplicated in both the JavaScript front-end and the native mobile app code.",
+    "output": [
+      {
+        "flaw_id": "ARC-26",
+        "flaw_type": "Architectural Best Practice (DRY Principle)",
+        "description": "Duplicating business logic across multiple clients violates the Don't Repeat Yourself (DRY) principle. It leads to inconsistencies and doubles the maintenance effort. A bug fixed in one client will likely persist in the other.",
+        "recommendation": "Centralize all core business logic in a backend API. Both the web and mobile clients should be 'thin' clients, responsible primarily for UI and user interaction, while consuming the same authoritative backend API for all business operations."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system where users can have tags. Database Schema: A `users` table has a `tags` column which stores a JSON array of strings.",
+    "output": [
+      {
+        "flaw_id": "DB-15",
+        "flaw_type": "Data Modeling & Indexing",
+        "description": "While modern databases can index JSON, it is often less efficient for querying relationships than a proper normalized model. Finding all users with a specific tag requires scanning the JSON array for each user, which can be slow.",
+        "recommendation": "Use a traditional many-to-many relationship for tags. Create three tables: `users`, `tags`, and a `user_tags` join table. This allows for standard, highly efficient indexing on the foreign keys, making it very fast to find all users for a given tag or all tags for a given user."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: An application that sends a welcome email. Architecture: The code uses `Thread.sleep(5000)` to wait for 5 seconds before sending the email to ensure the user's record is committed to the database.",
+    "output": [
+      {
+        "flaw_id": "ARC-27",
+        "flaw_type": "Architectural Best Practice (Heisenbug)",
+        "description": "Using `sleep` to hope that a race condition resolves itself is a fragile and unreliable design. It's not a guarantee; under high load, the database commit might take longer than 5 seconds, causing the bug to reappear intermittently. It also adds unnecessary latency.",
+        "recommendation": "Design a deterministic workflow. The email sending process should be triggered only *after* the database transaction has successfully committed. This can be achieved by using a transactional outbox pattern or a database trigger that places a job onto a queue upon commit."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A 'forgot password' API endpoint. Architecture: The endpoint `GET /reset-password?username=user@example.com` triggers the reset flow.",
+    "output": [
+      {
+        "flaw_id": "SEC-41",
+        "flaw_type": "Security (CSRF)",
+        "description": "Using a `GET` request for an action that causes a state change (like sending a password reset email) makes the endpoint vulnerable to Cross-Site Request Forgery (CSRF). An attacker could embed an `<img src='...'>` tag on a malicious website that, when viewed by a logged-in user, would trigger the password reset for their account without their knowledge.",
+        "recommendation": "Any action that causes a state change must use a `POST`, `PUT`, `PATCH`, or `DELETE` request. These requests should also be protected by an anti-CSRF token."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that uses an object storage service like S3. Architecture: The application is configured to make its S3 buckets publicly readable so the frontend can easily access images.",
+    "output": [
+      {
+        "flaw_id": "SEC-42",
+        "flaw_type": "Security (Security Misconfiguration)",
+        "description": "Making S3 buckets fully public is extremely dangerous and a common source of major data breaches. It exposes all content in the bucket to anyone on the internet and can allow for enumeration of all files.",
+        "recommendation": "Keep S3 buckets private by default. To allow the frontend to access specific objects, the backend should generate pre-signed URLs. A pre-signed URL is a temporary URL that grants time-limited access to a specific private object, which is a much more secure pattern."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system with multiple background worker processes. Architecture: There is no monitoring or health checks for the worker processes.",
+    "output": [
+      {
+        "flaw_id": "SCALE-27",
+        "flaw_type": "Reliability (Observability)",
+        "description": "Without health checks and monitoring, 'silent failures' can occur. A worker process could crash or become stuck in a loop, and no one would know. This would cause background jobs to stop being processed, leading to system degradation that is difficult to diagnose.",
+        "recommendation": "Implement robust monitoring for all background processes. Workers should expose a `/health` endpoint that a monitoring system can poll. They should also report key metrics (e.g., jobs processed, queue length, error rates) to a monitoring dashboard (like Prometheus/Grafana or Datadog)."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that shows real-time stock prices. Architecture: The frontend connects directly to a third-party stock data provider's WebSocket API.",
+    "output": [
+      {
+        "flaw_id": "ARC-28",
+        "flaw_type": "Architectural Best Practice (API Gateway)",
+        "description": "Having the client connect directly to a third-party API couples the client to that specific provider. If you want to change providers or aggregate data from multiple providers, every client must be updated. It also exposes API keys on the client side.",
+        "recommendation": "Use a backend-for-frontend (BFF) or API gateway pattern. The client should connect to your own backend service via a WebSocket. Your backend then connects to the third-party provider(s). This abstracts the data source, secures API keys, and allows you to add logic (like caching or aggregation) on the backend."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that needs to perform a full-text search. Architecture: The system uses a relational database and a query like `WHERE lower(column) LIKE '%searchterm%'`.",
+    "output": [
+      {
+        "flaw_id": "PERF-26",
+        "flaw_type": "Performance",
+        "description": "This is a highly inefficient way to perform a search. The `lower()` function prevents the use of a standard B-tree index, and the leading wildcard (`%`) forces a full table scan. This will not scale.",
+        "recommendation": "Use a dedicated full-text search index. Most relational databases (like PostgreSQL) offer built-in FTS capabilities that can handle stemming, tokenization, and use specialized GIN or GiST indexes. For more advanced needs, use a dedicated search engine like Elasticsearch."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system with a complex workflow. Architecture: The entire workflow is orchestrated in a single, massive function with multiple nested if/else statements and loops.",
+    "output": [
+      {
+        "flaw_id": "ARC-29",
+        "flaw_type": "Architectural Best Practice (Maintainability)",
+        "description": "This monolithic function has high cyclomatic complexity and is very difficult to understand, test, and modify. A small change can have unforeseen consequences, and there is no clear separation of concerns.",
+        "recommendation": "Refactor the workflow using a State Machine pattern or a dedicated workflow engine. Each step in the workflow becomes a distinct state with clear transitions. This makes the logic explicit, easier to visualize, and much more maintainable."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that uses a database replica. Architecture: The application writes to the primary and reads from the replica. There is no consideration for replication lag.",
+    "output": [
+      {
+        "flaw_id": "SCALE-28",
+        "flaw_type": "Reliability (Eventual Consistency)",
+        "description": "Replication is asynchronous, so there's always a delay (replication lag) before data written to the primary appears on the replica. This can cause bugs where a user performs an action (e.g., creates a post) and is immediately redirected to a page that reads from the replica, but the post isn't there yet.",
+        "recommendation": "Design the application to be tolerant of replication lag. A common pattern is 'read-your-writes' consistency: for a short period after a user performs a write, ensure that their subsequent read requests are directed to the primary database. All other reads can go to the replica."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A cookie-based session system. Architecture: The session cookie does not have the `Secure` flag set.",
+    "output": [
+      {
+        "flaw_id": "SEC-43",
+        "flaw_type": "Security (Cookie Security)",
+        "description": "Without the `Secure` flag, the browser can transmit the session cookie over an unencrypted HTTP connection. If a user visits a non-HTTPS page on the same site (or is tricked into it by an attacker), the cookie can be intercepted.",
+        "recommendation": "Always set the `Secure` flag on all session and authentication cookies. This ensures the browser will only send the cookie over an encrypted HTTPS connection. Also, implement HTTP Strict Transport Security (HSTS) to enforce HTTPS across the entire site."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: An API endpoint that can return a large amount of data. Architecture: The data is serialized to JSON by a simple library that does not support streaming.",
+    "output": [
+      {
+        "flaw_id": "PERF-27",
+        "flaw_type": "Performance (Memory Usage)",
+        "description": "Without streaming serialization, the entire JSON response must be constructed and held in memory as a single string before the first byte can be sent to the client. For large datasets, this can lead to huge memory spikes and Out-of-Memory errors.",
+        "recommendation": "Use a JSON serialization library that supports streaming. This allows the application to write the JSON to the output stream piece by piece, keeping memory usage low and constant regardless of the response size."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: An application that runs on a Kubernetes cluster. Architecture: The application's Docker image runs as the `root` user.",
+    "output": [
+      {
+        "flaw_id": "SEC-44",
+        "flaw_type": "Security (Principle of Least Privilege)",
+        "description": "Running containers as the `root` user is a security risk. If an attacker exploits a vulnerability in the application to get code execution, they will have root privileges inside the container. This makes it much easier for them to attempt to escape the container and compromise the host node.",
+        "recommendation": "Follow the principle of least privilege. Create a non-root user in your Dockerfile and use the `USER` instruction to ensure the application process runs as this unprivileged user."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that must be available 24/7. Architecture: The system has no automated alerting for production errors.",
+    "output": [
+      {
+        "flaw_id": "SCALE-29",
+        "flaw_type": "Reliability (Monitoring)",
+        "description": "Without automated alerting, the system could be down or malfunctioning for hours before a human notices (likely through customer complaints). This is unacceptable for a high-availability system.",
+        "recommendation": "Integrate the logging and monitoring system with an alerting service (like PagerDuty or Opsgenie). Configure automated alerts for critical events, such as a spike in 5xx errors, high application latency, or health check failures. Alerts should be sent immediately to the on-call engineering team."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system with a generic `DataAccessObject` (DAO). Architecture: The DAO has methods like `save(Object o)`, `find(Class c, int id)`. The application code frequently casts the results from this DAO.",
+    "output": [
+      {
+        "flaw_id": "ARC-30",
+        "flaw_type": "Architectural Best Practice (Type Safety)",
+        "description": "This generic, non-type-safe DAO pattern pushes type checking to runtime. It's easy to make a mistake and request the wrong type, leading to `ClassCastException`s at runtime that the compiler cannot catch. It also hides the data access logic.",
+        "recommendation": "Use a repository pattern with specific, type-safe interfaces for each aggregate root. For example, have a `ProductRepository` with methods like `save(Product p)` and `findById(int id)` that return a `Product`. This provides compile-time type safety and makes the code easier to understand."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that allows file uploads. Architecture: The system stores uploaded files using their original, user-supplied filename.",
+    "output": [
+      {
+        "flaw_id": "SEC-45",
+        "flaw_type": "Security",
+        "description": "Using the original filename can lead to several vulnerabilities. A user could upload a file named `../../../etc/passwd` (Path Traversal) or overwrite an existing system file. It can also cause collisions if two users upload a file with the same name.",
+        "recommendation": "Never use the user-supplied filename directly for storage. Generate a new, unique, and random filename (e.g., a UUID) for every uploaded file. The original filename can be stored as metadata in a database if it needs to be preserved for the user."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that uses an ORM and has a `products` table. Architecture: The `Product` object in the code contains a list of all `Order` objects in which the product has appeared.",
+    "output": [
+      {
+        "flaw_id": "PERF-28",
+        "flaw_type": "Performance (Unbounded Collections)",
+        "description": "For a popular product, the list of associated orders could be massive, containing millions of entries. Loading this `Product` object from the database would require the ORM to fetch and hydrate millions of `Order` objects, leading to an Out-of-Memory error.",
+        "recommendation": "Do not model unbounded collections as direct relationships in your domain objects. Instead of `product.getOrders()`, create a repository method like `orderRepository.findOrdersByProductId(productId, page, size)` that can fetch a paginated, manageable subset of the data."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system using a relational database. Database Schema: All tables use a randomly generated UUID as their primary key.",
+    "output": [
+      {
+        "flaw_id": "PERF-29",
+        "flaw_type": "Performance (Index Fragmentation)",
+        "description": "Using fully random UUIDs (like UUIDv4) as a primary key in a relational database with a clustered index (like MySQL's InnoDB or SQL Server) leads to poor insert performance. The random nature of the keys causes heavy index fragmentation and random I/O as new rows are inserted all over the index B-tree.",
+        "recommendation": "Use a sequential or time-ordered UUID type (like UUIDv7 or ULID) as the primary key. These are still globally unique but are monotonic, ensuring that new rows are inserted at the end of the index, which is much more efficient and reduces fragmentation."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system with a public-facing API. Architecture: The API does not have a defined deprecation policy.",
+    "output": [
+      {
+        "flaw_id": "ARC-31",
+        "flaw_type": "Architectural Best Practice (API Lifecycle)",
+        "description": "Without a deprecation policy, you cannot evolve the API without breaking existing clients. Suddenly removing or changing an endpoint will cause client applications to fail, damaging trust with your users and partners.",
+        "recommendation": "Establish and publish a clear API deprecation policy. When an endpoint needs to be changed, mark the old version as 'deprecated' and include a `Deprecation` header in the response. Continue to support the old version for a documented period (e.g., 6 months) to give clients time to migrate to the new version."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that connects to a database. Architecture: The database credentials (username, password) are stored in a `settings.xml` file that is checked into the Git repository.",
+    "output": [
+      {
+        "flaw_id": "SEC-46",
+        "flaw_type": "Security (Hardcoded Secrets)",
+        "description": "Committing secrets to a source control repository is a critical security vulnerability. The credentials are now exposed to anyone with read access to the repository and will be present in the Git history forever, even if you 'delete' the file later.",
+        "recommendation": "Never commit secrets to source control. Use a secrets management system (like HashiCorp Vault or AWS Secrets Manager) or load secrets from environment variables at runtime. Use a tool to scan your repository for any accidentally committed secrets."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that needs to perform some cleanup when it shuts down. Architecture: The system uses a shutdown hook to perform a critical operation, like writing a final piece of data to a database.",
+    "output": [
+      {
+        "flaw_id": "SCALE-30",
+        "flaw_type": "Reliability (Shutdown Hooks)",
+        "description": "Relying on shutdown hooks for critical operations is not reliable. Shutdown hooks are not guaranteed to run in all circumstances, such as a `kill -9` signal, a power failure, or a kernel panic. Data can be lost.",
+        "recommendation": "Design for failure. Critical operations should not be saved for shutdown. The system should be designed to be resilient to sudden crashes. For example, use write-ahead logging or a transactional outbox pattern so that upon restart, the system can determine what work was in progress and complete it safely."
+      }
+    ]
+  },
+  {
+    "instruction": "Critically evaluate the following software architecture plan and identify any flaws.",
+    "input": "System: A system that stores financial transaction data. Database Schema: The `transactions` table has columns `id`, `amount`, `user_id`, and `timestamp`.",
+    "output": [
+      {
+        "flaw_id": "DB-16",
+        "flaw_type": "Data Modeling (Immutability)",
+        "description": "This schema is mutable. A bug in the application code or a malicious admin could run an `UPDATE` query and change the `amount` of a past transaction, breaking the audit trail and financial integrity of the system.",
+        "recommendation": "Financial ledgers should be immutable. Do not model transactions as a mutable table. Model them as a log or journal of debits and credits. A 'change' is not an `UPDATE`, but rather a new set of reversing and correcting transactions. Use database permissions to prevent `UPDATE` and `DELETE` operations on the ledger table."
+      }
+    ]
+  }
+]

@@ -1,0 +1,12 @@
+# LLM Integration
+openai
+
+# Terminal UI and Formatting
+rich
+
+# PDF Generation
+reportlab
+
+# Diagrams and Imaging (Optional/Try-Except in code)
+graphviz
+pillow
