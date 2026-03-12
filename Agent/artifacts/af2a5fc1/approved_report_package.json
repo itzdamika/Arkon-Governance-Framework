@@ -1,0 +1,461 @@
+{
+  "title": "Unified Multi-Model AI Chat Platform – Validated Architecture Report Package",
+  "executive_summary": "This report consolidates the validated architecture, implementation strategy, and compliance framework for the Unified Multi-Model AI Chat Platform. The platform enables users to interact with multiple large language models (LLMs) such as ChatGPT, Gemini, and Claude through a unified, secure, and scalable web interface. It is designed for general public use, employing an account-based access model with persistent chat history, model comparison, prompt templates, and file uploads. The architecture leverages Next.js for the frontend, FastAPI for the backend, and Supabase for data management, hosted across Vercel, Render, and Supabase respectively. The design enforces zero-trust security, encryption, GDPR compliance, and observability, ensuring production-grade readiness under defined scalability and cost constraints.",
+  "sections": {
+    "overview": "The Unified Multi-Model AI Chat Platform is a full-stack web application that integrates multiple AI models into a single conversational interface. It provides authenticated users with persistent chat sessions, model comparison tools, and secure file handling. The architecture emphasizes modularity, maintainability, and compliance, ensuring that each subsystem—frontend, backend, and data—operates independently yet cohesively through well-defined APIs and security boundaries.",
+    "requirement_interpretation": "All mandatory requirement blockers have been satisfied. The project goal is to deliver a production-ready multi-model chat platform for the general public. The access model is account-based, ensuring secure user data management. The feature scope includes multi-model chat, chat history, model comparison, prompt templates, and file uploads. The frontend uses Next.js, the backend uses FastAPI, and Supabase serves as the data platform. Hosting targets are Vercel (frontend), Render (backend), and Supabase (database). The security baseline enforces zero-trust principles, encryption, and compliance with GDPR and SOC2. Privacy and retention policies limit chat data to 30 days, with encrypted PII and deletion upon account closure. The MVP scope is bypassed in favor of a full production release.",
+    "stack_rationale": "Next.js 14 with TypeScript provides a performant, SEO-friendly, and developer-efficient frontend framework. FastAPI offers asynchronous, type-safe backend services ideal for LLM orchestration. Supabase provides PostgreSQL with built-in authentication, storage, and row-level security, reducing operational overhead. Vercel and Render offer managed hosting with CI/CD integration, while Supabase ensures secure, scalable data persistence. This stack balances modern developer experience, scalability, and compliance readiness.",
+    "architecture": "The system follows a modular service-oriented architecture. The frontend communicates with the backend via REST and WebSocket APIs secured by JWT authentication. The backend orchestrates LLM interactions through an adapter layer that abstracts multiple AI providers. Supabase manages authentication, data storage, and file management. Redis supports rate limiting and caching. Observability is achieved through Sentry, Prometheus, and Grafana. Each component is isolated within its own trust boundary, enforcing least-privilege access.",
+    "component_design": "Frontend components include authentication pages, chat interface with model tabs, prompt template manager, file upload component, and settings UI. Backend components include authentication and JWT validation, chat orchestration service, LLM adapter layer, file scanning service, audit logging, and admin APIs. Data components include encrypted user tables, chat and message storage, file metadata, and immutable audit logs.",
+    "workflow_design": "User authentication occurs via Supabase Auth, issuing JWTs validated by FastAPI middleware. Chat interactions flow from the frontend to the backend, which routes requests to the appropriate LLM adapter and streams responses back via WebSocket. File uploads are scanned using ClamAV before being stored in Supabase. Model comparison workflows aggregate responses from multiple LLMs. All actions are logged for audit and anomaly detection.",
+    "data_model": "The data schema includes: Users (UUID, encrypted email, display name, timestamps), Chats (UUID, user_id, title, timestamps), Messages (UUID, chat_id, sender, model_name, encrypted content, timestamps), Files (UUID, user_id, chat_id, file_url, mime_type, scan_status, timestamps), and Audit Logs (UUID, user_id, action, timestamp, metadata JSONB). Supabase Row-Level Security ensures user data isolation.",
+    "api_design": "Auth endpoints manage login, registration, and logout. Chat endpoints handle chat creation, message submission, history retrieval, and model listing. File endpoints manage upload and metadata retrieval. Admin endpoints provide audit log access and anomaly listings. All endpoints enforce JWT validation and rate limiting.",
+    "security": "Security is enforced through Supabase Auth, JWT-based access control, AES-256 encryption at rest, and TLS 1.3 in transit. Role-based access control differentiates user and admin privileges. Redis-based rate limiting prevents abuse. File uploads undergo ClamAV scanning and MIME validation. Privacy-by-design principles ensure GDPR compliance, with 30-day retention and secure deletion. Audit logs are immutable and timestamped.",
+    "deployment": "Frontend is deployed on Vercel with environment-managed secrets. Backend is deployed on Render with autoscaling and background worker support. Supabase hosts the database with encryption, RLS, and daily backups. Networking enforces HTTPS across all services. CI/CD pipelines via GitHub Actions automate testing, linting, and deployment.",
+    "observability": "Structured JSON logging, Prometheus-compatible metrics, and OpenTelemetry tracing provide full observability. Sentry captures exceptions, while Grafana visualizes metrics and logs. Alerts trigger on latency, error rates, and anomaly detection thresholds. Supabase logs supplement audit trails for compliance verification.",
+    "cost_and_scaling": "Estimated monthly cost ranges from $500–$1,200 depending on LLM usage. The backend scales horizontally, with CDN caching for static assets and Redis for rate limiting. Cost controls include per-user quotas, API key rotation, and LLM usage monitoring. Scalability targets 1,000 concurrent users with <2-second average response latency.",
+    "phased_implementation": "Phase 1: Core setup (frontend, backend, Supabase integration, authentication). Phase 2: Multi-model integration (LLM adapter, unified chat interface). Phase 3: Security hardening (encryption, rate limiting, file scanning, audit logging). Phase 4: Observability and admin tools (monitoring dashboard, moderation interface). Phase 5: Final production deployment (load testing, accessibility audit, compliance verification).",
+    "development_playbook": "Developers follow strict coding standards (TypeScript strict mode, PEP8, ESLint, Black). CI/CD pipelines enforce automated testing. Security practices include environment-based configuration and dependency updates. Accessibility follows WCAG 2.1 AA. Localization is prepared for future i18n. Implementation order: setup repo → Supabase schema → FastAPI endpoints → Next.js UI → LLM adapters → file scanning → audit logging → observability → security validation → production deployment.",
+    "testing_validation": "Testing includes unit (Jest, Pytest), integration (API and WebSocket), system (end-to-end chat flow), security (penetration and vulnerability scans), performance (load tests for 1,000 concurrent users), compliance (GDPR/SOC2 audits), and usability (WCAG 2.1 AA). Regression testing runs automatically in CI/CD. Release readiness requires passing all functional, security, and compliance checks.",
+    "risks_tradeoffs": "Encryption and audit logging may increase latency but are mitigated by async processing. Full production scope under limited resources is balanced by defined scalability and cost caps. Multi-model integration increases API costs, mitigated by quotas and caching. Managed hosting simplifies operations but limits low-level tuning. Compliance verification cadence remains a minor open issue, recommended for quarterly review.",
+    "final_notes": "The architecture is validated, secure, and implementation-ready. All mandatory blockers are satisfied. The design reconciles resource constraints with production-grade expectations through explicit scalability and cost boundaries. Minor residual concerns—such as compliance audit scheduling—do not block implementation. The platform is ready for phased execution and deployment under the defined governance and compliance framework."
+  },
+  "execution": {
+    "execution_overview": {
+      "objective": "Deliver a secure, scalable, and production-ready multi-model AI chat platform enabling users to interact with ChatGPT, Gemini, Claude, and other models through a unified interface.",
+      "approach": "Implement modular architecture with Next.js frontend, FastAPI backend, and Supabase data platform. Enforce zero-trust security, encryption, GDPR compliance, and observability across all layers.",
+      "timeline": "Estimated 6–8 months total duration, divided into five implementation phases.",
+      "success_metrics": {
+        "scalability": "Support 1,000 concurrent users with autoscaling backend.",
+        "latency": "<2 seconds average chat response streaming.",
+        "security": "Zero critical vulnerabilities; full encryption and audit logging verified.",
+        "compliance": "GDPR and SOC2 alignment validated through quarterly audits."
+      }
+    },
+    "implementation_phases": {
+      "phase_1": {
+        "name": "Core Platform Setup",
+        "duration": "6 weeks",
+        "deliverables": [
+          "Next.js frontend scaffold with Supabase Auth integration",
+          "FastAPI backend setup with JWT authentication",
+          "Supabase schema for users, chats, messages, and files",
+          "CI/CD pipeline via GitHub Actions"
+        ],
+        "validation": "Smoke tests for authentication and chat creation endpoints"
+      },
+      "phase_2": {
+        "name": "Multi-Model Integration",
+        "duration": "8 weeks",
+        "deliverables": [
+          "LLM adapter layer for OpenAI, Anthropic, and Google APIs",
+          "Unified chat orchestration service with WebSocket streaming",
+          "Frontend model comparison view and prompt template manager"
+        ],
+        "validation": "Integration tests for multi-model response aggregation"
+      },
+      "phase_3": {
+        "name": "Security and Compliance Hardening",
+        "duration": "6 weeks",
+        "deliverables": [
+          "AES-256 encryption at rest and TLS 1.3 enforcement",
+          "Redis-based rate limiting and abuse prevention middleware",
+          "File scanning service with ClamAV integration",
+          "Audit logging and anomaly detection service"
+        ],
+        "validation": "Penetration testing and compliance checklist verification"
+      },
+      "phase_4": {
+        "name": "Observability and Admin Tools",
+        "duration": "5 weeks",
+        "deliverables": [
+          "Grafana dashboard for metrics and logs",
+          "Sentry integration for error tracking",
+          "Admin/moderation dashboard with audit log viewer",
+          "Anomaly detection alert thresholds"
+        ],
+        "validation": "Operational readiness review and alert simulation tests"
+      },
+      "phase_5": {
+        "name": "Final Production Deployment",
+        "duration": "4 weeks",
+        "deliverables": [
+          "Load testing and performance optimization",
+          "Accessibility audit (WCAG 2.1 AA)",
+          "Compliance verification (GDPR/SOC2)",
+          "Public release and post-launch monitoring setup"
+        ],
+        "validation": "End-to-end system acceptance testing and compliance audit sign-off"
+      }
+    },
+    "feature_workstreams": {
+      "frontend": [
+        "Authentication pages (login, register, password reset)",
+        "Chat interface with multi-model tabs and comparison view",
+        "Prompt template manager and file upload component",
+        "Settings and account management UI"
+      ],
+      "backend": [
+        "Auth API and JWT validation middleware",
+        "Chat orchestration and LLM adapter layer",
+        "File upload and scanning service",
+        "Audit logging and anomaly detection service",
+        "Admin/moderation API endpoints"
+      ],
+      "data": [
+        "Supabase schema setup with RLS and encryption",
+        "Chat history persistence and retrieval logic",
+        "File metadata and storage linkage",
+        "Audit logs and API key registry tables"
+      ],
+      "security_compliance": [
+        "Zero-trust access control enforcement",
+        "Rate limiting and abuse prevention",
+        "GDPR-compliant data retention and deletion",
+        "Periodic compliance audit scheduling"
+      ],
+      "observability_devops": [
+        "Structured logging and metrics collection",
+        "Sentry and Prometheus integration",
+        "Grafana dashboard setup",
+        "CI/CD pipeline automation and backup validation"
+      ]
+    },
+    "dependency_map": {
+      "frontend": [
+        "Supabase Auth",
+        "Backend REST/WebSocket APIs"
+      ],
+      "backend": [
+        "Supabase Database",
+        "LLM Provider APIs",
+        "Redis for rate limiting"
+      ],
+      "data": [
+        "Supabase Storage",
+        "Encryption and RLS policies"
+      ],
+      "security": [
+        "Redis middleware",
+        "ClamAV container",
+        "Audit logging service"
+      ],
+      "observability": [
+        "Sentry",
+        "Prometheus",
+        "Grafana",
+        "Supabase logs"
+      ]
+    },
+    "milestone_checks": {
+      "M1": {
+        "criteria": "Authentication and chat creation functional",
+        "phase": "phase_1",
+        "verification": "Unit and integration tests passing"
+      },
+      "M2": {
+        "criteria": "Multi-model chat and comparison view operational",
+        "phase": "phase_2",
+        "verification": "LLM adapter integration tests passing"
+      },
+      "M3": {
+        "criteria": "Security and compliance features validated",
+        "phase": "phase_3",
+        "verification": "Penetration test and compliance checklist approved"
+      },
+      "M4": {
+        "criteria": "Observability and admin tools functional",
+        "phase": "phase_4",
+        "verification": "Dashboard and alerting tests successful"
+      },
+      "M5": {
+        "criteria": "Production readiness confirmed",
+        "phase": "phase_5",
+        "verification": "Load test, accessibility audit, and compliance sign-off complete"
+      }
+    },
+    "rollout_strategy": {
+      "staging_environment": "Deploy to staging on Render and Vercel with Supabase sandbox for integration testing.",
+      "progressive_release": "Gradual rollout to 10%, 50%, then 100% of users after stability validation.",
+      "monitoring_post_launch": "Enable real-time monitoring for latency, error rates, and anomaly alerts.",
+      "incident_response": "24-hour SLA for incident resolution; maintain rollback capability via versioned deployments.",
+      "compliance_audit_schedule": "Quarterly GDPR/SOC2 review with documented evidence of encryption, deletion, and access control enforcement."
+    }
+  },
+  "tutor": {
+    "development_playbook": {
+      "overview": "This playbook outlines the step-by-step development process for building the Unified Multi-Model AI Chat Platform using Next.js, FastAPI, and Supabase. It ensures secure, scalable, and compliant implementation aligned with the approved architecture plan.",
+      "phases": [
+        {
+          "phase": "Core Platform Setup",
+          "tasks": [
+            "Initialize Next.js project with TypeScript and TailwindCSS.",
+            "Set up Supabase project and configure authentication.",
+            "Create FastAPI backend with JWT authentication and Supabase integration.",
+            "Define database schema for users, chats, messages, and files.",
+            "Implement CI/CD pipeline using GitHub Actions."
+          ],
+          "validation": "Run smoke tests for authentication and chat creation endpoints."
+        },
+        {
+          "phase": "Multi-Model Integration",
+          "tasks": [
+            "Develop LLM adapter layer for OpenAI, Anthropic, and Google APIs.",
+            "Implement chat orchestration service with WebSocket streaming.",
+            "Build frontend chat interface with model tabs and comparison view.",
+            "Add prompt template manager and file upload component."
+          ],
+          "validation": "Integration tests for multi-model response aggregation."
+        },
+        {
+          "phase": "Security and Compliance Hardening",
+          "tasks": [
+            "Enforce AES-256 encryption at rest and TLS 1.3 in transit.",
+            "Add Redis-based rate limiting and abuse prevention middleware.",
+            "Integrate ClamAV container for file scanning.",
+            "Implement audit logging and anomaly detection service."
+          ],
+          "validation": "Penetration testing and compliance checklist verification."
+        },
+        {
+          "phase": "Observability and Admin Tools",
+          "tasks": [
+            "Integrate Sentry for error tracking and Prometheus for metrics.",
+            "Set up Grafana dashboard for logs and metrics visualization.",
+            "Develop admin dashboard with audit log viewer and anomaly alerts."
+          ],
+          "validation": "Operational readiness review and alert simulation tests."
+        },
+        {
+          "phase": "Final Production Deployment",
+          "tasks": [
+            "Conduct load testing and optimize performance.",
+            "Perform accessibility audit (WCAG 2.1 AA).",
+            "Complete GDPR/SOC2 compliance verification.",
+            "Deploy to production and enable post-launch monitoring."
+          ],
+          "validation": "End-to-end system acceptance testing and compliance sign-off."
+        }
+      ]
+    },
+    "coding_order": [
+      "1. Initialize repository and CI/CD pipeline.",
+      "2. Implement Supabase schema and authentication integration.",
+      "3. Develop FastAPI backend endpoints for auth and chat creation.",
+      "4. Build Next.js frontend authentication and chat UI.",
+      "5. Add LLM adapter layer and WebSocket streaming.",
+      "6. Integrate file upload and scanning service.",
+      "7. Implement audit logging and anomaly detection.",
+      "8. Add observability stack (Sentry, Prometheus, Grafana).",
+      "9. Conduct security hardening and compliance validation.",
+      "10. Perform load testing and deploy to production."
+    ],
+    "implementation_tips": [
+      "Use environment variables for all secrets; never hardcode API keys.",
+      "Containerize ClamAV and Redis for consistent deployment.",
+      "Use async I/O in FastAPI for LLM calls to reduce latency.",
+      "Apply Supabase Row-Level Security for user data isolation.",
+      "Stream chat responses via WebSocket for better UX.",
+      "Use Storybook for UI component documentation.",
+      "Regularly run dependency vulnerability scans.",
+      "Maintain versioned backups and rollback capability."
+    ],
+    "common_mistakes": [
+      "Storing secrets in frontend code or public repositories.",
+      "Ignoring Supabase RLS configuration leading to data leaks.",
+      "Blocking async operations in FastAPI causing performance issues.",
+      "Skipping file scanning or MIME validation.",
+      "Neglecting accessibility and responsive design testing.",
+      "Failing to monitor LLM API usage leading to cost overruns.",
+      "Not setting up proper error handling and alerting in production."
+    ],
+    "feature_build_guides": {
+      "authentication": {
+        "frontend": "Use Supabase Auth UI components or custom forms integrated with Supabase JS client. Store JWT in HTTP-only cookies.",
+        "backend": "Validate JWT tokens in FastAPI middleware using Supabase public keys. Implement endpoints for login, register, and logout."
+      },
+      "chat_interface": {
+        "frontend": "Create chat UI with tabs for each model. Use React Query for data fetching and WebSocket for streaming responses.",
+        "backend": "Implement chat orchestration service that routes requests to LLM adapters and aggregates responses."
+      },
+      "model_comparison": {
+        "frontend": "Render side-by-side model outputs with unified formatting.",
+        "backend": "Send parallel requests to multiple LLM APIs and merge results before streaming."
+      },
+      "prompt_templates": {
+        "frontend": "Allow users to save and reuse prompt templates via Supabase storage.",
+        "backend": "Expose CRUD endpoints for template management."
+      },
+      "file_upload": {
+        "frontend": "Use drag-and-drop upload component with progress bar and preview.",
+        "backend": "Scan uploaded files using ClamAV, store clean files in Supabase Storage, and link metadata to chat sessions."
+      },
+      "audit_and_admin": {
+        "frontend": "Develop admin dashboard with audit log viewer and anomaly alerts.",
+        "backend": "Log all API actions with user ID and timestamp; implement anomaly detection service using rule-based thresholds."
+      }
+    }
+  },
+  "qa": {
+    "validation_strategy": {
+      "overview": "Adopt a multi-layer validation approach combining automated testing, manual audits, and compliance verification. Each phase of implementation includes validation gates aligned with functional, security, and performance objectives.",
+      "objectives": [
+        "Ensure functional correctness of all core and supporting features.",
+        "Validate security and compliance against GDPR and SOC2 baselines.",
+        "Confirm scalability and latency targets under load.",
+        "Verify accessibility and usability for general public users."
+      ],
+      "methods": [
+        "Automated unit and integration tests via GitHub Actions CI/CD.",
+        "Manual exploratory testing for UX and accessibility.",
+        "Penetration testing and vulnerability scanning.",
+        "Load and stress testing using k6 or Locust.",
+        "Compliance checklist audits and documentation review."
+      ]
+    },
+    "test_layers": {
+      "unit": "Frontend components tested with Jest; backend endpoints and services tested with Pytest.",
+      "integration": "Cross-service tests validating API communication between Next.js, FastAPI, and Supabase.",
+      "system": "End-to-end tests covering authentication, chat flow, file upload, and model comparison.",
+      "security": "Penetration tests, static code analysis, and dependency vulnerability scans.",
+      "performance": "Load tests simulating 1,000 concurrent users; latency and throughput benchmarks.",
+      "compliance": "Quarterly GDPR/SOC2 audit verification; data retention and deletion validation.",
+      "usability": "Accessibility audits (WCAG 2.1 AA) and user experience validation."
+    },
+    "detailed_test_plan": {
+      "phase_1": {
+        "focus": "Authentication and chat creation validation.",
+        "tests": [
+          "Unit tests for Supabase Auth integration.",
+          "API endpoint tests for JWT issuance and validation.",
+          "Smoke tests for chat creation and retrieval."
+        ],
+        "tools": [
+          "Jest",
+          "Pytest",
+          "Postman"
+        ]
+      },
+      "phase_2": {
+        "focus": "Multi-model chat orchestration and adapter layer.",
+        "tests": [
+          "Integration tests for LLM adapter responses.",
+          "WebSocket streaming validation.",
+          "Frontend rendering tests for model comparison view."
+        ],
+        "tools": [
+          "Pytest",
+          "Playwright",
+          "WebSocket test harness"
+        ]
+      },
+      "phase_3": {
+        "focus": "Security and compliance hardening.",
+        "tests": [
+          "Penetration testing for API endpoints.",
+          "File scanning validation with ClamAV test files.",
+          "Rate limiting and abuse prevention simulation."
+        ],
+        "tools": [
+          "OWASP ZAP",
+          "ClamAV test suite",
+          "Redis stress tests"
+        ]
+      },
+      "phase_4": {
+        "focus": "Observability and admin tools validation.",
+        "tests": [
+          "Grafana dashboard data accuracy checks.",
+          "Sentry alert simulation.",
+          "Audit log integrity verification."
+        ],
+        "tools": [
+          "Grafana",
+          "Sentry sandbox",
+          "Prometheus query tests"
+        ]
+      },
+      "phase_5": {
+        "focus": "Production readiness and compliance verification.",
+        "tests": [
+          "Load testing for 1,000 concurrent users.",
+          "Accessibility audit (WCAG 2.1 AA).",
+          "GDPR/SOC2 compliance checklist review."
+        ],
+        "tools": [
+          "k6",
+          "axe-core",
+          "Compliance audit scripts"
+        ]
+      }
+    },
+    "acceptance_criteria": {
+      "functional": [
+        "All core features (multi-model chat, history, comparison, templates, file upload) operate correctly.",
+        "Authentication and authorization flow passes all tests."
+      ],
+      "performance": [
+        "Average chat response latency <2 seconds.",
+        "System supports 1,000 concurrent users without degradation."
+      ],
+      "security": [
+        "No critical vulnerabilities detected in penetration tests.",
+        "All data encrypted at rest and in transit."
+      ],
+      "compliance": [
+        "GDPR and SOC2 audit checklist fully satisfied.",
+        "Data retention and deletion policies enforced."
+      ],
+      "usability": [
+        "WCAG 2.1 AA accessibility compliance verified.",
+        "User experience validated through manual testing."
+      ]
+    },
+    "regression_strategy": {
+      "approach": "Continuous regression testing integrated into CI/CD pipeline.",
+      "frequency": "Triggered automatically on every commit and before deployment.",
+      "scope": [
+        "Unit and integration tests for all modules.",
+        "Security regression scans for dependencies.",
+        "Performance regression benchmarks for chat latency and throughput."
+      ],
+      "tools": [
+        "GitHub Actions",
+        "Jest",
+        "Pytest",
+        "Dependabot",
+        "k6"
+      ],
+      "rollback_policy": "If regression tests fail, deployment halted and previous stable version restored automatically."
+    },
+    "release_readiness_checklist": {
+      "functional_verification": "All automated and manual tests passing.",
+      "security_clearance": "Penetration test report shows zero critical issues.",
+      "performance_validation": "Load test confirms scalability and latency targets.",
+      "compliance_signoff": "GDPR/SOC2 audit checklist approved.",
+      "observability_setup": "Sentry, Prometheus, and Grafana dashboards operational.",
+      "accessibility_audit": "WCAG 2.1 AA compliance verified.",
+      "documentation": "API and user documentation complete and published.",
+      "backup_and_recovery": "Supabase backups validated; rollback procedures tested.",
+      "incident_response": "24-hour SLA and escalation workflow documented.",
+      "final_approval": "Release manager and compliance officer sign-off recorded."
+    }
+  },
+  "development": {
+    "development_summary": "The project now moves into implementation using the approved validated architecture package.",
+    "first_week_plan": [],
+    "coding_sequence": [
+      "1. Initialize repository and CI/CD pipeline.",
+      "2. Implement Supabase schema and authentication integration.",
+      "3. Develop FastAPI backend endpoints for auth and chat creation.",
+      "4. Build Next.js frontend authentication and chat UI.",
+      "5. Add LLM adapter layer and WebSocket streaming.",
+      "6. Integrate file upload and scanning service.",
+      "7. Implement audit logging and anomaly detection.",
+      "8. Add observability stack (Sentry, Prometheus, Grafana).",
+      "9. Conduct security hardening and compliance validation.",
+      "10. Perform load testing and deploy to production."
+    ],
+    "practical_starting_point": "Start by scaffolding the repository, baseline config, auth flow, and core data contracts before feature implementation."
+  }
+}

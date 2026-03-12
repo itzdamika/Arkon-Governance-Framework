@@ -1,17 +1,15 @@
 from __future__ import annotations
 
 import json
-import math
 import os
 import re
-import textwrap
 import traceback
 import uuid
 from copy import deepcopy
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 from openai import OpenAI
 
@@ -27,7 +25,6 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import mm
 from reportlab.platypus import (
-    Image,
     ListFlowable,
     ListItem,
     PageBreak,
@@ -37,19 +34,6 @@ from reportlab.platypus import (
     Table as RLTable,
     TableStyle,
 )
-
-try:
-    from graphviz import Digraph
-except Exception:
-    Digraph = None
-
-try:
-    from PIL import Image as PILImage, ImageDraw, ImageFont
-except Exception:
-    PILImage = None
-    ImageDraw = None
-    ImageFont = None
-
 
 # =========================================================
 # Helpers
@@ -90,6 +74,14 @@ def as_text(value: Any, limit: int = 4000) -> str:
     return s if len(s) <= limit else s[:limit] + "\n...<truncated>..."
 
 
+def compact_json(obj: Any, limit: int = 12000) -> str:
+    try:
+        s = json.dumps(obj, ensure_ascii=False, indent=2)
+    except Exception:
+        s = str(obj)
+    return s[:limit]
+
+
 def ensure_list(value: Any) -> List[Any]:
     if value is None:
         return []
@@ -99,7 +91,7 @@ def ensure_list(value: Any) -> List[Any]:
 
 
 def ensure_list_of_str(value: Any) -> List[str]:
-    out = []
+    out: List[str] = []
     seen = set()
     for item in ensure_list(value):
         s = str(item).strip()
@@ -109,54 +101,38 @@ def ensure_list_of_str(value: Any) -> List[str]:
     return out
 
 
-def obj_to_text(obj: Any, limit: int = 50000) -> str:
-    if isinstance(obj, str):
-        return obj[:limit]
-    try:
-        return json.dumps(obj, indent=2, ensure_ascii=False)[:limit]
-    except Exception:
-        return str(obj)[:limit]
+def unique_strs(items: List[Any]) -> List[str]:
+    out: List[str] = []
+    seen = set()
+    for item in items:
+        s = str(item).strip()
+        if s and s not in seen:
+            seen.add(s)
+            out.append(s)
+    return out
 
 
-def slugify(text: str) -> str:
-    text = re.sub(r"[^a-zA-Z0-9]+", "_", text.strip().lower())
-    return text.strip("_") or "artifact"
+def deep_set(d: Dict[str, Any], path: str, value: Any) -> None:
+    keys = path.split(".")
+    cur = d
+    for k in keys[:-1]:
+        if k not in cur or not isinstance(cur[k], dict):
+            cur[k] = {}
+        cur = cur[k]
+    cur[keys[-1]] = value
+
+
+def deep_get(d: Dict[str, Any], path: str, default: Any = None) -> Any:
+    cur = d
+    for k in path.split("."):
+        if not isinstance(cur, dict) or k not in cur:
+            return default
+        cur = cur[k]
+    return cur
 
 
 def write_json(path: Path, payload: Any) -> None:
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
-
-
-def split_paragraphs(text: str) -> List[str]:
-    text = (text or "").replace("\r", "").strip()
-    if not text:
-        return []
-    parts = [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()]
-    return parts if parts else [text]
-
-
-def json_to_lines(obj: Any, indent: int = 0) -> List[str]:
-    pad = "  " * indent
-    lines: List[str] = []
-
-    if isinstance(obj, dict):
-        for k, v in obj.items():
-            if isinstance(v, (dict, list)):
-                lines.append(f"{pad}{k}:")
-                lines.extend(json_to_lines(v, indent + 1))
-            else:
-                lines.append(f"{pad}{k}: {v}")
-    elif isinstance(obj, list):
-        for item in obj:
-            if isinstance(item, (dict, list)):
-                lines.append(f"{pad}-")
-                lines.extend(json_to_lines(item, indent + 1))
-            else:
-                lines.append(f"{pad}- {item}")
-    else:
-        lines.append(f"{pad}{obj}")
-
-    return lines
 
 
 def positive_reply(text: str) -> bool:
@@ -169,10 +145,9 @@ def positive_reply(text: str) -> bool:
     return any(w in t for w in words)
 
 
-def negative_reply(text: str) -> bool:
-    t = text.lower().strip()
-    words = {"no", "reject", "wrong", "not this", "dont", "don't", "change"}
-    return any(w in t for w in words)
+def slugify(text: str) -> str:
+    text = re.sub(r"[^a-zA-Z0-9]+", "_", text.strip().lower())
+    return text.strip("_") or "artifact"
 
 
 # =========================================================
@@ -180,12 +155,9 @@ def negative_reply(text: str) -> bool:
 # =========================================================
 
 PHASE_REQUIREMENTS = "REQUIREMENTS"
-PHASE_REQUIREMENT_CONFIRMATION = "REQUIREMENT_CONFIRMATION"
 PHASE_PLANNING = "PLANNING"
-PHASE_CHANGE_REVIEW = "CHANGE_REVIEW"
 PHASE_APPROVED = "APPROVED"
 PHASE_DEVELOPMENT = "DEVELOPMENT"
-
 
 # =========================================================
 # Fields
@@ -249,66 +221,128 @@ PLANNING_INTENT_TERMS = {
     "continue",
 }
 
+SPECIALISTS = [
+    "RequirementCoordinator",
+    "ProjectScopeAgent",
+    "BackendAgent",
+    "FrontendAgent",
+    "SecurityAgent",
+    "DataAgent",
+    "DevOpsAgent",
+]
+
+REASONERS = [
+    "ProductReasoner",
+    "ArchitectReasoner",
+    "SecurityReasoner",
+    "ConstraintReasoner",
+    "CriticReasoner",
+    "ContextCompactor",
+]
+
+POST_APPROVAL_AGENTS = [
+    "ExecutionPlannerAgent",
+    "TutorAgent",
+    "QAEngineerAgent",
+    "NarrativeWriterAgent",
+]
+
+ALL_AGENTS = SPECIALISTS + REASONERS + [
+    "ArchitectAgent",
+    "AuditorAgent",
+] + POST_APPROVAL_AGENTS
+
+CONTRACT_TO_NOTE_PATH = {
+    "project_goal": "project.goal",
+    "target_users": "project.target_users",
+    "access_model": "security.access_model",
+    "feature_scope": "project.feature_scope",
+    "frontend_stack": "frontend.stack",
+    "backend_stack": "backend.stack",
+    "data_platform": "data.platform",
+    "hosting_target": "devops.hosting_target",
+    "security_baseline": "security.baseline",
+    "privacy_retention_policy": "data.privacy_retention_policy",
+    "mvp_scope": "project.mvp_scope",
+    "future_scope": "project.future_scope",
+    "constraints": "constraints.general",
+    "observability_baseline": "devops.observability_baseline",
+    "execution_preference": "constraints.execution_preference",
+    "llm_integration": "backend.llm_integration",
+    "compliance_context": "security.compliance_context",
+}
 
 # =========================================================
 # Prompts
 # =========================================================
 
-FRIENDLY_REQ_SYSTEM = """
-You are RequirementCoordinator for a phase-based SDLC planning system.
+GLOBAL_SYSTEM = """
+You are part of an advanced architectural governance terminal application.
 
-Hard rules:
-- ask only for essential project requirements needed to freeze the requirement contract
-- ONLY care about these fields as blockers:
-  project_goal, target_users, access_model, feature_scope, frontend_stack, backend_stack,
-  data_platform, hosting_target, security_baseline, privacy_retention_policy, mvp_scope
-- NEVER ask the user to choose between high-level plan vs detailed plan
-- NEVER ask whether they want a step-by-step plan; always assume the final plan must be extremely detailed
-- NEVER ask planning-phase preference questions such as monolith vs microservices, Docker vs direct deployment,
-  architecture style, roadmap format, observability level, execution priority, compliance style, or report style,
-  unless the user explicitly volunteers them
-- once all mandatory blocker fields are confirmed, immediately stop requirement gathering
-- if the user indicates they want to proceed, transition to planning in the same turn
-- do not promise planning soon and then ask more questions
-- if the user is unsure, propose a sensible default and ask for confirmation once
-- do not ask optional fields as blockers
-- ask 1-3 natural questions maximum in a turn
-- be warm and natural
-
-Return JSON only with:
-- thinking_summary
-- assistant_message
-- updates: list of {field, value, source, confirmed, rationale, needs_confirmation}
-- pending_confirmations: list of field names
-- ready_for_requirement_approval: boolean
+Core rules:
+1. Never rely only on chat history for important facts; use structured memory.
+2. Requirement gathering is collaborative and user-facing.
+3. Planning and auditing are mostly internal.
+4. The final plan must be implementation-grade and security-aware.
+5. The architect must revise using cumulative issue memory, not forget earlier feedback.
+6. The auditor must use stable issue IDs and mark issues as resolved, unresolved, downgraded, or newly introduced.
+7. Visible reasoning must be concise summarized reasoning, not hidden chain-of-thought.
+8. Mandatory requirement blockers are:
+   project_goal, target_users, access_model, feature_scope, frontend_stack,
+   backend_stack, data_platform, hosting_target, security_baseline,
+   privacy_retention_policy, mvp_scope.
+9. Never advance to planning until all mandatory blocker fields are populated and confirmed.
+10. Once planning starts, keep round-by-round turbulence internal unless the entire planning attempt fails.
 """
 
-REQUIREMENT_CONFIRM_SYSTEM = """
-You are RequirementCoordinator for a phase-based SDLC planning system.
+AGENT_PROMPTS: Dict[str, str] = {
+    "RequirementCoordinator": """
+You orchestrate requirement gathering.
 
-You are handling confirmation of previously proposed requirement values.
-
-Hard rules:
-- only the essential user-facing requirement fields can block transition to planning
-- if the proposed mandatory values are accepted and all required fields are now confirmed, mark ready_for_requirement_approval as true
-- NEVER ask plan-format or planning-style questions
-- if the user wants to proceed and mandatory fields are complete, do not ask more requirement questions
-
-Return JSON only with:
-- thinking_summary
-- assistant_message
-- action: one of ["approve_proposals", "revise_proposals", "treat_as_edit"]
-- updates: list of {field, value, source, confirmed, rationale, needs_confirmation}
-- pending_confirmations: list of field names
-- ready_for_requirement_approval: boolean
-"""
-
-PRODUCT_REASONER_SYSTEM = """
-You are ProductReasoner in a multi-agent SDLC planning swarm.
-
-Analyze the frozen requirement contract from a product and scope perspective.
-Focus on completeness, value fit, UX expectations, and missing product assumptions.
-
+Rules:
+- Inspect the structured requirement contract before asking for more information.
+- Ask progressively, not everything at once.
+- Use specialist delegation when beneficial.
+- Use upsert_contract_field for canonical blocker fields.
+- Only mark a blocker field confirmed=true if the user clearly confirmed it.
+- If you infer a sensible default, store it with confirmed=false and needs_confirmation=true.
+- Once all blocker fields are confirmed, stop requirement gathering and ask whether to start planning.
+- If the user confirms they want to proceed, advance to planning in the same turn.
+- Do not ask planning-style questions such as monolith vs microservices unless the user volunteers them.
+- Keep messages short, warm, and natural.
+""",
+    "ProjectScopeAgent": """
+Clarify product goal, target users, features, MVP scope, and priorities.
+Capture structured notes and propose canonical blocker values when useful.
+When done, delegate back to RequirementCoordinator.
+""",
+    "BackendAgent": """
+Clarify backend architecture, APIs, framework, runtime, services, integrations, and scaling needs.
+Prefer practical choices suitable for a final-year project unless the user states otherwise.
+Capture structured notes and canonical contract values where relevant.
+When done, delegate back to RequirementCoordinator.
+""",
+    "FrontendAgent": """
+Clarify frontend framework, UX flows, pages, components, and interaction style.
+Capture structured notes and canonical contract values where relevant.
+When done, delegate back to RequirementCoordinator.
+""",
+    "SecurityAgent": """
+Clarify auth, authorization, secrets, rate limiting, privacy, moderation, and security posture.
+Capture structured notes and canonical contract values where relevant.
+When done, delegate back to RequirementCoordinator.
+""",
+    "DataAgent": """
+Clarify data model, storage, retention, analytics, information flow, and persistence choices.
+Capture structured notes and canonical contract values where relevant.
+When done, delegate back to RequirementCoordinator.
+""",
+    "DevOpsAgent": """
+Clarify hosting, deployment, CI/CD, observability, environments, cost posture, and recovery.
+Capture structured notes and canonical contract values where relevant.
+When done, delegate back to RequirementCoordinator.
+""",
+    "ProductReasoner": """
 Return JSON only with:
 - summary
 - requirement_completeness_score
@@ -318,14 +352,8 @@ Return JSON only with:
 - ux_considerations
 - future_phase_candidates
 - next_focus
-"""
-
-ARCHITECT_REASONER_SYSTEM = """
-You are ArchitectReasoner in a multi-agent SDLC planning swarm.
-
-Analyze the frozen requirement contract and prior reviews from an architecture perspective.
-Focus on feasibility, modularity, coherence, scalability, API direction, data flow, and deployment direction.
-
+""",
+    "ArchitectReasoner": """
 Return JSON only with:
 - summary
 - feasibility
@@ -335,13 +363,8 @@ Return JSON only with:
 - infrastructure_direction
 - devops_direction
 - design_principles
-"""
-
-SECURITY_REASONER_SYSTEM = """
-You are SecurityReasoner in a multi-agent SDLC planning swarm.
-
-Analyze the frozen requirements from a security, privacy, moderation, and abuse-prevention perspective.
-
+""",
+    "SecurityReasoner": """
 Return JSON only with:
 - summary
 - key_risks
@@ -350,13 +373,8 @@ Return JSON only with:
 - compliance_notes
 - moderation_notes
 - incident_response_notes
-"""
-
-CONSTRAINT_REASONER_SYSTEM = """
-You are ConstraintReasoner in a multi-agent SDLC planning swarm.
-
-Analyze cost, complexity, maintainability, phased delivery, and operational trade-offs.
-
+""",
+    "ConstraintReasoner": """
 Return JSON only with:
 - summary
 - cost_range
@@ -365,14 +383,8 @@ Return JSON only with:
 - phased_delivery
 - tradeoffs
 - implementation_pressure_points
-"""
-
-CRITIC_REASONER_SYSTEM = """
-You are CriticReasoner in a multi-agent SDLC planning swarm.
-
-Synthesize all specialist reviews and identify contradictions, blind spots, unresolved assumptions,
-and corrective directions before the architecture draft is generated.
-
+""",
+    "CriticReasoner": """
 Return JSON only with:
 - summary
 - contradictions
@@ -380,26 +392,36 @@ Return JSON only with:
 - unresolved_questions
 - corrective_actions
 - priority_order
-"""
+""",
+    "ContextCompactor": """
+Summarize older context into stable facts, unresolved items, and direction.
+Return JSON only with:
+- summary
+- stable_facts
+- unresolved_items
+- direction
+""",
+    "ArchitectAgent": """
+You are the architecture generator.
 
-ARCHITECT_GENERATOR_SYSTEM = """
-You are ArchitectAgent in a phase-based multi-agent SDLC system.
-
-Create a very detailed architecture plan from:
-- the frozen confirmed requirements
-- the specialist review outputs
-- the issue ledger
-- the last audit feedback if any
+Create a polished implementation-grade architecture plan from:
+- frozen confirmed requirement contract
+- rich requirement notes
+- specialist reviews
+- cumulative issue ledger
+- revision memory
+- previous audits
+- best prior plan
 
 Rules:
-- this is NOT a short summary
-- always generate a detailed implementation-grade plan
-- include concrete architecture, modules, workflows, schemas, APIs, security, deployment,
-  observability, roadmap, and implementation details
-- preserve user-confirmed requirements
-- do not ask the user for planning-format choices
+- Do not mention round numbers in the title.
+- Preserve user-confirmed requirements.
+- Resolve known issues when possible.
+- Include concrete architecture, modules, workflows, schemas, APIs, security, deployment,
+  observability, roadmap, and developer guidance.
 
 Return JSON only with:
+- thinking_summary
 - title
 - executive_summary
 - architecture_overview
@@ -417,45 +439,52 @@ Return JSON only with:
 - development_guidelines
 - risks_and_tradeoffs
 - open_questions_resolved
-"""
+""",
+    "AuditorAgent": """
+You are the strict architecture auditor.
 
-AUDITOR_SYSTEM = """
-You are AuditorAgent in a phase-based multi-agent SDLC system.
+Audit the architecture plan against:
+- frozen confirmed requirements
+- rich requirement notes
+- cumulative issue ledger
+- revision memory
+- prior audit history
 
-Audit the architecture plan against the frozen confirmed requirements.
-Review coherence, security, privacy, maintainability, completeness, phase readiness, and execution realism.
-Approve only if the plan is genuinely strong.
+Rules:
+- Use stable issue IDs where possible.
+- Mark issue status as one of: unresolved, resolved, downgraded, new.
+- Avoid random score regression unless a clear severe flaw exists.
+- passed can be true only if score >= threshold and no unresolved critical issue remains.
 
 Return JSON only with:
+- thinking_summary
 - score
+- passed
 - summary
 - strengths
 - concerns
 - blocking_issues
 - recommendations
-- issue_updates
 - requirement_conflicts
+- issue_updates
 
-Each requirement_conflict item must include:
+Each requirement_conflicts item must include:
 - issue_id
 - field
 - current_value
 - proposed_value
 - exact_reason
 - severity
-"""
 
-EXECUTION_PLANNER_SYSTEM = """
-You are ExecutionPlannerAgent.
-
-Transform the approved architecture into a very detailed implementation roadmap.
-This must be long, specific, and step-by-step.
-
-Requirements:
-- organize by phases
-- include frontend, backend, data, infra, security, QA, and rollout work
-- include dependencies, deliverables, and done criteria
-- include feature-by-feature implementation guidance
+Each issue_updates item must include:
+- id
+- title
+- severity
+- status
+- detail
+""",
+    "ExecutionPlannerAgent": """
+Transform the approved architecture into a detailed implementation roadmap.
 
 Return JSON only with:
 - execution_overview
@@ -464,13 +493,9 @@ Return JSON only with:
 - dependency_map
 - milestone_checks
 - rollout_strategy
-"""
-
-TUTOR_SYSTEM = """
-You are TutorAgent.
-
-Create a detailed development playbook for implementing the approved plan.
-Teach in a practical, step-by-step way for a developer.
+""",
+    "TutorAgent": """
+Create a practical development playbook for implementing the approved plan.
 
 Return JSON only with:
 - development_playbook
@@ -478,12 +503,9 @@ Return JSON only with:
 - implementation_tips
 - common_mistakes
 - feature_build_guides
-"""
-
-QA_SYSTEM = """
-You are QAEngineerAgent.
-
-Create a detailed testing and validation package from the approved architecture and execution plan.
+""",
+    "QAEngineerAgent": """
+Create a testing and validation package from the approved architecture and execution plan.
 
 Return JSON only with:
 - validation_strategy
@@ -492,13 +514,9 @@ Return JSON only with:
 - acceptance_criteria
 - regression_strategy
 - release_readiness_checklist
-"""
-
-NARRATIVE_SYSTEM = """
-You are NarrativeWriterAgent.
-
-Write a long-form validated architecture report package.
-Never leave sections blank.
+""",
+    "NarrativeWriterAgent": """
+Write a polished long-form validated architecture report package.
 
 Return JSON only with:
 - title
@@ -523,41 +541,8 @@ sections must contain:
 - testing_validation
 - risks_tradeoffs
 - final_notes
-"""
-
-DIAGRAM_SYSTEM = """
-You are DiagramSpecAgent.
-
-Create real structured diagram specs for:
-- architecture
-- component_interaction
-- data_er
-- deployment
-- security_boundary
-- implementation_roadmap
-
-Rules:
-- provide actual nodes and edges
-- do not return placeholders
-- for ER include entities with fields and relationships
-- for roadmap model phases and dependencies
-
-Return JSON only with:
-- diagrams
-"""
-
-DEVELOPMENT_SUMMARY_SYSTEM = """
-You are DevelopmentPhaseAgent.
-
-Create the final development handoff after approval.
-
-Return JSON only with:
-- development_summary
-- first_week_plan
-- coding_sequence
-- practical_starting_point
-"""
-
+""",
+}
 
 # =========================================================
 # Data classes
@@ -581,24 +566,56 @@ class AcceptedException:
 
 
 @dataclass
+class ChatTurn:
+    role: str
+    content: str
+    agent: Optional[str] = None
+    timestamp: str = field(default_factory=now_iso)
+
+
+@dataclass
 class SharedState:
     session_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     phase: str = PHASE_REQUIREMENTS
-    dialogue: List[Dict[str, Any]] = field(default_factory=list)
+    active_agent: str = "RequirementCoordinator"
+
+    dialogue: List[ChatTurn] = field(default_factory=list)
+    context_summary: str = ""
 
     requirement_contract: Dict[str, RequirementField] = field(default_factory=lambda: {
         key: RequirementField() for key in FIELD_PROMPTS.keys()
     })
     pending_confirmations: List[str] = field(default_factory=list)
-    pending_change_requests: List[Dict[str, Any]] = field(default_factory=list)
+
+    requirements: Dict[str, Any] = field(default_factory=lambda: {
+        "project": {},
+        "frontend": {},
+        "backend": {},
+        "security": {},
+        "data": {},
+        "devops": {},
+        "constraints": {},
+        "open_questions": {},
+        "confirmed_decisions": {},
+    })
+
+    requirement_status: Dict[str, Any] = field(default_factory=lambda: {
+        "ready_for_planning": False,
+        "completeness_score": 0.0,
+        "summary": "",
+        "last_updated": None,
+    })
 
     pass_threshold: float = 9.0
-    max_planning_rounds: int = 4
+    max_requirement_hops: int = 10
+    max_tool_rounds: int = 8
+    max_planning_rounds: int = 5
     debug_mode: bool = False
     show_internal_panels: bool = True
     report_depth: str = "extreme"
 
     issue_ledger: Dict[str, Dict[str, Any]] = field(default_factory=dict)
+    revision_memory: Dict[str, Any] = field(default_factory=dict)
     accepted_exceptions: Dict[str, AcceptedException] = field(default_factory=dict)
 
     specialist_history: List[Dict[str, Any]] = field(default_factory=list)
@@ -614,6 +631,7 @@ class SharedState:
     final_pdf_path: str = ""
     artifacts_dir: str = ""
 
+    internal_busy: bool = False
     shutdown: bool = False
 
 
@@ -623,16 +641,17 @@ class SharedState:
 
 class AzureLLM:
     def __init__(self) -> None:
-        api_key = os.getenv("AZURE_OPENAI_API_KEY","F79rr24XOyTKAprSSVMiQuo8j99MQM9gzJD3oEIAmlfn4vrsj0TVJQQJ99CBACHYHv6XJ3w3AAABACOGX5Md")
-        endpoint = os.getenv("AZURE_OPENAI_ENDPOINT","https://cmg-ai-poc-eu2.openai.azure.com/")
-        chat_deployment = os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT","gpt-5-chat")
+        api_key = os.getenv("AZURE_OPENAI_API_KEY")
+        endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
+        chat_deployment = os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT", "gpt-4o")
         reasoning_deployment = os.getenv("AZURE_OPENAI_REASONING_DEPLOYMENT", chat_deployment)
 
-        if not api_key or not endpoint or not chat_deployment:
-            raise RuntimeError(
-                "Missing Azure OpenAI config. Set AZURE_OPENAI_API_KEY, "
-                "AZURE_OPENAI_ENDPOINT, and AZURE_OPENAI_CHAT_DEPLOYMENT."
-            )
+        if not api_key:
+            raise RuntimeError("Missing AZURE_OPENAI_API_KEY")
+        if not endpoint:
+            raise RuntimeError("Missing AZURE_OPENAI_ENDPOINT")
+        if not chat_deployment:
+            raise RuntimeError("Missing AZURE_OPENAI_CHAT_DEPLOYMENT")
 
         self.chat_deployment = chat_deployment
         self.reasoning_deployment = reasoning_deployment
@@ -641,16 +660,35 @@ class AzureLLM:
             base_url=endpoint.rstrip("/") + "/openai/v1/",
         )
 
+    def completion(
+        self,
+        model: str,
+        messages: List[Dict[str, Any]],
+        tools: Optional[List[Dict[str, Any]]] = None,
+        temperature: float = 0.2,
+        max_tokens: int = 1800,
+    ):
+        kwargs: Dict[str, Any] = {
+            "model": model,
+            "messages": messages,
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+        }
+        if tools:
+            kwargs["tools"] = tools
+            kwargs["tool_choice"] = "auto"
+        return self.client.chat.completions.create(**kwargs)
+
     def complete_json(
         self,
         system_prompt: str,
         payload: Dict[str, Any],
-        max_tokens: int = 3000,
+        max_tokens: int = 2200,
         reasoning: bool = True,
-        temperature: float = 0.2,
+        temperature: float = 0.1,
     ) -> Dict[str, Any]:
         model = self.reasoning_deployment if reasoning else self.chat_deployment
-        resp = self.client.chat.completions.create(
+        resp = self.completion(
             model=model,
             messages=[
                 {"role": "system", "content": system_prompt + "\nReturn ONLY valid JSON."},
@@ -668,7 +706,7 @@ class AzureLLM:
 # Main app
 # =========================================================
 
-class GovernanceTerminal:
+class GovernanceHybridApp:
     def __init__(self) -> None:
         self.console = Console()
         self.state = SharedState()
@@ -684,50 +722,57 @@ class GovernanceTerminal:
     def banner(self) -> None:
         self.console.print(Rule("[bold cyan]Architectural Governance Terminal"))
         self.console.print("[dim]Type your project idea. Type 'exit' to quit.[/dim]")
-        self.console.print("[dim]Commands: :threshold 9.0 | :rounds 5 | :depth extreme | :debug on/off | :thinking on/off | :status | :export | :exceptions[/dim]\n")
+        self.console.print(
+            "[dim]Commands: :threshold 9.0 | :rounds 5 | :debug on/off | "
+            ":thinking on/off | :status | :export[/dim]\n"
+        )
 
     def panel(self, title: str, body: str, color: str = "green") -> None:
         self.console.print(Panel(body, title=title, border_style=color))
 
-    def thinking(self, agent: str, summary: Any, next_action: str = "") -> None:
+    def thinking(self, agent: str, summary: Any, next_action: str = "", confidence: Optional[float] = None) -> None:
         if not self.state.show_internal_panels:
             return
-        body = as_text(summary, 3200)
+        body = as_text(summary, 2000)
+        if confidence is not None:
+            body += f"\n\n[dim]confidence: {confidence:.2f}[/dim]"
         if next_action:
-            body += f"\n\n[dim]next: {next_action}[/dim]"
+            body += f"\n[dim]next: {next_action}[/dim]"
         self.console.print(Panel(body, title=f"[bold yellow]THINKING · {agent}[/bold yellow]", border_style="yellow"))
 
     def append_dialogue(self, role: str, content: str, agent: Optional[str] = None) -> None:
-        self.state.dialogue.append({
-            "role": role,
-            "content": content,
-            "agent": agent,
-            "timestamp": now_iso(),
-        })
+        self.state.dialogue.append(ChatTurn(role=role, content=content, agent=agent))
 
-    def dialogue_tail(self, n: int = 14) -> List[Dict[str, Any]]:
-        return self.state.dialogue[-n:]
+    def dialogue_messages(self, keep_last: int = 14) -> List[Dict[str, Any]]:
+        turns = self.state.dialogue[-keep_last:]
+        out = []
+        for turn in turns:
+            if turn.role == "assistant" and turn.agent:
+                out.append({"role": "assistant", "content": f"{turn.agent}: {turn.content}"})
+            else:
+                out.append({"role": turn.role, "content": turn.content})
+        return out
 
     def show_status(self) -> None:
         t = Table(title="Runtime Status", box=box.SIMPLE_HEAVY)
         t.add_column("Field", style="cyan", width=28)
         t.add_column("Value")
         t.add_row("Phase", self.state.phase)
+        t.add_row("Active agent", self.state.active_agent)
         t.add_row("Threshold", f"{self.state.pass_threshold:.2f}")
+        t.add_row("Requirement pending", ", ".join(self.state.pending_confirmations) or "None")
+        t.add_row("Missing required", ", ".join(self.missing_required_fields()) or "None")
         t.add_row("Planning rounds", str(self.state.max_planning_rounds))
-        t.add_row("Report depth", self.state.report_depth)
-        t.add_row("Internal panels", str(self.state.show_internal_panels))
-        t.add_row("Debug", str(self.state.debug_mode))
-        t.add_row("Missing required fields", ", ".join(self.missing_required_fields()) or "None")
-        t.add_row("Best audit score", f"{self.state.best_audit.get('score', 0):.2f}" if self.state.best_audit else "N/A")
+        t.add_row("Known issues", str(len(self.state.issue_ledger)))
+        t.add_row("Best score", f"{self.state.best_audit.get('score', 0):.2f}" if self.state.best_audit else "N/A")
         t.add_row("Approved PDF", self.state.final_pdf_path or "None")
         self.console.print(t)
 
     # -----------------------------------------------------
-    # Contract helpers
+    # Contract + structured memory
     # -----------------------------------------------------
 
-    def set_field(self, field_name: str, value: str, source: str, confirmed: bool, rationale: str) -> None:
+    def set_contract_field(self, field_name: str, value: str, source: str, confirmed: bool, rationale: str) -> None:
         if field_name not in self.state.requirement_contract:
             return
         self.state.requirement_contract[field_name] = RequirementField(
@@ -737,6 +782,9 @@ class GovernanceTerminal:
             rationale=str(rationale).strip(),
             updated_at=now_iso(),
         )
+        note_path = CONTRACT_TO_NOTE_PATH.get(field_name)
+        if note_path:
+            deep_set(self.state.requirements, note_path, str(value).strip())
 
     def confirm_fields(self, fields: List[str]) -> None:
         for f in fields:
@@ -761,17 +809,42 @@ class GovernanceTerminal:
     def frozen_contract(self) -> Dict[str, Any]:
         return {k: asdict(v) for k, v in self.state.requirement_contract.items() if v.value.strip()}
 
-    def next_missing_field(self) -> Optional[str]:
-        missing = self.missing_required_fields()
-        return missing[0] if missing else None
+    def requirement_summary_paragraphs(self) -> List[str]:
+        out: List[str] = []
+        for section_name in ["project", "frontend", "backend", "security", "data", "devops", "constraints"]:
+            section = self.state.requirements.get(section_name, {})
+            if not isinstance(section, dict) or not section:
+                continue
+            facts = []
+            for k, v in section.items():
+                if isinstance(v, dict):
+                    continue
+                facts.append(f"{k.replace('_', ' ').title()}: {v}")
+            if facts:
+                out.append(f"<b>{section_name.title()}</b> — " + "; ".join(facts))
+        if not out:
+            out.append("The validated plan was generated from the confirmed requirement contract.")
+        return out
 
-    def contract_summary_text(self) -> str:
-        lines = ["Confirmed requirement contract:"]
-        for k, v in self.state.requirement_contract.items():
-            if v.value.strip():
-                suffix = "confirmed" if v.confirmed else "pending"
-                lines.append(f"- {k}: {v.value} ({suffix})")
-        return "\n".join(lines)
+    def fill_internal_defaults(self) -> None:
+        defaults = {
+            "future_scope": "Derive post-MVP enhancements internally from the requested product direction, including richer capabilities after the first stable release.",
+            "constraints": "Assume a final-year-project context with strong emphasis on quality, maintainability, and implementation readiness under limited resources.",
+            "observability_baseline": "Structured application logs, error tracking, request metrics, latency monitoring, traces, uptime alerts, audit events, and an admin-visible operations dashboard.",
+            "execution_preference": "Prioritize correctness, completeness, maintainability, and secure implementation readiness over brevity.",
+            "llm_integration": "Use secure backend-managed GPT-compatible integration through an adapter layer, never direct browser-side secret exposure.",
+            "compliance_context": "Adopt privacy-by-design baseline with deletion support, retention enforcement, secure secret storage, and explicit handling of user data and logs.",
+        }
+        for field_name, value in defaults.items():
+            current = self.state.requirement_contract[field_name]
+            if not current.value.strip():
+                self.set_contract_field(
+                    field_name=field_name,
+                    value=value,
+                    source="system_default_for_planning",
+                    confirmed=True,
+                    rationale="Internal planning default; not a user-blocking requirement.",
+                )
 
     def wants_planning_transition(self, text: str) -> bool:
         t = text.lower().strip()
@@ -779,25 +852,362 @@ class GovernanceTerminal:
             return True
         return any(term in t for term in PLANNING_INTENT_TERMS)
 
-    def fill_internal_defaults(self) -> None:
-        defaults = {
-            "future_scope": "Derive additional post-MVP features internally from the requested full ChatGPT-like feature set, including richer multimodal and advanced personalization capabilities.",
-            "constraints": "Assume final-year-project context with quality prioritized over brevity, likely solo or small-team execution, and a need for academically strong planning artifacts.",
-            "observability_baseline": "Structured application logs, error tracking, request metrics, latency monitoring, tracing, uptime alerts, audit events, and admin-visible operational dashboards.",
-            "execution_preference": "Prioritize correctness, completeness, maintainability, and implementation readiness over shortness or oversimplification.",
-            "llm_integration": "Use secure backend-managed GPT-compatible model integration through an adapter layer, never direct browser-side secret exposure.",
-            "compliance_context": "Adopt privacy-by-design baseline with deletion support, retention enforcement, secure secret storage, and explicit handling of user data and logs.",
+    def maybe_compact_context(self) -> None:
+        if len(self.state.dialogue) < 24:
+            return
+        payload = {
+            "current_summary": self.state.context_summary,
+            "older_dialogue": [asdict(x) for x in self.state.dialogue[:-10]],
+            "requirement_contract": self.contract_snapshot(),
+            "requirements": self.state.requirements,
         }
-        for field, value in defaults.items():
-            current = self.state.requirement_contract[field]
-            if not current.value.strip():
-                self.set_field(
-                    field_name=field,
-                    value=value,
-                    source="system_default_for_planning",
-                    confirmed=True,
-                    rationale="Internal planning default; not a user-blocking requirement.",
-                )
+        result = self.llm.complete_json(
+            GLOBAL_SYSTEM + "\n" + AGENT_PROMPTS["ContextCompactor"],
+            payload,
+            max_tokens=1000,
+            reasoning=True,
+        )
+        summary = result.get("summary")
+        if summary:
+            self.state.context_summary = str(summary)
+            self.state.dialogue = self.state.dialogue[-10:]
+
+    # -----------------------------------------------------
+    # Tool calling for requirement phase
+    # -----------------------------------------------------
+
+    def state_snapshot(self) -> Dict[str, Any]:
+        return {
+            "phase": self.state.phase,
+            "active_agent": self.state.active_agent,
+            "context_summary": self.state.context_summary,
+            "requirement_contract": self.contract_snapshot(),
+            "pending_confirmations": self.state.pending_confirmations,
+            "requirements": self.state.requirements,
+            "requirement_status": self.state.requirement_status,
+            "issue_ledger": self.state.issue_ledger,
+            "revision_memory": self.state.revision_memory,
+            "pass_threshold": self.state.pass_threshold,
+            "debug_mode": self.state.debug_mode,
+        }
+
+    def build_agent_messages(self, agent_name: str) -> List[Dict[str, Any]]:
+        snapshot = compact_json(self.state_snapshot(), 14000)
+        messages = [
+            {"role": "system", "content": GLOBAL_SYSTEM},
+            {"role": "system", "content": f"Current agent: {agent_name}\n\n{AGENT_PROMPTS[agent_name]}"},
+            {"role": "system", "content": f"Shared state snapshot:\n{snapshot}"},
+        ]
+        messages.extend(self.dialogue_messages())
+        return messages
+
+    def schema(self, name: str, description: str, properties: Dict[str, Any], required: List[str]) -> Dict[str, Any]:
+        return {
+            "type": "function",
+            "function": {
+                "name": name,
+                "description": description,
+                "parameters": {
+                    "type": "object",
+                    "properties": properties,
+                    "required": required,
+                },
+            },
+        }
+
+    def tool_schemas(self, agent_name: str) -> List[Dict[str, Any]]:
+        valid_targets = [a for a in ALL_AGENTS if a != agent_name]
+
+        return [
+            self.schema(
+                "inspect_contract",
+                "Inspect the canonical requirement contract or one field.",
+                {"field": {"type": "string"}},
+                [],
+            ),
+            self.schema(
+                "inspect_requirement_notes",
+                "Inspect the rich structured requirement notes or one section.",
+                {"section": {"type": "string"}},
+                [],
+            ),
+            self.schema(
+                "upsert_contract_field",
+                "Write or update a canonical requirement contract field.",
+                {
+                    "field": {"type": "string"},
+                    "value": {"type": "string"},
+                    "rationale": {"type": "string"},
+                    "confirmed": {"type": "boolean"},
+                    "needs_confirmation": {"type": "boolean"},
+                },
+                ["field", "value", "rationale", "confirmed", "needs_confirmation"],
+            ),
+            self.schema(
+                "confirm_contract_fields",
+                "Confirm one or more contract fields after explicit user confirmation.",
+                {
+                    "fields": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                    }
+                },
+                ["fields"],
+            ),
+            self.schema(
+                "upsert_requirement_note",
+                "Write or update a richer structured requirement note.",
+                {
+                    "path": {"type": "string"},
+                    "value": {"type": "string"},
+                    "rationale": {"type": "string"},
+                },
+                ["path", "value", "rationale"],
+            ),
+            self.schema(
+                "log_thinking",
+                "Show concise summarized reasoning in the terminal.",
+                {
+                    "summary": {"type": "string"},
+                    "confidence": {"type": "number"},
+                    "next_action": {"type": "string"},
+                },
+                ["summary", "confidence", "next_action"],
+            ),
+            self.schema(
+                "consult_reasoner",
+                "Consult a reasoner or specialist for deeper analysis.",
+                {
+                    "agent": {"type": "string", "enum": valid_targets},
+                    "task": {"type": "string"},
+                    "deliverable": {"type": "string"},
+                },
+                ["agent", "task", "deliverable"],
+            ),
+            self.schema(
+                "delegate_to",
+                "Transfer control to another specialist agent.",
+                {
+                    "agent": {"type": "string", "enum": valid_targets},
+                    "objective": {"type": "string"},
+                    "reason": {"type": "string"},
+                },
+                ["agent", "objective", "reason"],
+            ),
+            self.schema(
+                "set_readiness",
+                "Update requirement completeness and readiness.",
+                {
+                    "ready_for_planning": {"type": "boolean"},
+                    "completeness_score": {"type": "number"},
+                    "summary": {"type": "string"},
+                },
+                ["ready_for_planning", "completeness_score", "summary"],
+            ),
+            self.schema(
+                "advance_phase",
+                "Advance to planning when the mandatory requirement contract is ready.",
+                {
+                    "target_phase": {"type": "string", "enum": [PHASE_PLANNING]},
+                    "reason": {"type": "string"},
+                },
+                ["target_phase", "reason"],
+            ),
+        ]
+
+    def execute_tool(self, caller: str, tool_name: str, args: Dict[str, Any]) -> Dict[str, Any]:
+        if tool_name == "inspect_contract":
+            field_name = str(args.get("field", "")).strip()
+            if field_name:
+                return {"ok": True, "field": field_name, "data": asdict(self.state.requirement_contract.get(field_name, RequirementField()))}
+            return {"ok": True, "contract": self.contract_snapshot()}
+
+        if tool_name == "inspect_requirement_notes":
+            section = str(args.get("section", "")).strip()
+            if section:
+                return {"ok": True, "section": section, "data": self.state.requirements.get(section, {})}
+            return {"ok": True, "requirements": self.state.requirements}
+
+        if tool_name == "upsert_contract_field":
+            field_name = str(args.get("field", "")).strip()
+            value = str(args.get("value", "")).strip()
+            rationale = str(args.get("rationale", "")).strip()
+            confirmed = bool(args.get("confirmed", False))
+            needs_confirmation = bool(args.get("needs_confirmation", False))
+
+            if field_name not in self.state.requirement_contract or not value:
+                return {"ok": False, "error": "Invalid field or empty value."}
+
+            self.set_contract_field(field_name, value, caller, confirmed, rationale)
+
+            if needs_confirmation or not confirmed:
+                if field_name in USER_ONLY_REQUIRED_FIELDS and field_name not in self.state.pending_confirmations:
+                    self.state.pending_confirmations.append(field_name)
+            else:
+                self.state.pending_confirmations = [f for f in self.state.pending_confirmations if f != field_name]
+
+            return {"ok": True, "field": field_name}
+
+        if tool_name == "confirm_contract_fields":
+            fields = [f for f in ensure_list_of_str(args.get("fields")) if f in self.state.requirement_contract]
+            self.confirm_fields(fields)
+            self.state.pending_confirmations = [f for f in self.state.pending_confirmations if f not in fields]
+            return {"ok": True, "confirmed": fields}
+
+        if tool_name == "upsert_requirement_note":
+            path = str(args.get("path", "")).strip()
+            value = str(args.get("value", "")).strip()
+            rationale = str(args.get("rationale", "")).strip()
+            if not path or not value:
+                return {"ok": False, "error": "Path and value are required."}
+            deep_set(self.state.requirements, path, value)
+            return {"ok": True, "path": path, "rationale": rationale}
+
+        if tool_name == "log_thinking":
+            summary = str(args.get("summary", "")).strip()
+            confidence = args.get("confidence")
+            next_action = str(args.get("next_action", "")).strip()
+            if self.state.debug_mode:
+                try:
+                    conf = float(confidence) if confidence is not None else None
+                except Exception:
+                    conf = None
+                self.thinking(caller, summary, next_action, conf)
+            return {"ok": True}
+
+        if tool_name == "consult_reasoner":
+            target = str(args.get("agent", "")).strip()
+            task = str(args.get("task", "")).strip()
+            deliverable = str(args.get("deliverable", "")).strip()
+            if target not in ALL_AGENTS:
+                return {"ok": False, "error": "Invalid target agent."}
+            result = self.consult_direct(target, task, deliverable)
+            return {"ok": True, "agent": target, "result": result}
+
+        if tool_name == "delegate_to":
+            target = str(args.get("agent", "")).strip()
+            if target not in ALL_AGENTS:
+                return {"ok": False, "error": "Invalid delegate target."}
+            self.state.active_agent = target
+            return {
+                "ok": True,
+                "delegated_to": target,
+                "objective": str(args.get("objective", "")),
+                "reason": str(args.get("reason", "")),
+            }
+
+        if tool_name == "set_readiness":
+            self.state.requirement_status = {
+                "ready_for_planning": bool(args.get("ready_for_planning", False)),
+                "completeness_score": float(args.get("completeness_score", 0.0)),
+                "summary": str(args.get("summary", "")).strip(),
+                "last_updated": now_iso(),
+            }
+            return {"ok": True}
+
+        if tool_name == "advance_phase":
+            target_phase = str(args.get("target_phase", "")).strip()
+            if target_phase != PHASE_PLANNING:
+                return {"ok": False, "error": "Unsupported phase transition."}
+            if not self.all_required_locked():
+                return {"ok": False, "error": "Mandatory blocker fields are not all confirmed."}
+            self.fill_internal_defaults()
+            self.state.phase = PHASE_PLANNING
+            self.state.active_agent = "ArchitectAgent"
+            self.state.pending_confirmations = []
+            return {"ok": True, "phase": self.state.phase}
+
+        return {"ok": False, "error": f"Unknown tool: {tool_name}"}
+
+    def single_requirement_step(self, agent_name: str) -> bool:
+        messages = self.build_agent_messages(agent_name)
+
+        for _ in range(self.state.max_tool_rounds):
+            resp = self.llm.completion(
+                model=self.llm.chat_deployment,
+                messages=messages,
+                tools=self.tool_schemas(agent_name),
+                temperature=0.2,
+                max_tokens=1500,
+            )
+
+            msg = resp.choices[0].message
+            tool_calls = getattr(msg, "tool_calls", None) or []
+            assistant_message = {"role": "assistant", "content": msg.content or ""}
+
+            if tool_calls:
+                assistant_message["tool_calls"] = [
+                    {
+                        "id": tc.id,
+                        "type": "function",
+                        "function": {
+                            "name": tc.function.name,
+                            "arguments": tc.function.arguments,
+                        },
+                    }
+                    for tc in tool_calls
+                ]
+
+            messages.append(assistant_message)
+
+            if tool_calls:
+                active_before = self.state.active_agent
+                phase_before = self.state.phase
+
+                for tc in tool_calls:
+                    result = self.execute_tool(
+                        agent_name,
+                        tc.function.name,
+                        safe_json_loads(tc.function.arguments),
+                    )
+                    messages.append(
+                        {
+                            "role": "tool",
+                            "tool_call_id": tc.id,
+                            "name": tc.function.name,
+                            "content": json.dumps(result, ensure_ascii=False),
+                        }
+                    )
+
+                if self.state.phase != phase_before:
+                    return False
+                if self.state.active_agent != active_before:
+                    return False
+                continue
+
+            content = (msg.content or "").strip()
+            if content:
+                self.append_dialogue("assistant", content, agent_name)
+                self.panel(agent_name, content, "green")
+                return True
+
+        return False
+
+    def consult_direct(self, agent: str, task: str, deliverable: str = "") -> Dict[str, Any]:
+        payload = {
+            "phase": self.state.phase,
+            "task": task,
+            "deliverable": deliverable,
+            "context_summary": self.state.context_summary,
+            "requirement_contract": self.contract_snapshot(),
+            "requirements": self.state.requirements,
+            "requirement_status": self.state.requirement_status,
+            "issue_ledger": self.state.issue_ledger,
+            "revision_memory": self.state.revision_memory,
+            "current_plan": self.state.current_plan,
+            "best_plan": self.state.best_plan,
+            "audit_history": self.state.audit_history[-3:],
+        }
+        result = self.llm.complete_json(
+            GLOBAL_SYSTEM + "\n" + AGENT_PROMPTS[agent],
+            payload,
+            max_tokens=1200,
+            reasoning=True,
+        )
+        short = result.get("summary") or result.get("next_focus") or result
+        if self.state.debug_mode:
+            self.thinking(agent, short, "consultation complete")
+        return result
 
     # -----------------------------------------------------
     # Commands and run loop
@@ -806,13 +1216,16 @@ class GovernanceTerminal:
     def run(self) -> None:
         self.banner()
         welcome = (
-            "Hi — I’ll help you define the project step by step in a natural way. "
-            "Once the essential requirements are locked, I’ll move straight into the internal multi-agent planning and validation phase."
+            "Hi — I’ll help you define the project step by step. "
+            "I’ll lock the mandatory requirement contract first, then move into internal planning and validation."
         )
         self.append_dialogue("assistant", welcome, "RequirementCoordinator")
         self.panel("RequirementCoordinator", welcome)
 
         while not self.state.shutdown:
+            if self.state.internal_busy:
+                continue
+
             user_text = input("> ").strip()
             if not user_text:
                 continue
@@ -826,6 +1239,7 @@ class GovernanceTerminal:
                 continue
 
             self.append_dialogue("user", user_text)
+            self.maybe_compact_context()
 
             try:
                 self.handle_turn(user_text)
@@ -841,7 +1255,8 @@ class GovernanceTerminal:
 
         if cmd == ":threshold" and len(parts) == 2:
             try:
-                self.state.pass_threshold = max(7.0, min(10.0, float(parts[1])))
+                value = float(parts[1])
+                self.state.pass_threshold = max(7.0, min(10.0, value))
                 self.panel("System", f"Pass threshold set to {self.state.pass_threshold:.2f}.", "cyan")
             except Exception:
                 self.panel("System", "Invalid threshold value.", "red")
@@ -849,19 +1264,11 @@ class GovernanceTerminal:
 
         if cmd == ":rounds" and len(parts) == 2:
             try:
-                self.state.max_planning_rounds = max(1, min(10, int(parts[1])))
+                value = int(parts[1])
+                self.state.max_planning_rounds = max(1, min(10, value))
                 self.panel("System", f"Planning rounds set to {self.state.max_planning_rounds}.", "cyan")
             except Exception:
                 self.panel("System", "Invalid round count.", "red")
-            return True
-
-        if cmd == ":depth" and len(parts) == 2:
-            value = parts[1].lower()
-            if value in {"medium", "long", "extreme"}:
-                self.state.report_depth = value
-                self.panel("System", f"Report depth set to {value}.", "cyan")
-            else:
-                self.panel("System", "Use :depth medium | long | extreme", "red")
             return True
 
         if cmd == ":debug" and len(parts) == 2:
@@ -878,17 +1285,6 @@ class GovernanceTerminal:
             self.show_status()
             return True
 
-        if cmd == ":exceptions":
-            if not self.state.accepted_exceptions:
-                self.panel("Accepted Exceptions", "No accepted exceptions.")
-            else:
-                body = "\n\n".join(
-                    f"{ex.issue_id}\nReason: {ex.reason}\nUser message: {ex.user_message}"
-                    for ex in self.state.accepted_exceptions.values()
-                )
-                self.panel("Accepted Exceptions", body, "cyan")
-            return True
-
         if cmd == ":export":
             if not self.state.best_plan or not self.state.best_audit:
                 self.panel("System", "There is no approved plan to export yet.", "red")
@@ -897,120 +1293,26 @@ class GovernanceTerminal:
                 self.panel("System", f"PDF exported:\n{self.state.final_pdf_path}", "cyan")
             return True
 
-        return False
+        self.panel("System", "Unknown command.", "red")
+        return True
 
     def handle_turn(self, user_text: str) -> None:
-        if self.state.phase in {PHASE_REQUIREMENTS, PHASE_REQUIREMENT_CONFIRMATION}:
+        if self.state.phase == PHASE_REQUIREMENTS:
             self.handle_requirement_turn(user_text)
-            return
-
-        if self.state.phase == PHASE_CHANGE_REVIEW:
-            self.handle_change_review(user_text)
             return
 
         if self.state.phase in {PHASE_APPROVED, PHASE_DEVELOPMENT}:
             msg = (
-                f"The validated plan is already approved.\nPDF: {self.state.final_pdf_path or 'not exported yet'}\n\n"
+                f"The validated plan is already approved.\n"
+                f"PDF: {self.state.final_pdf_path or 'not exported yet'}\n\n"
                 "Use :export to regenerate the report, or start a new session for a new project."
             )
             self.panel("System", msg, "cyan")
             return
 
     # -----------------------------------------------------
-    # Requirement stage
+    # Requirement phase
     # -----------------------------------------------------
-
-    def requirement_coordinator_consult(self, user_text: str) -> Dict[str, Any]:
-        payload = {
-            "current_contract": self.contract_snapshot(),
-            "required_fields": USER_ONLY_REQUIRED_FIELDS,
-            "missing_required_fields": self.missing_required_fields(),
-            "field_prompts": FIELD_PROMPTS,
-            "user_message": user_text,
-            "dialogue_tail": self.dialogue_tail(),
-        }
-        result = self.llm.complete_json(FRIENDLY_REQ_SYSTEM, payload, max_tokens=2200, reasoning=True)
-        if self.state.debug_mode:
-            self.thinking(
-                "RequirementCoordinator",
-                result.get("thinking_summary", "Continuing requirement gathering."),
-                "ask only essential requirement questions",
-            )
-        return result
-
-    def requirement_confirmation_consult(self, user_text: str) -> Dict[str, Any]:
-        pending_fields = deepcopy(self.state.pending_confirmations)
-        pending_snapshot = {
-            f: asdict(self.state.requirement_contract[f])
-            for f in pending_fields
-            if f in self.state.requirement_contract
-        }
-        payload = {
-            "current_contract": self.contract_snapshot(),
-            "required_fields": USER_ONLY_REQUIRED_FIELDS,
-            "missing_required_fields": self.missing_required_fields(),
-            "pending_confirmation_fields": pending_fields,
-            "pending_confirmation_snapshot": pending_snapshot,
-            "user_message": user_text,
-            "dialogue_tail": self.dialogue_tail(),
-        }
-        result = self.llm.complete_json(REQUIREMENT_CONFIRM_SYSTEM, payload, max_tokens=2200, reasoning=True)
-        if self.state.debug_mode:
-            self.thinking(
-                "RequirementCoordinator",
-                result.get("thinking_summary", "Resolving requirement confirmations."),
-                "confirm or revise mandatory requirement values",
-            )
-        return result
-
-    def apply_requirement_updates(self, result: Dict[str, Any]) -> List[str]:
-        updates = result.get("updates", [])
-        pending = []
-
-        if not isinstance(updates, list):
-            return pending
-
-        for item in updates:
-            if not isinstance(item, dict):
-                continue
-            field_name = item.get("field")
-            value = str(item.get("value", "")).strip()
-            if not field_name or field_name not in self.state.requirement_contract or not value:
-                continue
-
-            self.set_field(
-                field_name=field_name,
-                value=value,
-                source=str(item.get("source", "agent")),
-                confirmed=bool(item.get("confirmed", False)),
-                rationale=str(item.get("rationale", "")),
-            )
-
-            if bool(item.get("needs_confirmation", False)) and not self.state.requirement_contract[field_name].confirmed:
-                pending.append(field_name)
-
-        explicit_pending = ensure_list_of_str(result.get("pending_confirmations"))
-        if explicit_pending:
-            pending = explicit_pending
-
-        # Hard filter: only user-facing required fields can block planning.
-        pending = [f for f in pending if f in USER_ONLY_REQUIRED_FIELDS]
-        return pending
-
-    def try_transition_to_planning(self, user_text: str, result: Optional[Dict[str, Any]] = None) -> bool:
-        ready_flag = bool((result or {}).get("ready_for_requirement_approval", False))
-        if self.all_required_locked() and (self.wants_planning_transition(user_text) or ready_flag):
-            self.fill_internal_defaults()
-            self.state.pending_confirmations = []
-            self.state.phase = PHASE_PLANNING
-            msg = (
-                "Perfect — the required project requirements are now locked. "
-                "I’m moving to the internal planning and validation phase now."
-            )
-            self.panel("RequirementCoordinator", msg, "green")
-            self.start_governance_cycle()
-            return True
-        return False
 
     def handle_requirement_turn(self, user_text: str) -> None:
         normalized = user_text.lower().strip()
@@ -1018,207 +1320,208 @@ class GovernanceTerminal:
         if normalized in {"approve requirements", "approve contract", "finalize requirements"}:
             if self.all_required_locked():
                 self.fill_internal_defaults()
+                self.state.requirement_status = {
+                    "ready_for_planning": True,
+                    "completeness_score": 1.0,
+                    "summary": "Mandatory requirement contract fully locked.",
+                    "last_updated": now_iso(),
+                }
+                self.state.phase = PHASE_PLANNING
+                self.state.active_agent = "ArchitectAgent"
+                self.panel(
+                    "RequirementCoordinator",
+                    "Perfect — the mandatory requirement contract is locked. I’m moving to the internal planning and validation phase now.",
+                    "green",
+                )
+                self.run_governance_cycle()
+            else:
+                self.panel(
+                    "RequirementCoordinator",
+                    f"We’re close, but these mandatory fields still need confirmation: {', '.join(self.missing_required_fields())}.",
+                    "yellow",
+                )
+            return
+
+        hops = 0
+        while hops < self.state.max_requirement_hops and self.state.phase == PHASE_REQUIREMENTS:
+            emitted = self.single_requirement_step(self.state.active_agent)
+            if emitted:
+                break
+            hops += 1
+
+        if self.all_required_locked():
+            self.state.requirement_status = {
+                "ready_for_planning": True,
+                "completeness_score": 1.0,
+                "summary": "Mandatory requirement contract fully locked.",
+                "last_updated": now_iso(),
+            }
+
+            if self.wants_planning_transition(user_text):
+                self.fill_internal_defaults()
+                self.state.phase = PHASE_PLANNING
+                self.state.active_agent = "ArchitectAgent"
                 self.panel(
                     "RequirementCoordinator",
                     "Perfect — the required project requirements are now locked. I’m moving to the internal planning and validation phase now.",
                     "green",
                 )
-                self.state.phase = PHASE_PLANNING
-                self.start_governance_cycle()
-            else:
-                next_field = self.next_missing_field()
-                self.panel(
-                    "RequirementCoordinator",
-                    f"We’re close, but one essential requirement still needs to be locked before planning: {next_field}.",
-                    "yellow",
-                )
+                self.run_governance_cycle()
+                return
+
+            self.panel(
+                "RequirementCoordinator",
+                "Perfect — the essential requirements are fully locked. Reply yes when you want me to move straight into the internal planning and validation phase.",
+                "green",
+            )
             return
 
         if self.state.pending_confirmations:
-            result = self.requirement_confirmation_consult(user_text)
-            action = str(result.get("action", "treat_as_edit")).lower().strip()
-            old_pending = deepcopy(self.state.pending_confirmations)
-
-            if action == "approve_proposals":
-                self.confirm_fields(old_pending)
-                self.state.pending_confirmations = []
-            else:
-                self.state.pending_confirmations = []
-
-            new_pending = self.apply_requirement_updates(result)
-            self.state.pending_confirmations = [f for f in new_pending if f in USER_ONLY_REQUIRED_FIELDS]
-
-            if self.try_transition_to_planning(user_text, result):
-                return
-
-            self.state.phase = PHASE_REQUIREMENT_CONFIRMATION if self.state.pending_confirmations else PHASE_REQUIREMENTS
-
-            # If all required fields are done, do not ask any new planning-like questions.
-            if self.all_required_locked():
-                msg = (
-                    "Perfect — the essential requirements are fully locked. "
-                    "Reply yes when you want me to move straight into the internal planning and validation phase."
-                )
-                self.panel("RequirementCoordinator", msg, "green")
-                return
-
-            self.panel("RequirementCoordinator", result.get("assistant_message", "Got it — I’ve updated the requirement notes."), "green")
-            return
-
-        result = self.requirement_coordinator_consult(user_text)
-        self.state.pending_confirmations = [f for f in self.apply_requirement_updates(result) if f in USER_ONLY_REQUIRED_FIELDS]
-
-        if self.try_transition_to_planning(user_text, result):
-            return
-
-        self.state.phase = PHASE_REQUIREMENT_CONFIRMATION if self.state.pending_confirmations else PHASE_REQUIREMENTS
-
-        # Hard stop if complete.
-        if self.all_required_locked():
-            msg = (
-                "Perfect — the essential requirements are fully locked. "
-                "Reply yes when you want me to move straight into the internal planning and validation phase."
+            self.panel(
+                "RequirementCoordinator",
+                "I have a few proposed values that still need your confirmation before planning can begin: "
+                + ", ".join(self.state.pending_confirmations),
+                "cyan",
             )
-            self.panel("RequirementCoordinator", msg, "green")
-            return
-
-        self.panel("RequirementCoordinator", result.get("assistant_message", "Got it — I’ve updated the requirement notes."), "green")
 
     # -----------------------------------------------------
     # Planning swarm
     # -----------------------------------------------------
 
     def token_budget(self, purpose: str) -> int:
-        depth = self.state.report_depth
         budgets = {
-            "medium": {"analysis": 1800, "plan": 3000, "report": 3500},
-            "long": {"analysis": 2600, "plan": 4200, "report": 5000},
-            "extreme": {"analysis": 3400, "plan": 5600, "report": 6500},
+            "medium": {"analysis": 1800, "plan": 3200, "report": 3800},
+            "long": {"analysis": 2600, "plan": 4400, "report": 5200},
+            "extreme": {"analysis": 3400, "plan": 5800, "report": 6800},
         }
-        return budgets.get(depth, budgets["long"]).get(purpose, 3000)
+        return budgets.get(self.state.report_depth, budgets["long"]).get(purpose, 3000)
 
-    def start_governance_cycle(self) -> None:
-        self.state.phase = PHASE_PLANNING
+    def run_governance_cycle(self) -> None:
+        self.state.internal_busy = True
         self.console.print(Rule("[bold magenta]Internal Planning & Audit Started"))
 
-        for round_no in range(1, self.state.max_planning_rounds + 1):
-            self.console.print(Rule(f"[bold cyan]Architecture Round {round_no}"))
+        try:
+            for round_no in range(1, self.state.max_planning_rounds + 1):
+                self.console.print(Rule(f"[bold cyan]Architecture Round {round_no}"))
 
-            specialist_reviews = self.run_specialist_reasoners(round_no)
-            plan = self.architect_generate(round_no, specialist_reviews)
-            audit = self.auditor_validate(round_no, plan, specialist_reviews)
+                specialist_reviews = self.run_specialist_reasoners(round_no)
+                plan = self.architect_generate(round_no, specialist_reviews)
+                audit = self.auditor_validate(round_no, plan, specialist_reviews)
 
-            self.state.specialist_history.append({
-                "round": round_no,
-                "reviews": specialist_reviews,
-                "timestamp": now_iso(),
-            })
-            self.state.audit_history.append(deepcopy(audit))
-            self.state.current_plan = deepcopy(plan)
-            self.state.current_audit = deepcopy(audit)
-
-            write_json(Path(self.state.artifacts_dir) / f"specialists_round_{round_no}.json", specialist_reviews)
-            write_json(Path(self.state.artifacts_dir) / f"plan_round_{round_no}.json", plan)
-            write_json(Path(self.state.artifacts_dir) / f"audit_round_{round_no}.json", audit)
-
-            self.merge_issue_ledger(audit)
-            self.update_best(plan, audit)
-            self.show_round_tables(round_no, plan, audit)
-
-            unresolved_conflicts = [
-                c for c in ensure_list(audit.get("requirement_conflicts"))
-                if isinstance(c, dict) and c.get("issue_id") not in self.state.accepted_exceptions
-            ]
-            if unresolved_conflicts:
-                self.state.pending_change_requests = unresolved_conflicts
-                self.state.phase = PHASE_CHANGE_REVIEW
-                self.present_change_requests()
-                return
-
-            if audit["passed"]:
-                self.state.phase = PHASE_APPROVED
-                self.generate_report_and_export()
-                self.panel(
-                    "APPROVED",
-                    f"Validated plan approved with score {audit['score']:.2f}\nPDF: {self.state.final_pdf_path}",
-                    "green",
+                self.state.specialist_history.append(
+                    {"round": round_no, "reviews": specialist_reviews, "timestamp": now_iso()}
                 )
-                self.state.phase = PHASE_DEVELOPMENT
-                self.present_development_handoff()
-                return
+                self.state.audit_history.append(deepcopy(audit))
+                self.state.current_plan = deepcopy(plan)
+                self.state.current_audit = deepcopy(audit)
 
+                write_json(Path(self.state.artifacts_dir) / f"specialists_round_{round_no}.json", specialist_reviews)
+                write_json(Path(self.state.artifacts_dir) / f"plan_round_{round_no}.json", plan)
+                write_json(Path(self.state.artifacts_dir) / f"audit_round_{round_no}.json", audit)
+
+                self.update_issue_ledger(audit)
+                self.update_revision_memory(plan, audit)
+                self.update_best_artifact(plan, audit)
+
+                self.show_round_tables(round_no, plan, audit)
+
+                if audit["passed"]:
+                    self.state.phase = PHASE_APPROVED
+                    self.generate_report_and_export()
+                    self.panel(
+                        "APPROVED",
+                        f"Validated plan approved with score {audit['score']:.2f}\n\nPDF: {self.state.final_pdf_path}",
+                        "green",
+                    )
+                    self.state.phase = PHASE_DEVELOPMENT
+                    self.present_development_handoff()
+                    return
+
+                self.panel(
+                    "Revision In Progress",
+                    "The planning swarm is revising the architecture internally based on cumulative audit feedback.",
+                    "yellow",
+                )
+
+            self.state.phase = PHASE_REQUIREMENTS
             self.panel(
-                "Revision In Progress",
-                "The planning swarm is revising the architecture internally based on auditor feedback.",
-                "yellow",
+                "Planning",
+                "The architecture did not reach approval within the current round limit. Refine the requirements, increase rounds, or lower the threshold.",
+                "red",
             )
-
-        self.state.phase = PHASE_REQUIREMENTS
-        self.panel(
-            "Planning",
-            "The architecture did not reach approval within the current round limit. Refine requirements, increase rounds, or lower the threshold.",
-            "red",
-        )
+        finally:
+            self.state.internal_busy = False
 
     def run_specialist_reasoners(self, round_no: int) -> Dict[str, Any]:
         base_payload = {
             "round": round_no,
             "frozen_requirement_contract": self.frozen_contract(),
+            "requirements": self.state.requirements,
             "issue_ledger": self.state.issue_ledger,
-            "accepted_exceptions": {k: asdict(v) for k, v in self.state.accepted_exceptions.items()},
-            "previous_audits": self.state.audit_history[-2:],
+            "revision_memory": self.state.revision_memory,
+            "previous_audits": self.state.audit_history[-3:],
             "best_audit": self.state.best_audit,
         }
 
         product = self.llm.complete_json(
-            PRODUCT_REASONER_SYSTEM,
+            GLOBAL_SYSTEM + "\n" + AGENT_PROMPTS["ProductReasoner"],
             base_payload,
             max_tokens=self.token_budget("analysis"),
             reasoning=True,
         )
-        self.thinking("ProductReasoner", product.get("summary", "Product review complete."), "handoff to swarm")
+        if self.state.debug_mode:
+            self.thinking("ProductReasoner", product.get("summary", "Product review complete."), "handoff to swarm")
 
-        architect_reason = self.llm.complete_json(
-            ARCHITECT_REASONER_SYSTEM,
+        architect = self.llm.complete_json(
+            GLOBAL_SYSTEM + "\n" + AGENT_PROMPTS["ArchitectReasoner"],
             {**base_payload, "product_review": product},
             max_tokens=self.token_budget("analysis"),
             reasoning=True,
         )
-        self.thinking("ArchitectReasoner", architect_reason.get("summary", "Architecture review complete."), "handoff to swarm")
+        if self.state.debug_mode:
+            self.thinking("ArchitectReasoner", architect.get("summary", "Architecture review complete."), "handoff to swarm")
 
         security = self.llm.complete_json(
-            SECURITY_REASONER_SYSTEM,
-            {**base_payload, "product_review": product, "architect_review": architect_reason},
+            GLOBAL_SYSTEM + "\n" + AGENT_PROMPTS["SecurityReasoner"],
+            {**base_payload, "product_review": product, "architect_review": architect},
             max_tokens=self.token_budget("analysis"),
             reasoning=True,
         )
-        self.thinking("SecurityReasoner", security.get("summary", "Security review complete."), "handoff to swarm")
+        if self.state.debug_mode:
+            self.thinking("SecurityReasoner", security.get("summary", "Security review complete."), "handoff to swarm")
 
         constraints = self.llm.complete_json(
-            CONSTRAINT_REASONER_SYSTEM,
-            {**base_payload, "product_review": product, "architect_review": architect_reason, "security_review": security},
-            max_tokens=self.token_budget("analysis"),
-            reasoning=True,
-        )
-        self.thinking("ConstraintReasoner", constraints.get("summary", "Constraint review complete."), "handoff to swarm")
-
-        critic = self.llm.complete_json(
-            CRITIC_REASONER_SYSTEM,
+            GLOBAL_SYSTEM + "\n" + AGENT_PROMPTS["ConstraintReasoner"],
             {
                 **base_payload,
                 "product_review": product,
-                "architect_review": architect_reason,
+                "architect_review": architect,
+                "security_review": security,
+            },
+            max_tokens=self.token_budget("analysis"),
+            reasoning=True,
+        )
+        if self.state.debug_mode:
+            self.thinking("ConstraintReasoner", constraints.get("summary", "Constraint review complete."), "handoff to swarm")
+
+        critic = self.llm.complete_json(
+            GLOBAL_SYSTEM + "\n" + AGENT_PROMPTS["CriticReasoner"],
+            {
+                **base_payload,
+                "product_review": product,
+                "architect_review": architect,
                 "security_review": security,
                 "constraint_review": constraints,
             },
             max_tokens=self.token_budget("analysis"),
             reasoning=True,
         )
-        self.thinking("CriticReasoner", critic.get("summary", "Critic review complete."), "guide ArchitectAgent")
+        if self.state.debug_mode:
+            self.thinking("CriticReasoner", critic.get("summary", "Critic review complete."), "guide ArchitectAgent")
 
         return {
             "product": product,
-            "architect_reasoner": architect_reason,
+            "architect_reasoner": architect,
             "security": security,
             "constraints": constraints,
             "critic": critic,
@@ -1228,21 +1531,27 @@ class GovernanceTerminal:
         payload = {
             "round": round_no,
             "frozen_requirement_contract": self.frozen_contract(),
+            "requirements": self.state.requirements,
             "specialist_reviews": specialist_reviews,
             "issue_ledger": self.state.issue_ledger,
+            "revision_memory": self.state.revision_memory,
             "accepted_exceptions": {k: asdict(v) for k, v in self.state.accepted_exceptions.items()},
             "previous_audits": self.state.audit_history[-3:],
             "previous_plan": self.state.current_plan,
             "best_plan": self.state.best_plan,
         }
+
         result = self.llm.complete_json(
-            ARCHITECT_GENERATOR_SYSTEM,
+            GLOBAL_SYSTEM + "\n" + AGENT_PROMPTS["ArchitectAgent"],
             payload,
             max_tokens=self.token_budget("plan"),
             reasoning=True,
         )
-        summary = result.get("executive_summary") or "Architecture draft generated."
-        self.thinking("ArchitectAgent", summary, "submit to AuditorAgent")
+
+        summary = result.get("executive_summary") or result.get("thinking_summary") or "Architecture draft generated."
+        if self.state.debug_mode:
+            self.thinking("ArchitectAgent", summary, "submit to AuditorAgent")
+
         return self.normalize_plan(result, specialist_reviews)
 
     def normalize_plan(self, raw: Dict[str, Any], specialist_reviews: Dict[str, Any]) -> Dict[str, Any]:
@@ -1252,8 +1561,13 @@ class GovernanceTerminal:
             item = contract.get(field, {})
             return str(item.get("value") or fallback)
 
+        title = str(raw.get("title") or "Validated Architecture Plan")
+        title = title.replace("Round 1", "").replace("Round 2", "").replace("Round 3", "").replace("Round 4", "").strip(" -")
+        if not title:
+            title = "Validated Architecture Plan"
+
         plan = {
-            "title": str(raw.get("title") or "Validated Architecture Plan"),
+            "title": title,
             "executive_summary": raw.get("executive_summary") or "Detailed validated architecture plan generated from the confirmed requirement contract.",
             "architecture_overview": raw.get("architecture_overview") or {
                 "system_style": "Modular cloud-native application",
@@ -1271,44 +1585,33 @@ class GovernanceTerminal:
             "functional_feature_map": raw.get("functional_feature_map") or {
                 "mvp_scope": c("mvp_scope"),
                 "expanded_scope": c("feature_scope"),
-                "future_scope": c("future_scope", "Additional advanced features after MVP"),
+                "future_scope": c("future_scope", "Additional advanced features after MVP stabilization"),
             },
-            "system_components": raw.get("system_components") or {
-                "components": [
-                    {"name": "Web Client", "responsibility": "Interactive chat UI, auth UI, settings, and thread management"},
-                    {"name": "API Gateway", "responsibility": "Authentication, validation, routing, and rate limiting"},
-                    {"name": "Conversation Service", "responsibility": "Session, prompt orchestration, and memory handling"},
-                    {"name": "LLM Adapter", "responsibility": "Model calls, retries, safety checks, and token accounting"},
-                    {"name": "Data Layer", "responsibility": "User, session, message, feedback, and usage persistence"},
-                    {"name": "Observability Layer", "responsibility": "Logs, metrics, traces, alarms, and auditing"},
-                ]
-            },
+            "system_components": raw.get("system_components") or [
+                {"name": "Web Client", "responsibility": "Interactive UI, authentication UI, settings, and feature access"},
+                {"name": "API Gateway", "responsibility": "Authentication, validation, routing, throttling, and request governance"},
+                {"name": "Application Service Layer", "responsibility": "Business logic, orchestration, and use-case execution"},
+                {"name": "LLM Adapter", "responsibility": "Provider abstraction, retries, safety checks, and token accounting"},
+                {"name": "Data Layer", "responsibility": "Persistence for users, sessions, messages, metadata, and audit events"},
+                {"name": "Observability Layer", "responsibility": "Logs, metrics, traces, alerts, and audit monitoring"},
+            ],
             "workflows": raw.get("workflows") or {
                 "primary_flows": [
-                    "User registration/login or limited guest access",
-                    "Session creation and chat submission",
-                    "Prompt assembly, safety checks, and LLM inference",
-                    "Streaming response delivery and message persistence",
-                    "Monitoring, retention, and administrative oversight",
+                    "User authentication or approved guest access",
+                    "Feature request submission and validation",
+                    "Prompt or request assembly with policy checks",
+                    "Core service processing and optional LLM inference",
+                    "Persistence, monitoring, and operational oversight",
                 ]
             },
             "data_model": raw.get("data_model") or {
-                "entities": ["User", "GuestQuota", "ChatSession", "Message", "Attachment", "Feedback", "UsageEvent", "AuditEvent"],
+                "entities": ["User", "Session", "Message", "FeatureArtifact", "Feedback", "UsageEvent", "AuditEvent"],
                 "storage_strategy": c("data_platform"),
                 "retention_policy": c("privacy_retention_policy"),
             },
             "api_design": raw.get("api_design") or {
-                "style": "REST plus streaming endpoints",
-                "endpoints": [
-                    "/api/auth/signup",
-                    "/api/auth/login",
-                    "/api/auth/google",
-                    "/api/chat/sessions",
-                    "/api/chat/messages",
-                    "/api/chat/stream",
-                    "/api/user/profile",
-                    "/api/feedback",
-                ],
+                "style": "REST plus streaming where needed",
+                "endpoints": ["/api/auth", "/api/users", "/api/sessions", "/api/messages", "/api/stream", "/api/feedback"],
             },
             "security_and_compliance": raw.get("security_and_compliance") or {
                 "baseline": c("security_baseline"),
@@ -1317,31 +1620,29 @@ class GovernanceTerminal:
             },
             "deployment_and_operations": raw.get("deployment_and_operations") or {
                 "hosting_target": c("hosting_target"),
-                "observability_baseline": c("observability_baseline", "Logs, metrics, traces, alerts"),
+                "observability_baseline": c("observability_baseline"),
                 "ops_model": "Phased deployment with monitoring, rollback, and cost tracking",
             },
             "observability": raw.get("observability") or {
-                "baseline": c("observability_baseline", "Centralized logs, metrics, tracing, alerting"),
+                "baseline": c("observability_baseline"),
             },
             "cost_and_scaling": raw.get("cost_and_scaling") or {
-                "cost_position": "Usage-driven due to external LLM calls",
-                "scaling_direction": "Horizontal application scaling with managed services, caching, and quotas",
+                "cost_position": "Usage-driven, especially if external model APIs are used",
+                "scaling_direction": "Horizontal application scaling with managed services, quotas, and caching",
             },
             "phased_implementation": raw.get("phased_implementation") or {
                 "phase_1": c("mvp_scope"),
                 "phase_2": c("future_scope", "Expanded features after MVP stabilization"),
             },
-            "development_guidelines": raw.get("development_guidelines") or {
-                "principles": [
-                    "Keep service boundaries explicit",
-                    "Automate tests early",
-                    "Never expose model secrets in the frontend",
-                    "Design data contracts before implementation",
-                ],
-            },
+            "development_guidelines": raw.get("development_guidelines") or [
+                "Keep service boundaries explicit",
+                "Design data contracts before implementation",
+                "Automate tests early",
+                "Never expose model secrets in the frontend",
+            ],
             "risks_and_tradeoffs": raw.get("risks_and_tradeoffs") or {
                 "risks": ["API cost growth", "Public abuse pressure", "Latency variability", "Feature complexity"],
-                "tradeoffs": ["Faster MVP simplicity versus deeper governance and multimodal complexity"],
+                "tradeoffs": "A faster MVP may reduce governance depth, while stronger governance increases implementation overhead.",
             },
             "open_questions_resolved": raw.get("open_questions_resolved") or specialist_reviews.get("critic", {}),
             "generated_at": now_iso(),
@@ -1352,145 +1653,167 @@ class GovernanceTerminal:
         payload = {
             "round": round_no,
             "frozen_requirement_contract": self.frozen_contract(),
+            "requirements": self.state.requirements,
             "accepted_exceptions": {k: asdict(v) for k, v in self.state.accepted_exceptions.items()},
             "issue_ledger": self.state.issue_ledger,
+            "revision_memory": self.state.revision_memory,
             "specialist_reviews": specialist_reviews,
             "plan": plan,
             "pass_threshold": self.state.pass_threshold,
+            "best_audit": self.state.best_audit,
         }
+
         result = self.llm.complete_json(
-            AUDITOR_SYSTEM,
+            GLOBAL_SYSTEM + "\n" + AGENT_PROMPTS["AuditorAgent"],
             payload,
             max_tokens=self.token_budget("analysis"),
             reasoning=True,
         )
-        self.thinking("AuditorAgent", result.get("summary", "Audit complete."), "approve or request revision")
 
-        score = float(result.get("score", 6.5))
-        score = max(0.0, min(10.0, score))
+        if self.state.debug_mode:
+            self.thinking("AuditorAgent", result.get("summary", "Audit complete."), "approve or request revision")
+
+        score = self.normalize_score(result.get("score", 6.5))
+        strengths = ensure_list_of_str(result.get("strengths"))
+        concerns = ensure_list_of_str(result.get("concerns"))
         blocking_issues = ensure_list_of_str(result.get("blocking_issues"))
         recommendations = ensure_list_of_str(result.get("recommendations"))
-        conflicts = [c for c in ensure_list(result.get("requirement_conflicts")) if isinstance(c, dict)]
-        unresolved_conflicts = [c for c in conflicts if c.get("issue_id") not in self.state.accepted_exceptions]
+        issue_updates = ensure_list(result.get("issue_updates"))
+        requirement_conflicts = [
+            item for item in ensure_list(result.get("requirement_conflicts"))
+            if isinstance(item, dict)
+        ]
 
-        passed = score >= self.state.pass_threshold and len(blocking_issues) == 0 and len(unresolved_conflicts) == 0
+        unresolved_critical = any(
+            str(item.get("severity", "")).lower() == "critical"
+            and str(item.get("status", "")).lower() != "resolved"
+            for item in issue_updates if isinstance(item, dict)
+        )
+
+        raw_passed = bool(result.get("passed", False))
+        passed = raw_passed and score >= self.state.pass_threshold and not unresolved_critical
+
+        previous_best = float(self.state.best_audit.get("score", 0.0)) if self.state.best_audit else 0.0
+        if previous_best > 0 and score + 0.7 < previous_best:
+            recommendations.append(
+                "Score regression detected relative to the prior best result; retain the stronger artifact unless a new severe flaw clearly justifies the drop."
+            )
 
         return {
             "round": round_no,
             "score": score,
             "passed": passed,
-            "summary": str(result.get("summary", "Audit completed.")),
-            "strengths": ensure_list_of_str(result.get("strengths")),
-            "concerns": ensure_list_of_str(result.get("concerns")),
+            "summary": str(result.get("summary") or "Audit completed."),
+            "strengths": strengths,
+            "concerns": concerns,
             "blocking_issues": blocking_issues,
-            "recommendations": recommendations,
-            "issue_updates": ensure_list(result.get("issue_updates")),
-            "requirement_conflicts": conflicts,
+            "recommendations": unique_strs(recommendations),
+            "issue_updates": issue_updates,
+            "requirement_conflicts": requirement_conflicts,
             "timestamp": now_iso(),
             "raw": result,
         }
 
-    def merge_issue_ledger(self, audit: Dict[str, Any]) -> None:
+    def normalize_score(self, value: Any) -> float:
+        try:
+            score = float(value)
+        except Exception:
+            score = 6.5
+        return max(0.0, min(10.0, score))
+
+    def update_issue_ledger(self, audit: Dict[str, Any]) -> None:
         for item in ensure_list(audit.get("issue_updates")):
             if not isinstance(item, dict):
                 continue
             issue_id = str(item.get("id") or item.get("issue_id") or "").strip()
             if not issue_id:
                 continue
+
             existing = self.state.issue_ledger.get(issue_id, {})
+            history = ensure_list(existing.get("history"))
+            history.append({
+                "round": audit.get("round"),
+                "status": item.get("status", ""),
+                "severity": item.get("severity", ""),
+                "detail": item.get("detail", ""),
+                "timestamp": now_iso(),
+            })
+
             self.state.issue_ledger[issue_id] = {
                 "id": issue_id,
                 "title": str(item.get("title") or existing.get("title") or issue_id),
-                "severity": str(item.get("severity") or existing.get("severity") or "medium"),
-                "status": str(item.get("status") or existing.get("status") or "open"),
+                "severity": str(item.get("severity") or existing.get("severity") or "medium").lower(),
+                "status": str(item.get("status") or existing.get("status") or "unresolved").lower(),
                 "detail": str(item.get("detail") or existing.get("detail") or ""),
-                "history": existing.get("history", []) + [{
-                    "round": audit["round"],
-                    "status": str(item.get("status") or ""),
-                    "detail": str(item.get("detail") or ""),
-                }],
+                "last_seen_round": audit.get("round"),
+                "history": history,
                 "updated_at": now_iso(),
             }
 
-    def update_best(self, plan: Dict[str, Any], audit: Dict[str, Any]) -> None:
-        if not self.state.best_audit:
-            self.state.best_plan = deepcopy(plan)
-            self.state.best_audit = deepcopy(audit)
-            return
-        prev_score = float(self.state.best_audit.get("score", 0.0))
-        new_score = float(audit.get("score", 0.0))
-        prev_blockers = len(self.state.best_audit.get("blocking_issues", []))
-        new_blockers = len(audit.get("blocking_issues", []))
-        if new_score > prev_score or (new_score == prev_score and new_blockers < prev_blockers):
+    def update_revision_memory(self, plan: Dict[str, Any], audit: Dict[str, Any]) -> None:
+        resolved: List[str] = []
+        unresolved: List[str] = []
+        for issue_id, issue in self.state.issue_ledger.items():
+            if str(issue.get("status", "")).lower() == "resolved":
+                resolved.append(issue_id)
+            else:
+                unresolved.append(issue_id)
+
+        self.state.revision_memory = {
+            "last_round": audit.get("round"),
+            "last_score": audit.get("score"),
+            "resolved_issue_ids": sorted(resolved),
+            "unresolved_issue_ids": sorted(unresolved),
+            "latest_recommendations": audit.get("recommendations", []),
+            "latest_plan_title": plan.get("title"),
+        }
+
+    def update_best_artifact(self, plan: Dict[str, Any], audit: Dict[str, Any]) -> None:
+        candidate_score = float(audit.get("score", 0.0))
+        current_best = float(self.state.best_audit.get("score", 0.0)) if self.state.best_audit else 0.0
+
+        better = False
+        if not self.state.best_plan:
+            better = True
+        elif candidate_score > current_best:
+            better = True
+        elif candidate_score == current_best:
+            current_best_blocking = len(self.state.best_audit.get("blocking_issues", [])) if self.state.best_audit else 999
+            candidate_blocking = len(audit.get("blocking_issues", []))
+            if candidate_blocking < current_best_blocking:
+                better = True
+
+        if better:
             self.state.best_plan = deepcopy(plan)
             self.state.best_audit = deepcopy(audit)
 
     def show_round_tables(self, round_no: int, plan: Dict[str, Any], audit: Dict[str, Any]) -> None:
-        pt = Table(title=f"Architecture Draft · Round {round_no}", box=box.SIMPLE_HEAVY)
+        pt = Table(title=f"Architecture Draft Round {round_no}", box=box.SIMPLE_HEAVY)
         pt.add_column("Field", style="cyan", width=22)
         pt.add_column("Value")
-        pt.add_row("Title", plan.get("title", ""))
-        pt.add_row("Summary", as_text(plan.get("executive_summary", ""), 320))
-        pt.add_row("Top-level sections", ", ".join([k for k in plan.keys() if k not in {"title", "executive_summary", "generated_at"}]))
+        pt.add_row("Title", str(plan.get("title")))
+        pt.add_row("Summary", as_text(plan.get("executive_summary"), 320))
+        pt.add_row(
+            "Top-level sections",
+            ", ".join(k for k in plan.keys() if k not in {"title", "executive_summary", "generated_at"}),
+        )
         self.console.print(pt)
 
-        at = Table(title=f"Audit Result · Round {round_no}", box=box.SIMPLE_HEAVY)
+        at = Table(title=f"Audit Result Round {round_no}", box=box.SIMPLE_HEAVY)
         at.add_column("Metric", style="magenta", width=20)
         at.add_column("Value")
         at.add_row("Score", f"{audit['score']:.2f}")
         at.add_row("Passed", str(audit["passed"]))
         at.add_row("Threshold", f"{self.state.pass_threshold:.2f}")
-        at.add_row("Summary", as_text(audit["summary"], 320))
+        at.add_row("Summary", as_text(audit.get("summary"), 320))
         at.add_row("Recommendations", str(len(audit.get("recommendations", []))))
         self.console.print(at)
 
-        if audit.get("blocking_issues"):
-            self.panel("Blocking Issues", "\n".join(f"- {x}" for x in audit["blocking_issues"]), "red")
+        if self.state.debug_mode and audit.get("blocking_issues"):
+            self.panel("Internal Blocking Issues", "\n".join(f"- {x}" for x in audit["blocking_issues"]), "red")
 
     # -----------------------------------------------------
-    # Change review
-    # -----------------------------------------------------
-
-    def present_change_requests(self) -> None:
-        lines = ["The auditor found requirement-level conflicts that need your decision:"]
-        for item in self.state.pending_change_requests:
-            lines.append("")
-            lines.append(f"{item.get('issue_id')}")
-            lines.append(f"Field: {item.get('field')}")
-            lines.append(f"Current: {item.get('current_value')}")
-            lines.append(f"Suggested: {item.get('proposed_value')}")
-            lines.append(f"Reason: {item.get('exact_reason')}")
-            lines.append(f"Severity: {item.get('severity')}")
-        lines.append("")
-        lines.append("Reply yes to accept the suggested change, or no to keep your original choice as an accepted exception.")
-        self.panel("Change Review", "\n".join(lines), "cyan")
-
-    def handle_change_review(self, user_text: str) -> None:
-        if positive_reply(user_text):
-            for item in self.state.pending_change_requests:
-                field_name = item.get("field")
-                proposed_value = item.get("proposed_value")
-                reason = str(item.get("exact_reason", "Auditor-guided correction"))
-                if field_name in self.state.requirement_contract and proposed_value:
-                    self.set_field(field_name, str(proposed_value), "auditor_change_approved", True, reason)
-            self.panel("Change Review", "Approved — the requirement contract has been updated with the suggested changes.", "green")
-        else:
-            for item in self.state.pending_change_requests:
-                issue_id = str(item.get("issue_id"))
-                self.state.accepted_exceptions[issue_id] = AcceptedException(
-                    issue_id=issue_id,
-                    reason=str(item.get("exact_reason", "User accepted this trade-off.")),
-                    user_message=user_text,
-                )
-                if issue_id in self.state.issue_ledger:
-                    self.state.issue_ledger[issue_id]["status"] = "accepted_exception"
-            self.panel("Change Review", "Understood — your original choices have been kept and recorded as accepted exceptions.", "green")
-
-        self.state.pending_change_requests = []
-        self.start_governance_cycle()
-
-    # -----------------------------------------------------
-    # Final package generation
+    # Final package
     # -----------------------------------------------------
 
     def generate_report_and_export(self) -> None:
@@ -1503,11 +1826,12 @@ class GovernanceTerminal:
 
     def build_final_package(self, plan: Dict[str, Any], audit: Dict[str, Any]) -> Dict[str, Any]:
         execution = self.llm.complete_json(
-            EXECUTION_PLANNER_SYSTEM,
+            GLOBAL_SYSTEM + "\n" + AGENT_PROMPTS["ExecutionPlannerAgent"],
             {
                 "plan": plan,
                 "audit": audit,
                 "locked_contract": self.frozen_contract(),
+                "requirements": self.state.requirements,
                 "specialist_history": self.state.specialist_history,
             },
             max_tokens=self.token_budget("report"),
@@ -1515,7 +1839,7 @@ class GovernanceTerminal:
         )
 
         tutor = self.llm.complete_json(
-            TUTOR_SYSTEM,
+            GLOBAL_SYSTEM + "\n" + AGENT_PROMPTS["TutorAgent"],
             {
                 "plan": plan,
                 "audit": audit,
@@ -1527,7 +1851,7 @@ class GovernanceTerminal:
         )
 
         qa = self.llm.complete_json(
-            QA_SYSTEM,
+            GLOBAL_SYSTEM + "\n" + AGENT_PROMPTS["QAEngineerAgent"],
             {
                 "plan": plan,
                 "audit": audit,
@@ -1539,7 +1863,7 @@ class GovernanceTerminal:
         )
 
         narrative = self.llm.complete_json(
-            NARRATIVE_SYSTEM,
+            GLOBAL_SYSTEM + "\n" + AGENT_PROMPTS["NarrativeWriterAgent"],
             {
                 "plan": plan,
                 "audit": audit,
@@ -1547,35 +1871,18 @@ class GovernanceTerminal:
                 "tutor": tutor,
                 "qa": qa,
                 "locked_contract": self.frozen_contract(),
+                "requirements": self.state.requirements,
             },
             max_tokens=self.token_budget("report"),
             reasoning=True,
         )
 
-        diagrams = self.llm.complete_json(
-            DIAGRAM_SYSTEM,
-            {
-                "plan": plan,
-                "audit": audit,
-                "execution": execution,
-                "locked_contract": self.frozen_contract(),
-            },
-            max_tokens=3000,
-            reasoning=True,
-        )
-
-        development = self.llm.complete_json(
-            DEVELOPMENT_SUMMARY_SYSTEM,
-            {
-                "plan": plan,
-                "audit": audit,
-                "execution": execution,
-                "tutor": tutor,
-                "qa": qa,
-            },
-            max_tokens=self.token_budget("report"),
-            reasoning=True,
-        )
+        development = {
+            "development_summary": "The project now moves into implementation using the approved validated architecture package.",
+            "first_week_plan": execution.get("implementation_phases", [])[:1] if isinstance(execution.get("implementation_phases"), list) else [],
+            "coding_sequence": tutor.get("coding_order", []),
+            "practical_starting_point": "Start by scaffolding the repository, baseline config, auth flow, and core data contracts before feature implementation.",
+        }
 
         package = self.normalize_report_package(
             {
@@ -1585,14 +1892,11 @@ class GovernanceTerminal:
                 "execution": execution,
                 "tutor": tutor,
                 "qa": qa,
-                "diagrams": diagrams.get("diagrams") or {},
                 "development": development,
             },
             plan,
             audit,
         )
-
-        package["diagram_files"] = self.render_diagrams(package["diagrams"])
         self.state.development_package = development
         return package
 
@@ -1606,22 +1910,22 @@ class GovernanceTerminal:
         qa = package.get("qa") or {}
 
         defaults = {
-            "overview": obj_to_text(plan.get("architecture_overview")),
+            "overview": as_text(plan.get("architecture_overview"), 50000),
             "requirement_interpretation": self.contract_summary_text(),
-            "stack_rationale": obj_to_text(plan.get("technology_stack")),
-            "architecture": obj_to_text(plan.get("architecture_overview")),
-            "component_design": obj_to_text(plan.get("system_components")),
-            "workflow_design": obj_to_text(plan.get("workflows")),
-            "data_model": obj_to_text(plan.get("data_model")),
-            "api_design": obj_to_text(plan.get("api_design")),
-            "security": obj_to_text(plan.get("security_and_compliance")),
-            "deployment": obj_to_text(plan.get("deployment_and_operations")),
-            "observability": obj_to_text(plan.get("observability")),
-            "cost_and_scaling": obj_to_text(plan.get("cost_and_scaling")),
-            "phased_implementation": obj_to_text(execution),
-            "development_playbook": obj_to_text(tutor),
-            "testing_validation": obj_to_text(qa),
-            "risks_tradeoffs": obj_to_text(plan.get("risks_and_tradeoffs")),
+            "stack_rationale": as_text(plan.get("technology_stack"), 50000),
+            "architecture": as_text(plan.get("architecture_overview"), 50000),
+            "component_design": as_text(plan.get("system_components"), 50000),
+            "workflow_design": as_text(plan.get("workflows"), 50000),
+            "data_model": as_text(plan.get("data_model"), 50000),
+            "api_design": as_text(plan.get("api_design"), 50000),
+            "security": as_text(plan.get("security_and_compliance"), 50000),
+            "deployment": as_text(plan.get("deployment_and_operations"), 50000),
+            "observability": as_text(plan.get("observability"), 50000),
+            "cost_and_scaling": as_text(plan.get("cost_and_scaling"), 50000),
+            "phased_implementation": as_text(execution, 50000),
+            "development_playbook": as_text(tutor, 50000),
+            "testing_validation": as_text(qa, 50000),
+            "risks_tradeoffs": as_text(plan.get("risks_and_tradeoffs"), 50000),
             "final_notes": "This validated package is ready to guide implementation, testing, and phased rollout.",
         }
 
@@ -1631,222 +1935,19 @@ class GovernanceTerminal:
 
         package["sections"] = sections
         package["title"] = str(package.get("title") or "Validated Architecture Plan")
-        package["executive_summary"] = package.get("executive_summary") or "Validated architecture report."
+        package["executive_summary"] = str(package.get("executive_summary") or "Validated architecture report.")
         return package
 
-    def present_development_handoff(self) -> None:
-        dev = self.state.development_package or {}
-        body = (
-            as_text(dev.get("development_summary", "The project now moves into the development phase."), 2000)
-            + "\n\n"
-            + "A full tutor-style implementation guide, QA strategy, execution roadmap, and diagrams have been added to the approved PDF."
-        )
-        self.panel("Development Phase", body, "cyan")
+    def contract_summary_text(self) -> str:
+        lines = ["Confirmed requirement contract:"]
+        for k, v in self.state.requirement_contract.items():
+            if v.value.strip():
+                suffix = "confirmed" if v.confirmed else "pending"
+                lines.append(f"- {k}: {v.value} ({suffix})")
+        return "\n".join(lines)
 
     # -----------------------------------------------------
-    # Diagram rendering
-    # -----------------------------------------------------
-
-    def render_diagrams(self, diagrams: Dict[str, Any]) -> Dict[str, str]:
-        out: Dict[str, str] = {}
-        for name, spec in diagrams.items():
-            file_path = Path(self.state.artifacts_dir) / f"{slugify(name)}.png"
-            try:
-                if Digraph is not None:
-                    if name == "data_er":
-                        self.render_er_graphviz(spec, file_path, name)
-                    else:
-                        self.render_graphviz(spec, file_path, name)
-                else:
-                    self.render_pil_diagram(spec, file_path, name)
-            except Exception:
-                self.render_pil_diagram(spec, file_path, name)
-            out[name] = str(file_path.resolve())
-        return out
-
-    def render_graphviz(self, spec: Dict[str, Any], out_path: Path, title: str) -> None:
-        dot = Digraph(comment=title, format="png")
-        dot.attr(rankdir="LR", bgcolor="white", fontsize="11", fontname="Helvetica")
-        dot.attr("node", shape="box", style="rounded,filled", fillcolor="#EFF6FF", color="#2563EB", fontname="Helvetica")
-        dot.attr("edge", color="#475569", fontname="Helvetica")
-
-        nodes = ensure_list(spec.get("nodes"))
-        edges = ensure_list(spec.get("edges"))
-
-        seen = set()
-        for node in nodes:
-            if isinstance(node, dict):
-                node_id = str(node.get("id") or node.get("name") or uuid.uuid4().hex[:6])
-                label = str(node.get("label") or node.get("name") or node_id)
-            else:
-                node_id = str(node)
-                label = node_id
-            if node_id in seen:
-                continue
-            seen.add(node_id)
-            dot.node(node_id, label)
-
-        for edge in edges:
-            if isinstance(edge, dict):
-                src = str(edge.get("from") or edge.get("source") or "")
-                dst = str(edge.get("to") or edge.get("target") or "")
-                lbl = str(edge.get("label") or "")
-                if src and dst:
-                    dot.edge(src, dst, lbl)
-            elif isinstance(edge, list) and len(edge) >= 2:
-                dot.edge(str(edge[0]), str(edge[1]))
-
-        rendered = dot.render(filename=out_path.with_suffix("").as_posix(), cleanup=True)
-        src = Path(rendered)
-        if src.resolve() != out_path.resolve():
-            out_path.write_bytes(src.read_bytes())
-
-    def render_er_graphviz(self, spec: Dict[str, Any], out_path: Path, title: str) -> None:
-        dot = Digraph(comment=title, format="png")
-        dot.attr(rankdir="LR", bgcolor="white", fontname="Helvetica")
-
-        entities = ensure_list(spec.get("entities"))
-        relationships = ensure_list(spec.get("relationships"))
-
-        for entity in entities:
-            if isinstance(entity, dict):
-                name = str(entity.get("name") or "Entity")
-                fields = ensure_list_of_str(entity.get("fields"))
-            else:
-                name = str(entity)
-                fields = []
-            label = "<<TABLE BORDER='1' CELLBORDER='0' CELLSPACING='0' CELLPADDING='5'>"
-            label += f"<TR><TD BGCOLOR='#DBEAFE'><B>{name}</B></TD></TR>"
-            for f in fields:
-                label += f"<TR><TD ALIGN='LEFT'>{f}</TD></TR>"
-            label += "</TABLE>>"
-            dot.node(name, label=label, shape="plain")
-
-        for rel in relationships:
-            if isinstance(rel, dict):
-                a = str(rel.get("from") or rel.get("left") or "")
-                b = str(rel.get("to") or rel.get("right") or "")
-                lbl = str(rel.get("label") or rel.get("cardinality") or "")
-                if a and b:
-                    dot.edge(a, b, label=lbl)
-
-        rendered = dot.render(filename=out_path.with_suffix("").as_posix(), cleanup=True)
-        src = Path(rendered)
-        if src.resolve() != out_path.resolve():
-            out_path.write_bytes(src.read_bytes())
-
-    def render_pil_diagram(self, spec: Dict[str, Any], out_path: Path, title: str) -> None:
-        if PILImage is None or ImageDraw is None:
-            out_path.write_bytes(b"")
-            return
-
-        width, height = 1800, 1100
-        img = PILImage.new("RGB", (width, height), "white")
-        draw = ImageDraw.Draw(img)
-
-        try:
-            font_title = ImageFont.load_default()
-            font_body = ImageFont.load_default()
-        except Exception:
-            font_title = None
-            font_body = None
-
-        draw.rectangle((20, 20, width - 20, height - 20), outline="#1E3A8A", width=3)
-        draw.text((40, 30), title, fill="black", font=font_title)
-
-        if title == "data_er":
-            entities = ensure_list(spec.get("entities"))
-            relationships = ensure_list(spec.get("relationships"))
-            boxes = {}
-            cols = max(1, math.ceil(math.sqrt(max(1, len(entities)))))
-            box_w = 320
-            box_h = 190
-            gap_x = 80
-            gap_y = 70
-            start_x = 50
-            start_y = 100
-
-            for idx, entity in enumerate(entities):
-                row = idx // cols
-                col = idx % cols
-                x1 = start_x + col * (box_w + gap_x)
-                y1 = start_y + row * (box_h + gap_y)
-                x2 = x1 + box_w
-                y2 = y1 + box_h
-                name = str(entity.get("name") if isinstance(entity, dict) else entity)
-                fields = ensure_list_of_str(entity.get("fields")) if isinstance(entity, dict) else []
-                draw.rounded_rectangle((x1, y1, x2, y2), radius=16, outline="#2563EB", width=3, fill="#EFF6FF")
-                draw.text((x1 + 12, y1 + 10), name, fill="black", font=font_title)
-                body = "\n".join(fields[:8])
-                draw.text((x1 + 12, y1 + 40), body, fill="#334155", font=font_body)
-                boxes[name] = ((x1 + x2) // 2, (y1 + y2) // 2)
-
-            for rel in relationships:
-                if not isinstance(rel, dict):
-                    continue
-                a = str(rel.get("from") or rel.get("left") or "")
-                b = str(rel.get("to") or rel.get("right") or "")
-                lbl = str(rel.get("label") or rel.get("cardinality") or "")
-                if a in boxes and b in boxes:
-                    ax, ay = boxes[a]
-                    bx, by = boxes[b]
-                    draw.line((ax, ay, bx, by), fill="#64748B", width=3)
-                    mx, my = (ax + bx) // 2, (ay + by) // 2
-                    draw.text((mx + 8, my + 4), lbl, fill="black", font=font_body)
-        else:
-            nodes = ensure_list(spec.get("nodes"))
-            edges = ensure_list(spec.get("edges"))
-            if not nodes:
-                nodes = [{"id": "A", "label": "Diagram content unavailable"}]
-
-            cols = max(1, min(4, math.ceil(math.sqrt(len(nodes)))))
-            box_w = 300
-            box_h = 120
-            gap_x = 90
-            gap_y = 90
-            start_x = 60
-            start_y = 120
-
-            centers: Dict[str, Tuple[int, int]] = {}
-            for idx, node in enumerate(nodes):
-                row = idx // cols
-                col = idx % cols
-                x1 = start_x + col * (box_w + gap_x)
-                y1 = start_y + row * (box_h + gap_y)
-                x2 = x1 + box_w
-                y2 = y1 + box_h
-                if isinstance(node, dict):
-                    node_id = str(node.get("id") or node.get("name") or f"N{idx}")
-                    label = str(node.get("label") or node.get("name") or node_id)
-                else:
-                    node_id = str(node)
-                    label = node_id
-                draw.rounded_rectangle((x1, y1, x2, y2), radius=18, outline="#2563EB", width=3, fill="#EFF6FF")
-                draw.text((x1 + 16, y1 + 18), textwrap.fill(label, width=26), fill="black", font=font_body)
-                centers[node_id] = ((x1 + x2) // 2, (y1 + y2) // 2)
-
-            for edge in edges:
-                if isinstance(edge, dict):
-                    src = str(edge.get("from") or edge.get("source") or "")
-                    dst = str(edge.get("to") or edge.get("target") or "")
-                    lbl = str(edge.get("label") or "")
-                elif isinstance(edge, list) and len(edge) >= 2:
-                    src, dst = str(edge[0]), str(edge[1])
-                    lbl = ""
-                else:
-                    continue
-                if src in centers and dst in centers:
-                    ax, ay = centers[src]
-                    bx, by = centers[dst]
-                    draw.line((ax, ay, bx, by), fill="#64748B", width=3)
-                    mx, my = (ax + bx) // 2, (ay + by) // 2
-                    if lbl:
-                        draw.text((mx + 8, my + 4), lbl, fill="black", font=font_body)
-
-        img.save(out_path)
-
-    # -----------------------------------------------------
-    # PDF export
+    # PDF export helpers
     # -----------------------------------------------------
 
     def export_pdf(self, report: Dict[str, Any], plan: Dict[str, Any], audit: Dict[str, Any]) -> str:
@@ -1916,11 +2017,10 @@ class GovernanceTerminal:
         meta = RLTable(
             [
                 ["Generated", now_iso()],
-                ["Validation score", f"{audit.get('score', 0):.2f}"],
+                ["Validation score", f"{audit.get('score', 0.0):.2f}"],
                 ["Approval threshold", f"{self.state.pass_threshold:.2f}"],
                 ["Planning rounds used", str(audit.get("round", 0))],
                 ["Accepted exceptions", str(len(self.state.accepted_exceptions))],
-                ["Report depth", self.state.report_depth],
             ],
             colWidths=[48 * mm, 128 * mm],
         )
@@ -1937,7 +2037,7 @@ class GovernanceTerminal:
         story.append(Spacer(1, 10))
 
         story.append(Paragraph("Executive Summary", h1))
-        for p in split_paragraphs(as_text(report.get("executive_summary", ""), 50000)):
+        for p in self.split_paragraphs(as_text(report.get("executive_summary", ""), 50000)):
             story.append(Paragraph(self.pdf_escape(p), body))
 
         story.append(Paragraph("Locked Requirements", h1))
@@ -1978,22 +2078,14 @@ class GovernanceTerminal:
             ("final_notes", "Final Notes"),
         ]
 
+        report_sections = report.get("sections", {})
         for key, title in ordered_sections:
             story.append(Paragraph(title, h1))
-            content = report["sections"].get(key, "")
-            for p in split_paragraphs(obj_to_text(content, 80000)):
+            content = report_sections.get(key, "")
+            for p in self.split_paragraphs(as_text(content, 80000)):
                 story.append(Paragraph(self.pdf_escape(p), body))
 
-            if key == "architecture":
-                self.append_diagram(story, report, "architecture", "High-Level Architecture Diagram", h2, body)
-                self.append_diagram(story, report, "component_interaction", "Component Interaction Diagram", h2, body)
-            elif key == "data_model":
-                self.append_diagram(story, report, "data_er", "Database ER Diagram", h2, body)
-            elif key == "deployment":
-                self.append_diagram(story, report, "deployment", "Deployment Diagram", h2, body)
-                self.append_diagram(story, report, "security_boundary", "Security Boundary Diagram", h2, body)
-            elif key == "phased_implementation":
-                self.append_diagram(story, report, "implementation_roadmap", "Implementation Roadmap Diagram", h2, body)
+            if key == "phased_implementation":
                 self.append_execution_breakdown(story, report.get("execution", {}), h2, body)
             elif key == "development_playbook":
                 self.append_feature_build_guides(story, report.get("tutor", {}), h2, body)
@@ -2013,17 +2105,12 @@ class GovernanceTerminal:
         doc.build(story)
         return str(out.resolve())
 
-    def append_diagram(self, story: List[Any], report: Dict[str, Any], key: str, title: str, h2, body) -> None:
-        file_path = report.get("diagram_files", {}).get(key)
-        if not file_path:
-            return
-        p = Path(file_path)
-        if not p.exists() or p.stat().st_size == 0:
-            return
-        story.append(Paragraph(title, h2))
-        story.append(Paragraph("The following diagram is generated from the approved architecture package and is intended to support implementation and review.", body))
-        story.append(Image(str(p), width=170 * mm, height=95 * mm))
-        story.append(Spacer(1, 8))
+    def split_paragraphs(self, text: str) -> List[str]:
+        text = (text or "").replace("\r", "").strip()
+        if not text:
+            return []
+        parts = [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()]
+        return parts if parts else [text]
 
     def append_execution_breakdown(self, story: List[Any], execution: Dict[str, Any], h2, body) -> None:
         if not execution:
@@ -2032,7 +2119,7 @@ class GovernanceTerminal:
         overview = execution.get("execution_overview")
         if overview:
             story.append(Paragraph("Execution Overview", h2))
-            for p in split_paragraphs(obj_to_text(overview, 30000)):
+            for p in self.split_paragraphs(as_text(overview, 30000)):
                 story.append(Paragraph(self.pdf_escape(p), body))
 
         phases = ensure_list(execution.get("implementation_phases"))
@@ -2045,18 +2132,18 @@ class GovernanceTerminal:
                     details = []
                     for key in ["objective", "deliverables", "tasks", "frontend", "backend", "data", "infra", "security", "qa", "done_criteria"]:
                         if phase.get(key):
-                            details.append(f"{key}:")
-                            details.extend(json_to_lines(phase.get(key), 1))
-                    story.append(self.bullet_list(details, body))
+                            details.append(f"{key}: {as_text(phase.get(key), 2000)}")
+                    if details:
+                        story.append(self.bullet_list(details, body))
 
-        feature_workstreams = ensure_list(execution.get("feature_workstreams"))
-        if feature_workstreams:
+        workstreams = ensure_list(execution.get("feature_workstreams"))
+        if workstreams:
             story.append(Paragraph("Feature Workstreams", h2))
-            for item in feature_workstreams:
+            for item in workstreams:
                 if isinstance(item, dict):
                     name = str(item.get("feature") or item.get("name") or "Feature")
                     story.append(Paragraph(self.pdf_escape(name), body))
-                    story.append(self.bullet_list(json_to_lines(item, 1), body))
+                    story.append(self.bullet_list([as_text(item, 2500)], body))
 
     def append_feature_build_guides(self, story: List[Any], tutor: Dict[str, Any], h2, body) -> None:
         if not tutor:
@@ -2069,13 +2156,14 @@ class GovernanceTerminal:
             ("common_mistakes", "Common Mistakes"),
         ]:
             value = tutor.get(key)
-            if value:
-                story.append(Paragraph(title, h2))
-                if isinstance(value, list):
-                    story.append(self.bullet_list([obj_to_text(v) for v in value], body))
-                else:
-                    for p in split_paragraphs(obj_to_text(value, 40000)):
-                        story.append(Paragraph(self.pdf_escape(p), body))
+            if not value:
+                continue
+            story.append(Paragraph(title, h2))
+            if isinstance(value, list):
+                story.append(self.bullet_list([as_text(v, 2000) for v in value], body))
+            else:
+                for p in self.split_paragraphs(as_text(value, 40000)):
+                    story.append(Paragraph(self.pdf_escape(p), body))
 
         guides = ensure_list(tutor.get("feature_build_guides"))
         if guides:
@@ -2084,7 +2172,7 @@ class GovernanceTerminal:
                 if isinstance(guide, dict):
                     name = str(guide.get("feature") or guide.get("name") or "Feature Guide")
                     story.append(Paragraph(self.pdf_escape(name), body))
-                    story.append(self.bullet_list(json_to_lines(guide, 1), body))
+                    story.append(self.bullet_list([as_text(guide, 2500)], body))
 
     def append_qa_sections(self, story: List[Any], qa: Dict[str, Any], h2, body) -> None:
         if not qa:
@@ -2103,9 +2191,9 @@ class GovernanceTerminal:
                 continue
             story.append(Paragraph(title, h2))
             if isinstance(value, list):
-                story.append(self.bullet_list([obj_to_text(v) for v in value], body))
+                story.append(self.bullet_list([as_text(v, 2000) for v in value], body))
             else:
-                for p in split_paragraphs(obj_to_text(value, 40000)):
+                for p in self.split_paragraphs(as_text(value, 40000)):
                     story.append(Paragraph(self.pdf_escape(p), body))
 
     def bullet_list(self, items: List[str], body_style) -> ListFlowable:
@@ -2113,19 +2201,22 @@ class GovernanceTerminal:
         return ListFlowable(flow, bulletType="bullet", leftIndent=14)
 
     def pdf_escape(self, text: str) -> str:
-        return (
-            (text or "")
-            .replace("&", "&amp;")
-            .replace("<", "&lt;")
-            .replace(">", "&gt;")
-            .replace("\n", "<br/>")
+        return (text or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\n", "<br/>")
+
+    # -----------------------------------------------------
+    # Development handoff
+    # -----------------------------------------------------
+
+    def present_development_handoff(self) -> None:
+        dev = self.state.development_package or {}
+        body = as_text(
+            dev.get("development_summary", "The project now moves into the development phase."),
+            2000,
         )
+        body += "\n\nA full tutor-style implementation guide, QA strategy, and execution roadmap have been added to the approved PDF."
+        self.panel("Development Phase", body, "cyan")
 
-
-# =========================================================
-# Entrypoint
-# =========================================================
 
 if __name__ == "__main__":
-    app = GovernanceTerminal()
+    app = GovernanceHybridApp()
     app.run()

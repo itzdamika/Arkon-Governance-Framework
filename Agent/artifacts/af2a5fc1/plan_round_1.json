@@ -1,0 +1,183 @@
+{
+  "title": "Unified Multi-Model AI Chat Platform Architecture Plan",
+  "executive_summary": "This architecture defines a secure, scalable, and maintainable web application enabling users to chat with multiple AI models (ChatGPT, Gemini, Claude, etc.) through a unified interface. It targets the general public, offering account-based access, persistent chat history, model comparison, prompt templates, and file uploads. The system uses Next.js for the frontend, FastAPI for the backend, and Supabase for data management. Hosting is distributed across Vercel (frontend), Render (backend), and Supabase (database). The design enforces zero-trust security, encryption, GDPR compliance, and observability.",
+  "architecture_overview": "The system follows a modular, service-oriented architecture. The frontend (Next.js) communicates with the backend (FastAPI) via secure REST and WebSocket APIs. The backend orchestrates LLM interactions through an adapter layer that abstracts multiple AI providers. Supabase handles authentication, data storage, and file management. The architecture enforces strict separation of concerns, with security, compliance, and observability integrated across all layers.",
+  "technology_stack": {
+    "frontend": "Next.js 14 with TypeScript, TailwindCSS, and React Query",
+    "backend": "FastAPI with Python 3.11, Uvicorn, and Pydantic",
+    "database": "Supabase (PostgreSQL + Supabase Auth + Storage)",
+    "infrastructure": "Vercel (frontend), Render (backend), Supabase (database)",
+    "security": "JWT authentication, HTTPS/TLS 1.3, AES-256 encryption at rest, Supabase Row-Level Security",
+    "observability": "Sentry, Prometheus-compatible metrics, Supabase logs, Grafana dashboard",
+    "ci_cd": "GitHub Actions for testing, linting, and deployment"
+  },
+  "functional_feature_map": {
+    "core_features": [
+      "Multi-model chat interface (ChatGPT, Gemini, Claude, etc.)",
+      "Chat history persistence and retrieval",
+      "Model comparison view",
+      "Prompt template management",
+      "File upload and preview"
+    ],
+    "supporting_features": [
+      "User authentication and profile management",
+      "Settings and account management",
+      "Admin and moderation dashboard",
+      "Audit logging and anomaly detection"
+    ],
+    "security_features": [
+      "Zero-trust access control",
+      "End-to-end encryption",
+      "Rate limiting and abuse prevention",
+      "File scanning and content moderation"
+    ]
+  },
+  "system_components": {
+    "frontend": [
+      "Authentication pages (login, register, password reset)",
+      "Chat interface with model tabs and comparison view",
+      "Prompt template manager",
+      "File upload component with progress and preview",
+      "Settings and account management UI"
+    ],
+    "backend": [
+      "Auth API (JWT issuance, validation, Supabase integration)",
+      "Chat orchestration service (context management, routing)",
+      "LLM adapter layer (OpenAI, Anthropic, Google APIs)",
+      "File upload and scanning service (ClamAV integration)",
+      "Audit logging and anomaly detection service",
+      "Admin/moderation API endpoints"
+    ],
+    "data": [
+      "Users table (encrypted PII)",
+      "Chats and messages tables",
+      "Files metadata table",
+      "Audit logs table",
+      "API key registry table"
+    ]
+  },
+  "workflows": {
+    "user_authentication": "User registers or logs in via Supabase Auth. JWT token issued and stored securely in HTTP-only cookies. FastAPI validates JWT on each request.",
+    "chat_interaction": "Frontend sends chat request to FastAPI → FastAPI routes to selected LLM adapter → Adapter calls external API → Response streamed back via WebSocket → Stored in Supabase for history.",
+    "file_upload": "User uploads file → FastAPI receives and scans file → If clean, metadata stored in Supabase and file in Supabase Storage → Linked to chat session.",
+    "model_comparison": "User selects multiple models → Backend sends parallel requests → Responses aggregated and returned in unified format for frontend display.",
+    "audit_and_monitoring": "All API calls logged with user ID, timestamp, and action. Anomaly detection service flags suspicious activity for admin review."
+  },
+  "data_model": {
+    "users": {
+      "id": "UUID (PK)",
+      "email": "Encrypted string",
+      "display_name": "String",
+      "created_at": "Timestamp",
+      "deleted_at": "Timestamp (nullable)"
+    },
+    "chats": {
+      "id": "UUID (PK)",
+      "user_id": "UUID (FK)",
+      "title": "String",
+      "created_at": "Timestamp"
+    },
+    "messages": {
+      "id": "UUID (PK)",
+      "chat_id": "UUID (FK)",
+      "sender": "Enum('user','model')",
+      "model_name": "String",
+      "content": "Encrypted text",
+      "created_at": "Timestamp"
+    },
+    "files": {
+      "id": "UUID (PK)",
+      "user_id": "UUID (FK)",
+      "chat_id": "UUID (FK)",
+      "file_url": "String",
+      "mime_type": "String",
+      "scan_status": "Enum('pending','clean','infected')",
+      "created_at": "Timestamp"
+    },
+    "audit_logs": {
+      "id": "UUID (PK)",
+      "user_id": "UUID (FK)",
+      "action": "String",
+      "timestamp": "Timestamp",
+      "metadata": "JSONB"
+    }
+  },
+  "api_design": {
+    "auth": {
+      "POST /auth/login": "Authenticate user and issue JWT",
+      "POST /auth/register": "Create new user account",
+      "POST /auth/logout": "Invalidate session"
+    },
+    "chat": {
+      "POST /chat/start": "Create new chat session",
+      "POST /chat/{chat_id}/message": "Send message to selected model(s)",
+      "GET /chat/{chat_id}/history": "Retrieve chat history",
+      "GET /chat/models": "List available models"
+    },
+    "files": {
+      "POST /files/upload": "Upload and scan file",
+      "GET /files/{file_id}": "Retrieve file metadata"
+    },
+    "admin": {
+      "GET /admin/audit": "View audit logs",
+      "GET /admin/anomalies": "List flagged activities"
+    }
+  },
+  "security_and_compliance": {
+    "authentication": "Supabase Auth with JWT tokens validated by FastAPI middleware.",
+    "encryption": "AES-256 encryption at rest, TLS 1.3 in transit.",
+    "access_control": "RBAC for admin and user roles, enforced via JWT claims.",
+    "rate_limiting": "Per-user and per-IP rate limits using Redis middleware.",
+    "file_security": "ClamAV scanning, MIME validation, and size limits.",
+    "privacy": "30-day chat retention, encrypted PII, GDPR-compliant deletion.",
+    "audit": "All access and admin actions logged with immutable timestamps.",
+    "compliance": "GDPR and SOC2 alignment with documented data flow and retention."
+  },
+  "deployment_and_operations": {
+    "frontend": "Deployed on Vercel with environment variables managed via Vercel Secrets.",
+    "backend": "Deployed on Render with autoscaling and background worker support.",
+    "database": "Supabase with encryption, RLS, and daily backups.",
+    "networking": "HTTPS enforced across all services, unified domain routing via reverse proxy.",
+    "ci_cd": "GitHub Actions pipeline for linting, testing, and deployment."
+  },
+  "observability": {
+    "logging": "Structured JSON logs for all services.",
+    "metrics": "Prometheus-compatible metrics for request latency, error rates, and throughput.",
+    "tracing": "OpenTelemetry traces for API calls and LLM requests.",
+    "alerting": "Sentry alerts for exceptions, uptime monitoring via health checks.",
+    "dashboard": "Grafana dashboard aggregating logs, metrics, and traces."
+  },
+  "cost_and_scaling": {
+    "estimated_monthly_cost": "USD $500–$1,200 depending on LLM usage.",
+    "scaling_strategy": "Horizontal scaling for backend workers, CDN caching for static assets, Redis for session and rate-limit management.",
+    "cost_controls": "Usage quotas per user, API key rotation, and monitoring of LLM API spend."
+  },
+  "phased_implementation": {
+    "phase_1": "Core setup: Next.js frontend, FastAPI backend, Supabase integration, authentication.",
+    "phase_2": "Multi-model integration: LLM adapter layer and unified chat interface.",
+    "phase_3": "Security hardening: encryption, rate limiting, file scanning, audit logging.",
+    "phase_4": "Observability and admin tools: monitoring dashboard, moderation interface.",
+    "phase_5": "Final production deployment: load testing, accessibility audit, compliance verification."
+  },
+  "development_guidelines": {
+    "coding_standards": "TypeScript strict mode, PEP8 for Python, ESLint and Black for formatting.",
+    "testing": "Unit tests with Jest and Pytest, integration tests for API endpoints.",
+    "documentation": "Auto-generated API docs via FastAPI OpenAPI and Storybook for UI components.",
+    "security_practices": "No secrets in code, environment-based configuration, regular dependency updates.",
+    "accessibility": "WCAG 2.1 AA compliance, keyboard navigation, ARIA labeling.",
+    "localization": "Framework support for i18n to enable future multilingual expansion."
+  },
+  "risks_and_tradeoffs": {
+    "security_vs_performance": "Encryption and audit logging may increase latency; mitigated by async processing and caching.",
+    "feature_scope_vs_resources": "Full production scope under limited resources requires prioritizing stability over advanced UX polish.",
+    "multi_model_costs": "Multiple LLM integrations increase API costs; mitigated by quotas and caching.",
+    "managed_services_vs_control": "Using Vercel, Render, and Supabase simplifies ops but limits low-level tuning."
+  },
+  "open_questions_resolved": {
+    "Q1": "Target scalability: 1,000 concurrent users, backend autoscaling enabled.",
+    "Q2": "Localization: English-only at launch, framework prepared for i18n.",
+    "Q3": "Latency target: <2 seconds average for chat response streaming.",
+    "Q4": "LLM API budget: $500/month cap with dynamic rate limiting and usage monitoring."
+  },
+  "generated_at": "2026-03-12T19:30:01.849000+00:00"
+}
