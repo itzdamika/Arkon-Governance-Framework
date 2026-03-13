@@ -464,19 +464,29 @@ Create a polished implementation-grade architecture plan from:
 - rich requirement notes
 - specialist reviews
 - cumulative issue ledger
+- focus issues
 - revision memory
 - previous audits
 - best prior plan
 
+Main goal:
+- First, address the current focus issues.
+- Second, preserve all user-confirmed requirements.
+- Third, improve the architecture without introducing regressions.
+
 Rules:
 - Do not mention round numbers in the title.
 - Preserve user-confirmed requirements.
-- Resolve known issues when possible.
-- Include concrete architecture, modules, workflows, schemas, APIs, security, deployment,
-  observability, roadmap, and developer guidance.
+- Prioritize unresolved critical and high-severity focus issues first.
+- For each focus issue, either fix it in the plan or clearly explain why it remains unresolved.
+- Do not ignore recurring unresolved issues from previous rounds.
+- Try to improve weak areas identified by the auditor before adding extra design complexity.
+- Include concrete architecture, modules, workflows, schemas, APIs, security, deployment, observability, roadmap, and developer guidance.
+- Keep the plan implementation-grade and specific, not generic.
 
 Return JSON only with:
 - thinking_summary
+- fix_report
 - title
 - executive_summary
 - architecture_overview
@@ -494,6 +504,18 @@ Return JSON only with:
 - development_guidelines
 - risks_and_tradeoffs
 - open_questions_resolved
+
+fix_report must be a list of items with:
+- issue_id
+- action_taken
+- changed_sections
+- expected_outcome
+
+For each fix_report item:
+- issue_id must match the issue being addressed
+- action_taken must say what was changed
+- changed_sections must name the plan sections updated
+- expected_outcome must explain what the auditor should now find improved
 """,
     "AuditorAgent": """
 You are the strict architecture auditor.
@@ -505,12 +527,24 @@ Audit the architecture plan against:
 - revision memory
 - prior audit history
 
+Main goal:
+- First, verify whether previously reported issues were actually fixed.
+- Second, identify the most important remaining weaknesses.
+- Third, explain clearly why the score stayed the same, improved, or dropped.
+
 Rules:
-- Use stable issue IDs where possible.
-- Mark issue status as one of: unresolved, resolved, downgraded, new.
+- Use stable issue IDs whenever the same issue still exists.
+- Mark each issue status as one of: unresolved, resolved, downgraded, new.
+- Re-check prior unresolved issues before creating new ones.
+- If an earlier issue was fixed, keep the same issue ID and mark it resolved.
+- If an earlier issue still exists, keep the same issue ID and explain what is still missing.
+- Only create a new issue ID if the problem is materially different from previous issues.
 - Score the plan against an absolute rubric, not against any approval threshold.
 - Do not try to make the plan pass or fail a gate.
 - Be willing to score below 9 if the plan has real weaknesses.
+- If the score drops, explain the exact reason for the drop.
+- If the score does not improve, explain what blocked improvement.
+- Prefer the most important unresolved issues over minor nitpicks.
 - passed is advisory only; the runtime decides approval.
 
 Return JSON only with:
@@ -545,6 +579,22 @@ Each issue_updates item must include:
 - severity
 - status
 - detail
+
+For each issue_updates.detail:
+- State whether the issue was fixed, partially fixed, unchanged, or newly introduced.
+- Explain exactly what in the plan caused this judgment.
+- If the issue affected the score, explain how.
+- If the architect improved one part but created another problem, say that clearly.
+
+recommendations should:
+- focus on the next highest-impact fixes
+- be specific enough for the architect to act on in the next round
+- avoid vague advice like "improve architecture quality"
+
+summary should:
+- briefly explain overall quality
+- say whether the round meaningfully improved over the prior round
+- mention the main reason the score changed or stayed flat
 """,
     "ExecutionPlannerAgent": """
 Transform the approved architecture into a detailed implementation roadmap.
@@ -696,6 +746,10 @@ class SharedState:
 
     internal_busy: bool = False
     shutdown: bool = False
+
+    focus_issues: List[Dict[str, Any]] = field(default_factory=list)
+    convergence_state: Dict[str, Any] = field(default_factory=dict)
+    finalization_reason: str = ""
 
 
 # =========================================================
@@ -1642,6 +1696,7 @@ class GovernanceHybridApp:
                 )
 
                 self.update_issue_ledger(audit)
+                self.state.focus_issues = self.build_focus_issues()
                 self.update_revision_memory(plan, audit)
                 self.update_best_artifact(plan, audit)
 
@@ -1659,20 +1714,25 @@ class GovernanceHybridApp:
                     self.present_development_handoff()
                     return
 
-                self.panel(
-                    "Revision In Progress",
-                    "The planning swarm is revising the architecture internally based on cumulative audit feedback.",
-                    "yellow",
-                )
+                conv = self.detect_convergence(window=3, epsilon=0.10)
+                self.state.convergence_state = conv
 
-            self.state.phase = PHASE_REQUIREMENTS
-            self.panel(
-                "Planning",
-                "The architecture did not reach approval within the current round limit. Refine the requirements, increase rounds, or lower the threshold.",
-                "red",
-            )
+                if conv.get("converged"):
+                    self.finish_as_best_draft("converged_without_meaningful_improvement")
+                    return
+
+                if round_no < self.state.max_planning_rounds:
+                    self.panel(
+                        "Revision In Progress",
+                        "The planning swarm is revising the architecture internally based on cumulative audit feedback and the current focus issues.",
+                        "yellow",
+                    )
+
+            self.finish_as_best_draft("round_limit_reached_without_approval")
+
         finally:
             self.state.internal_busy = False
+
 
 
     def run_specialist_reasoners(self, round_no: int) -> Dict[str, Any]:
@@ -1805,6 +1865,7 @@ class GovernanceHybridApp:
             "reasoner_reviews": reasoner_reviews,
             "specialist_subplans": specialist_subplans,
             "issue_ledger": self.state.issue_ledger,
+            "focus_issues": self.state.focus_issues,
             "revision_memory": self.state.revision_memory,
             "accepted_exceptions": {k: asdict(v) for k, v in self.state.accepted_exceptions.items()},
             "previous_audits": self.state.audit_history[-3:],
@@ -2015,6 +2076,7 @@ class GovernanceHybridApp:
             "accepted_exceptions": {k: asdict(v) for k, v in self.state.accepted_exceptions.items()},
             "issue_ledger": self.state.issue_ledger,
             "revision_memory": self.state.revision_memory,
+            "previous_audits": self.state.audit_history[-3:],
             "reasoner_reviews": reasoner_reviews,
             "specialist_subplans": specialist_subplans,
             "plan": plan,
@@ -2165,7 +2227,116 @@ class GovernanceHybridApp:
             "unresolved_issue_ids": sorted(unresolved),
             "latest_recommendations": audit.get("recommendations", []),
             "latest_plan_title": plan.get("title"),
+            "focus_issue_ids": [x.get("id") for x in self.state.focus_issues if isinstance(x, dict)],
+            "convergence_state": self.state.convergence_state,
         }
+
+    def build_focus_issues(self, limit: int = 6) -> List[Dict[str, Any]]:
+        severity_rank = {"critical": 0, "high": 1, "medium": 2, "low": 3}
+        items = []
+
+        for issue_id, issue in self.state.issue_ledger.items():
+            status = str(issue.get("status", "")).lower()
+            if status == "resolved":
+                continue
+            items.append({
+                "id": issue_id,
+                "title": str(issue.get("title", issue_id)),
+                "severity": str(issue.get("severity", "medium")).lower(),
+                "status": status or "unresolved",
+                "detail": str(issue.get("detail", "")),
+                "last_seen_round": int(issue.get("last_seen_round", 0) or 0),
+            })
+
+        items.sort(key=lambda x: (
+            severity_rank.get(x["severity"], 9),
+            x["last_seen_round"],
+            x["id"],
+        ))
+        return items[:limit]
+    
+    def unresolved_issue_ids(self) -> List[str]:
+        out = []
+        for issue_id, issue in self.state.issue_ledger.items():
+            if str(issue.get("status", "")).lower() != "resolved":
+                out.append(issue_id)
+        return sorted(out)
+
+    def resolved_issue_count(self) -> int:
+        count = 0
+        for issue in self.state.issue_ledger.values():
+            if str(issue.get("status", "")).lower() == "resolved":
+                count += 1
+        return count
+
+    def detect_convergence(self, window: int = 3, epsilon: float = 0.10) -> Dict[str, Any]:
+        history = self.state.audit_history
+        if len(history) < window:
+            return {"converged": False, "reason": "", "detail": {}}
+
+        recent = history[-window:]
+        scores = [float(x.get("score", 0.0)) for x in recent]
+        score_span = max(scores) - min(scores)
+
+        recent_unresolved_sets = []
+        for audit in recent:
+            unresolved = set()
+            for item in ensure_list(audit.get("issue_updates")):
+                if not isinstance(item, dict):
+                    continue
+                if str(item.get("status", "")).lower() == "resolved":
+                    continue
+                sev = str(item.get("severity", "")).lower()
+                if sev in {"critical", "high", "medium"}:
+                    unresolved.add(str(item.get("id") or "").strip())
+            recent_unresolved_sets.append(unresolved)
+
+        unresolved_stable = all(s == recent_unresolved_sets[0] for s in recent_unresolved_sets[1:])
+
+        resolved_counts = []
+        for audit in recent:
+            resolved_counts.append(sum(
+                1 for item in ensure_list(audit.get("issue_updates"))
+                if isinstance(item, dict) and str(item.get("status", "")).lower() == "resolved"
+            ))
+        no_resolution_growth = max(resolved_counts) == min(resolved_counts)
+
+        converged = score_span <= epsilon and unresolved_stable and no_resolution_growth
+
+        return {
+            "converged": converged,
+            "reason": "plateau" if converged else "",
+            "detail": {
+                "scores": scores,
+                "score_span": round(score_span, 3),
+                "unresolved_stable": unresolved_stable,
+                "no_resolution_growth": no_resolution_growth,
+            },
+        }
+
+    def finish_as_best_draft(self, reason: str) -> None:
+        best_plan = self.state.best_plan or self.state.current_plan
+        best_audit = self.state.best_audit or self.state.current_audit
+
+        if best_plan and best_audit:
+            self.generate_report_and_export()
+
+        self.state.phase = PHASE_DEVELOPMENT
+        self.state.finalization_reason = reason
+
+        message = (
+            f"I've reached the strongest validated draft for the current requirements "
+            f"after {best_audit.get('round', 0)} internal planning rounds.\n\n"
+            f"Further rounds are no longer producing meaningful improvements, so I am presenting "
+            f"the best current version instead of looping unnecessarily.\n\n"
+            f"Current best score: {float(best_audit.get('score', 0.0)):.2f}\n"
+            f"PDF: {self.state.final_pdf_path or 'not exported yet'}\n\n"
+            f"If you want, we can now do one of two things:\n"
+            f"1. Use this validated draft as the implementation baseline.\n"
+            f"2. Reopen the requirements and target specific improvements."
+        )
+        self.panel("Best Validated Draft", message, "cyan")
+        self.present_development_handoff()
 
     def update_best_artifact(self, plan: Dict[str, Any], audit: Dict[str, Any]) -> None:
         candidate_score = float(audit.get("score", 0.0))
