@@ -134,17 +134,6 @@ def deep_get(d: Dict[str, Any], path: str, default: Any = None) -> Any:
 def write_json(path: Path, payload: Any) -> None:
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
 
-
-def positive_reply(text: str) -> bool:
-    t = text.lower().strip()
-    words = {
-        "yes", "y", "ok", "okay", "sure", "approved", "approve", "yes please",
-        "go ahead", "sounds good", "looks good", "fine", "correct", "right",
-        "perfect", "lets go", "let's go", "proceed", "continue"
-    }
-    return any(w in t for w in words)
-
-
 def slugify(text: str) -> str:
     text = re.sub(r"[^a-zA-Z0-9]+", "_", text.strip().lower())
     return text.strip("_") or "artifact"
@@ -166,6 +155,12 @@ PHASE_DEVELOPMENT = "DEVELOPMENT"
 FIELD_PROMPTS = {
     "project_goal": "What exactly should the software do at a high level?",
     "target_users": "Who will use this system most often?",
+    "project_class": "What is the main project type? Use one label such as web_app, fullstack_app, mobile_app, desktop_app, api_service, static_website, cli_tool, library_sdk, automation_tool, data_pipeline, ai_system, research_prototype, or infrastructure_project.",
+    "capabilities": "Which capabilities are needed? Use comma-separated labels such as frontend, backend, data, auth, ai_llm, integrations, analytics, realtime, payments, admin_panel, public_api, batch_jobs, or devops.",
+    "complexity_level": "Use one label such as simple, moderate, advanced, or high_scale.",
+    "risk_level": "Use one label such as low, medium, or high.",
+    "data_sensitivity": "Use one label such as none, internal, personal, financial, health, or confidential.",
+    "external_exposure": "Use one label such as local_only, internal_only, private_authenticated, partner_facing, or public_internet.",
     "access_model": "Should it be public, anonymous, account-based, subscription-based, or something else?",
     "feature_scope": "What major features should be included?",
     "frontend_stack": "What frontend stack should be used?",
@@ -173,7 +168,7 @@ FIELD_PROMPTS = {
     "data_platform": "What database and storage approach should be used?",
     "hosting_target": "Where should it be deployed or hosted?",
     "security_baseline": "What basic security and abuse-prevention controls are required?",
-    "privacy_retention_policy": "How should chat history, logs, and retention be handled?",
+    "privacy_retention_policy": "How should logs, stored data, and retention be handled?",
     "mvp_scope": "What should the first shippable version include?",
     "future_scope": "What can be phased after MVP?",
     "constraints": "What practical constraints exist?",
@@ -183,19 +178,21 @@ FIELD_PROMPTS = {
     "compliance_context": "What compliance or privacy posture is expected?",
 }
 
-USER_ONLY_REQUIRED_FIELDS = [
+
+CORE_REQUIRED_FIELDS = [
     "project_goal",
     "target_users",
+    "project_class",
+    "capabilities",
     "access_model",
     "feature_scope",
-    "frontend_stack",
-    "backend_stack",
-    "data_platform",
-    "hosting_target",
-    "security_baseline",
-    "privacy_retention_policy",
     "mvp_scope",
+    "risk_level",
+    "data_sensitivity",
+    "external_exposure",
+    "security_baseline",
 ]
+
 
 INTERNAL_PLANNING_FIELDS = [
     "future_scope",
@@ -206,19 +203,22 @@ INTERNAL_PLANNING_FIELDS = [
     "compliance_context",
 ]
 
-PLANNING_INTENT_TERMS = {
-    "move to planning",
-    "move to the planning phase",
-    "go to planning",
-    "start planning",
-    "continue to planning",
-    "continue planning",
-    "planning phase",
-    "lets move",
-    "let's move",
-    "go ahead",
-    "proceed",
-    "continue",
+PROJECT_CLASS_DEFAULT_CAPABILITIES = {
+    "static_website": ["frontend"],
+    "landing_page": ["frontend"],
+    "dashboard": ["frontend", "backend", "data"],
+    "web_app": ["frontend", "backend", "data", "devops"],
+    "fullstack_app": ["frontend", "backend", "data", "devops"],
+    "mobile_app": ["frontend", "backend", "data", "devops"],
+    "desktop_app": ["frontend", "backend", "data"],
+    "api_service": ["backend", "data", "devops"],
+    "cli_tool": [],
+    "library_sdk": [],
+    "automation_tool": ["backend", "batch_jobs"],
+    "data_pipeline": ["backend", "data", "batch_jobs", "devops"],
+    "ai_system": ["backend", "data", "ai_llm", "devops"],
+    "research_prototype": [],
+    "infrastructure_project": ["devops"],
 }
 
 SPECIALISTS = [
@@ -255,6 +255,12 @@ ALL_AGENTS = SPECIALISTS + REASONERS + [
 CONTRACT_TO_NOTE_PATH = {
     "project_goal": "project.goal",
     "target_users": "project.target_users",
+    "project_class": "project.project_class",
+    "capabilities": "project.capabilities",
+    "complexity_level": "constraints.complexity_level",
+    "risk_level": "security.risk_level",
+    "data_sensitivity": "data.sensitivity",
+    "external_exposure": "security.external_exposure",
     "access_model": "security.access_model",
     "feature_scope": "project.feature_scope",
     "frontend_stack": "frontend.stack",
@@ -287,11 +293,8 @@ Core rules:
 5. The architect must revise using cumulative issue memory, not forget earlier feedback.
 6. The auditor must use stable issue IDs and mark issues as resolved, unresolved, downgraded, or newly introduced.
 7. Visible reasoning must be concise summarized reasoning, not hidden chain-of-thought.
-8. Mandatory requirement blockers are:
-   project_goal, target_users, access_model, feature_scope, frontend_stack,
-   backend_stack, data_platform, hosting_target, security_baseline,
-   privacy_retention_policy, mvp_scope.
-9. Never advance to planning until all mandatory blocker fields are populated and confirmed.
+8. Mandatory requirement blockers are dynamic. A small core is always required, and additional required fields depend on project_class, capabilities, risk_level, data_sensitivity, and external_exposure.
+9. Never advance to planning until all active required fields are populated and confirmed.
 10. Once planning starts, keep round-by-round turbulence internal unless the entire planning attempt fails.
 """
 
@@ -308,10 +311,12 @@ Rules:
 - Use confirmed=false and needs_confirmation=true only when you are proposing, inferring, or rewording a value the user has not explicitly accepted yet.
 - If the user says yes/ok/correct to a proposed value, confirm the relevant pending field(s).
 - Never say a field is confirmed unless the canonical contract has been updated for that field.
-- Once all blocker fields are confirmed, stop requirement gathering and ask whether to start planning.
 - If the user confirms they want to proceed, advance to planning in the same turn.
 - Do not ask planning-style questions such as monolith vs microservices unless the user volunteers them.
 - Keep messages short, warm, and natural.
+- Ask for project_class, capabilities, risk_level, data_sensitivity, and external_exposure early.
+- Only ask for fields activated by the current project profile.
+- Once all active required fields are confirmed, stop requirement gathering and ask whether to start planning.
 """,
     "ProjectScopeAgent": """
 Clarify product goal, target users, features, MVP scope, and priorities.
@@ -718,6 +723,8 @@ class SharedState:
         "summary": "",
         "last_updated": None,
     })
+    last_requested_fields: List[str] = field(default_factory=list)
+    planning_confirmation_requested: bool = False
 
     pass_threshold: float = 9.0
     max_requirement_hops: int = 10
@@ -898,14 +905,17 @@ class GovernanceHybridApp:
             return
 
         existing = self.state.requirement_contract[field_name]
-        clean_value = str(value).strip()
+        clean_value = self.canonicalize_contract_value(field_name, str(value).strip())
         if not clean_value:
             return
+
+        same_value = clean_value == str(existing.value or "").strip()
+        confirmed_state = bool(confirmed) or (existing.confirmed and same_value)
 
         self.state.requirement_contract[field_name] = RequirementField(
             value=clean_value,
             source=str(source).strip() or existing.source,
-            confirmed=existing.confirmed or bool(confirmed),
+            confirmed=confirmed_state,
             rationale=str(rationale).strip() or existing.rationale,
             updated_at=now_iso(),
         )
@@ -913,7 +923,6 @@ class GovernanceHybridApp:
         note_path = CONTRACT_TO_NOTE_PATH.get(field_name)
         if note_path:
             deep_set(self.state.requirements, note_path, clean_value)
-
 
     def confirm_fields(self, fields: List[str]) -> None:
         for f in fields:
@@ -925,10 +934,99 @@ class GovernanceHybridApp:
             item.confirmed = True
             item.updated_at = now_iso()
 
+    def get_contract_value(self, field_name: str) -> str:
+        item = self.state.requirement_contract.get(field_name)
+        if not item:
+            return ""
+        return str(item.value or "").strip().lower()
+
+    def contract_tokens(self, field_name: str) -> List[str]:
+        raw = self.get_contract_value(field_name)
+        if not raw:
+            return []
+        parts = re.split(r"[,;\n|]+", raw)
+        tokens = []
+        for part in parts:
+            token = re.sub(r"[^a-z0-9_ -]+", "", part.strip().lower())
+            token = token.replace("-", "_").replace(" ", "_").strip("_")
+            if token:
+                tokens.append(token)
+        return unique_strs(tokens)
+
+    def normalized_project_class(self) -> str:
+        value = self.get_contract_value("project_class")
+        value = re.sub(r"[^a-z0-9_ -]+", "", value)
+        value = value.replace("-", "_").replace(" ", "_").strip("_")
+        return value
+
+    def inferred_capabilities(self) -> List[str]:
+        project_class = self.normalized_project_class()
+        caps = set(self.contract_tokens("capabilities"))
+        for cap in PROJECT_CLASS_DEFAULT_CAPABILITIES.get(project_class, []):
+            caps.add(cap)
+        return sorted(caps)
+
+    def active_required_fields(self) -> List[str]:
+        required = list(CORE_REQUIRED_FIELDS)
+        caps = set(self.inferred_capabilities())
+        project_class = self.normalized_project_class()
+        risk = self.get_contract_value("risk_level")
+        sensitivity = self.get_contract_value("data_sensitivity")
+        exposure = self.get_contract_value("external_exposure")
+
+        frontend_classes = {
+            "static_website", "landing_page", "dashboard",
+            "web_app", "fullstack_app", "mobile_app", "desktop_app"
+        }
+        backend_classes = {
+            "web_app", "fullstack_app", "api_service",
+            "automation_tool", "data_pipeline", "ai_system"
+        }
+        data_classes = {
+            "dashboard", "web_app", "fullstack_app",
+            "mobile_app", "desktop_app", "api_service",
+            "data_pipeline", "ai_system"
+        }
+
+        if "frontend" in caps or "admin_panel" in caps or project_class in frontend_classes:
+            required.append("frontend_stack")
+
+        if "backend" in caps or project_class in backend_classes or {"public_api", "ai_llm", "batch_jobs"} & caps:
+            required.append("backend_stack")
+
+        if "data" in caps or project_class in data_classes or sensitivity not in {"", "none"}:
+            required.append("data_platform")
+
+        if (
+            "frontend" in caps or "backend" in caps or "data" in caps or "devops" in caps
+            or exposure in {"internal_only", "private_authenticated", "partner_facing", "public_internet"}
+        ):
+            required.append("hosting_target")
+
+        if (
+            sensitivity not in {"", "none"}
+            or risk in {"medium", "high"}
+            or exposure in {"private_authenticated", "partner_facing", "public_internet"}
+            or {"auth", "analytics", "payments", "ai_llm"} & caps
+        ):
+            required.append("privacy_retention_policy")
+
+        if "ai_llm" in caps:
+            required.append("llm_integration")
+
+        if (
+            risk == "high"
+            or sensitivity in {"personal", "financial", "health", "confidential"}
+            or "payments" in caps
+        ):
+            required.append("compliance_context")
+
+        return unique_strs(required)
+
 
     def missing_required_fields(self) -> List[str]:
         out = []
-        for f in USER_ONLY_REQUIRED_FIELDS:
+        for f in self.active_required_fields():
             item = self.state.requirement_contract[f]
             if not item.value.strip() or not item.confirmed:
                 out.append(f)
@@ -966,13 +1064,35 @@ class GovernanceHybridApp:
 
     def fill_internal_defaults(self) -> None:
         defaults = {
-            "future_scope": "Derive post-MVP enhancements internally from the requested product direction, including richer capabilities after the first stable release.",
-            "constraints": "Assume a final-year-project context with strong emphasis on quality, maintainability, and implementation readiness under limited resources.",
-            "observability_baseline": "Structured application logs, error tracking, request metrics, latency monitoring, traces, uptime alerts, audit events, and an admin-visible operations dashboard.",
-            "execution_preference": "Prioritize correctness, completeness, maintainability, and secure implementation readiness over brevity.",
-            "llm_integration": "Use secure backend-managed GPT-compatible integration through an adapter layer, never direct browser-side secret exposure.",
-            "compliance_context": "Adopt privacy-by-design baseline with deletion support, retention enforcement, secure secret storage, and explicit handling of user data and logs.",
+            "future_scope": "Derive post-MVP enhancements internally from the requested product direction.",
+            "constraints": "Assume limited resources with emphasis on quality, maintainability, and implementation readiness.",
+            "execution_preference": "Prioritize correctness, maintainability, and secure implementation readiness over brevity.",
         }
+
+        caps = set(self.inferred_capabilities())
+        risk = self.get_contract_value("risk_level")
+        sensitivity = self.get_contract_value("data_sensitivity")
+        exposure = self.get_contract_value("external_exposure")
+
+        if "frontend" in caps or "backend" in caps or "data" in caps or "devops" in caps:
+            defaults["observability_baseline"] = (
+                "Structured logs, error tracking, request metrics, latency monitoring, traces, uptime alerts, and audit events."
+            )
+
+        if "ai_llm" in caps:
+            defaults["llm_integration"] = (
+                "Use secure backend-managed GPT-compatible integration through an adapter layer, never direct browser-side secret exposure."
+            )
+
+        if (
+            risk == "high"
+            or sensitivity in {"personal", "financial", "health", "confidential"}
+            or exposure in {"private_authenticated", "partner_facing", "public_internet"}
+        ):
+            defaults["compliance_context"] = (
+                "Adopt privacy-by-design with deletion support, retention enforcement, secret storage, auditability, and explicit handling of user data and logs."
+            )
+
         for field_name, value in defaults.items():
             current = self.state.requirement_contract[field_name]
             if not current.value.strip():
@@ -984,11 +1104,270 @@ class GovernanceHybridApp:
                     rationale="Internal planning default; not a user-blocking requirement.",
                 )
 
+    def ai_json(self, system_prompt: str, payload: Dict[str, Any], max_tokens: int = 450) -> Dict[str, Any]:
+        try:
+            result = self.llm.complete_json(
+                system_prompt=system_prompt,
+                payload=payload,
+                max_tokens=max_tokens,
+                reasoning=True,
+                temperature=0.0,
+            )
+            return result if isinstance(result, dict) else {}
+        except Exception:
+            return {}
+
+    def allowed_values_for_field(self, field_name: str) -> List[str]:
+        controlled = {
+            "project_class": [
+                "web_app",
+                "fullstack_app",
+                "mobile_app",
+                "desktop_app",
+                "api_service",
+                "static_website",
+                "landing_page",
+                "cli_tool",
+                "library_sdk",
+                "automation_tool",
+                "data_pipeline",
+                "ai_system",
+                "research_prototype",
+                "infrastructure_project",
+            ],
+            "capabilities": [
+                "frontend",
+                "backend",
+                "data",
+                "auth",
+                "ai_llm",
+                "integrations",
+                "analytics",
+                "realtime",
+                "payments",
+                "admin_panel",
+                "public_api",
+                "batch_jobs",
+                "devops",
+            ],
+            "complexity_level": ["simple", "moderate", "advanced", "high_scale"],
+            "risk_level": ["low", "medium", "high"],
+            "data_sensitivity": ["none", "internal", "personal", "financial", "health", "confidential"],
+            "external_exposure": ["local_only", "internal_only", "private_authenticated", "partner_facing", "public_internet"],
+        }
+        return controlled.get(field_name, [])
+
+    def last_assistant_text(self) -> str:
+        for turn in reversed(self.state.dialogue):
+            if turn.role == "assistant":
+                if turn.agent:
+                    return self.clean_assistant_text(turn.content, turn.agent)
+                return str(turn.content or "").strip()
+        return ""
+
+    def interpret_user_message(self, text: str) -> Dict[str, Any]:
+        raw = str(text or "").strip()
+        if not raw:
+            return {
+                "is_affirmation": False,
+                "is_clarification": False,
+                "explicitly_requests_planning": False,
+                "answered_fields": [],
+                "answer_value": "",
+            }
+
+        payload = {
+            "phase": self.state.phase,
+            "user_text": raw,
+            "last_assistant_message": self.last_assistant_text(),
+            "last_requested_fields": list(self.state.last_requested_fields),
+            "pending_confirmations": list(self.state.pending_confirmations),
+            "missing_required_fields": self.missing_required_fields(),
+            "all_required_locked": self.all_required_locked(),
+            "field_prompts": FIELD_PROMPTS,
+            "requirement_contract": self.contract_snapshot(),
+        }
+
+        prompt = """
+        You classify one user message in a requirement-gathering application.
+
+        Return ONLY valid JSON with:
+        - is_affirmation: boolean
+        - is_clarification: boolean
+        - explicitly_requests_planning: boolean
+        - answered_fields: array of exact field names from payload.field_prompts
+        - answer_value: string
+
+        Rules:
+        - Use the current conversation context, especially last_assistant_message and last_requested_fields.
+        - If the user is clearly confirming a previously proposed value, set is_affirmation=true.
+        - If the user is asking for explanation or clarification instead of answering, set is_clarification=true.
+        - Set explicitly_requests_planning=true only when the user clearly wants to move into planning now, including a context-aware "yes" reply to a direct planning question.
+        - answered_fields must contain only exact field names from payload.field_prompts.
+        - If the user directly answers the most recent requirement question, include that field in answered_fields.
+        - answer_value should be the direct answer text, cleaned slightly but without inventing details.
+        - If there is no direct answer, use answer_value="".
+        """
+
+        result = self.ai_json(prompt, payload, max_tokens=400)
+        fields = [
+            f for f in ensure_list_of_str(result.get("answered_fields"))
+            if f in FIELD_PROMPTS
+        ]
+        return {
+            "is_affirmation": bool(result.get("is_affirmation", False)),
+            "is_clarification": bool(result.get("is_clarification", False)),
+            "explicitly_requests_planning": bool(result.get("explicitly_requests_planning", False)),
+            "answered_fields": unique_strs(fields),
+            "answer_value": str(result.get("answer_value") or "").strip(),
+        }
+
     def wants_planning_transition(self, text: str) -> bool:
-        t = text.lower().strip()
-        if positive_reply(t):
+        return bool(self.interpret_user_message(text).get("explicitly_requests_planning", False))
+
+    def sync_pending_confirmations(self) -> None:
+        self.state.pending_confirmations = [
+            f for f in unique_strs(self.state.pending_confirmations)
+            if f in self.state.requirement_contract
+            and self.state.requirement_contract[f].value.strip()
+            and not self.state.requirement_contract[f].confirmed
+        ]
+
+    def looks_like_clarification(self, text: str) -> bool:
+        return bool(self.interpret_user_message(text).get("is_clarification", False))
+
+    def infer_requested_fields_from_text(self, text: str) -> List[str]:
+        raw = str(text or "").strip()
+        if not raw:
+            return []
+
+        payload = {
+            "assistant_text": raw,
+            "field_prompts": FIELD_PROMPTS,
+            "missing_required_fields": self.missing_required_fields(),
+            "pending_confirmations": list(self.state.pending_confirmations),
+        }
+
+        prompt = """
+        You read one assistant message and infer which requirement fields it is asking about.
+
+        Return ONLY valid JSON with:
+        - fields: array of exact field names from payload.field_prompts
+
+        Rules:
+        - Return only exact field names from payload.field_prompts.
+        - Prefer the single main field being asked for.
+        - If multiple fields are clearly asked together, return them in priority order.
+        - Prefer missing_required_fields and pending_confirmations when they fit the message.
+        - Return [] if the assistant text is not really asking for requirement data.
+        """
+
+        result = self.ai_json(prompt, payload, max_tokens=250)
+        fields = [
+            f for f in ensure_list_of_str(result.get("fields"))
+            if f in FIELD_PROMPTS
+        ]
+        unresolved = set(self.missing_required_fields()) | set(self.state.pending_confirmations)
+        ranked = [f for f in fields if f in unresolved]
+        return unique_strs(ranked or fields)
+
+    def remember_requirement_prompt(self, assistant_text: str) -> None:
+        if self.state.phase != PHASE_REQUIREMENTS:
+            return
+        fields = self.infer_requested_fields_from_text(assistant_text)
+        if fields:
+            self.state.last_requested_fields = fields[:1]
+
+    def canonicalize_contract_value(self, field_name: str, value: str) -> str:
+        raw = str(value or "").strip()
+        if not raw:
+            return ""
+
+        allowed = self.allowed_values_for_field(field_name)
+        payload = {
+            "field_name": field_name,
+            "raw_value": raw,
+            "allowed_values": allowed,
+            "field_prompt": FIELD_PROMPTS.get(field_name, ""),
+        }
+
+        prompt = """
+        Normalize one requirement value.
+
+        Return ONLY valid JSON with:
+        - canonical_value: string
+        - canonical_list: array of strings
+
+        Rules:
+        - If allowed_values is empty, return a concise cleaned rewrite in canonical_value without inventing facts.
+        - If field_name is capabilities, put only exact allowed_values in canonical_list and leave out unsupported items.
+        - If field_name has controlled allowed_values, return exactly one item from allowed_values in canonical_value when the meaning is clear.
+        - If meaning is unclear for a controlled field, return the original trimmed value in canonical_value.
+        - Never invent requirements not present in the raw value.
+        """
+
+        result = self.ai_json(prompt, payload, max_tokens=250)
+
+        if field_name == "capabilities":
+            values = [
+                v for v in ensure_list_of_str(result.get("canonical_list"))
+                if v in allowed
+            ]
+            return ", ".join(unique_strs(values)) if values else raw
+
+        canonical = str(result.get("canonical_value") or raw).strip()
+        if allowed and canonical not in allowed:
+            return raw
+        return canonical
+
+    def capture_direct_user_answer(self, user_text: str) -> bool:
+        text = str(user_text or "").strip()
+        if not text:
+            return False
+
+        self.sync_pending_confirmations()
+        analysis = self.interpret_user_message(text)
+
+        if self.state.pending_confirmations and analysis["is_affirmation"]:
+            self.confirm_fields(self.state.pending_confirmations)
+            self.sync_pending_confirmations()
             return True
-        return any(term in t for term in PLANNING_INTENT_TERMS)
+
+        if analysis["is_clarification"]:
+            return False
+
+        targets = list(analysis.get("answered_fields") or [])
+        if not targets:
+            targets = list(self.state.last_requested_fields)
+
+        if not targets and not self.state.requirement_contract["project_goal"].value.strip():
+            targets = ["project_goal"]
+
+        if len(targets) != 1:
+            return False
+
+        field_name = targets[0]
+
+        if analysis["is_affirmation"]:
+            current = self.state.requirement_contract[field_name]
+            if current.value.strip():
+                self.confirm_fields([field_name])
+                self.sync_pending_confirmations()
+                return True
+            return False
+
+        value = str(analysis.get("answer_value") or text).strip()
+        self.set_contract_field(
+            field_name=field_name,
+            value=value,
+            source="user_direct_answer_ai",
+            confirmed=True,
+            rationale="Captured from AI interpretation of the user's direct answer.",
+        )
+        self.sync_pending_confirmations()
+        return True
+
+
 
     def maybe_compact_context(self) -> None:
         if len(self.state.dialogue) < 24:
@@ -1031,7 +1410,6 @@ class GovernanceHybridApp:
             "pass_threshold": self.state.pass_threshold,
             "debug_mode": self.state.debug_mode,
         }
-
 
     def build_agent_messages(self, agent_name: str) -> List[Dict[str, Any]]:
         snapshot = compact_json(self.state_snapshot(), 14000)
@@ -1182,8 +1560,13 @@ class GovernanceHybridApp:
 
             self.set_contract_field(field_name, value, caller, confirmed, rationale)
 
+            user_facing_fields = [
+                f for f in FIELD_PROMPTS.keys()
+                if f not in INTERNAL_PLANNING_FIELDS
+            ]
+
             if needs_confirmation or not confirmed:
-                if field_name in USER_ONLY_REQUIRED_FIELDS and field_name not in self.state.pending_confirmations:
+                if field_name in user_facing_fields and field_name not in self.state.pending_confirmations:
                     self.state.pending_confirmations.append(field_name)
             else:
                 self.state.pending_confirmations = [f for f in self.state.pending_confirmations if f != field_name]
@@ -1341,6 +1724,7 @@ class GovernanceHybridApp:
 
             content = self.clean_assistant_text(raw_content, agent_name)
             if content:
+                self.remember_requirement_prompt(content)
                 self.append_dialogue("assistant", content, agent_name)
                 self.panel(agent_name, content, "green")
                 return True
@@ -1555,24 +1939,22 @@ class GovernanceHybridApp:
     def debug_requirement_contract(self) -> None:
         if not self.state.debug_mode:
             return
-
         lines = []
-        for f in USER_ONLY_REQUIRED_FIELDS:
+        for f in self.active_required_fields():
             item = self.state.requirement_contract[f]
-            lines.append(
-                f"{f}: value={item.value or '<empty>'} | confirmed={item.confirmed}"
-            )
-        lines.append(f"pending_confirmations: {self.state.pending_confirmations}")
-        lines.append(f"missing_required_fields: {self.missing_required_fields()}")
-
+            lines.append(f"{f}: value={item.value or '<empty>'} confirmed={item.confirmed}")
+        lines.append(f"pending_confirmations={self.state.pending_confirmations}")
+        lines.append(f"missing_required_fields={self.missing_required_fields()}")
         self.thinking("RequirementState", "\n".join(lines), "inspect canonical contract")
 
 
-    def handle_requirement_turn(self, user_text: str) -> None:
-        normalized = user_text.lower().strip()
 
-        if normalized in {"approve requirements", "approve contract", "finalize requirements"}:
-            if self.all_required_locked():
+    def handle_requirement_turn(self, user_text: str) -> None:
+        self.sync_pending_confirmations()
+        captured = self.capture_direct_user_answer(user_text)
+
+        if self.state.planning_confirmation_requested:
+            if self.all_required_locked() and self.wants_planning_transition(user_text):
                 self.fill_internal_defaults()
                 self.state.requirement_status = {
                     "ready_for_planning": True,
@@ -1582,18 +1964,40 @@ class GovernanceHybridApp:
                 }
                 self.state.phase = PHASE_PLANNING
                 self.state.active_agent = "ArchitectAgent"
+                self.state.pending_confirmations = []
+                self.state.planning_confirmation_requested = False
                 self.panel(
                     "RequirementCoordinator",
-                    "Perfect — the mandatory requirement contract is locked. I’m moving to the internal planning and validation phase now.",
+                    "Perfect — I’m moving to the internal planning and validation phase now.",
                     "green",
                 )
                 self.run_governance_cycle()
-            else:
-                self.panel(
-                    "RequirementCoordinator",
-                    f"We’re close, but these mandatory fields still need confirmation: {', '.join(self.missing_required_fields())}.",
-                    "yellow",
-                )
+                return
+
+            self.panel(
+                "RequirementCoordinator",
+                "The requirements are already locked. Reply yes when you want me to start planning.",
+                "green",
+            )
+            return
+
+        if self.all_required_locked():
+            self.state.requirement_status = {
+                "ready_for_planning": True,
+                "completeness_score": 1.0,
+                "summary": "Mandatory requirement contract fully locked.",
+                "last_updated": now_iso(),
+            }
+            self.state.planning_confirmation_requested = True
+            self.panel(
+                "RequirementCoordinator",
+                "Perfect — the essential requirements are fully locked. Do you want me to start planning now?",
+                "green",
+            )
+            return
+
+        if captured:
+            self.debug_requirement_contract()
             return
 
         hops = 0
@@ -1610,33 +2014,20 @@ class GovernanceHybridApp:
                 "summary": "Mandatory requirement contract fully locked.",
                 "last_updated": now_iso(),
             }
-
-            if self.wants_planning_transition(user_text):
-                self.fill_internal_defaults()
-                self.state.phase = PHASE_PLANNING
-                self.state.active_agent = "ArchitectAgent"
-                self.panel(
-                    "RequirementCoordinator",
-                    "Perfect — the required project requirements are now locked. I’m moving to the internal planning and validation phase now.",
-                    "green",
-                )
-                self.run_governance_cycle()
-                return
-
+            self.state.planning_confirmation_requested = True
             self.panel(
                 "RequirementCoordinator",
-                "Perfect — the essential requirements are fully locked. Reply yes when you want me to move straight into the internal planning and validation phase.",
+                "Perfect — the essential requirements are fully locked. Do you want me to start planning now?",
                 "green",
             )
             return
-        
+
         self.debug_requirement_contract()
 
         if self.state.pending_confirmations:
             self.panel(
                 "RequirementCoordinator",
-                "I have a few proposed values that still need your confirmation before planning can begin: "
-                + ", ".join(self.state.pending_confirmations),
+                "I still need confirmation for: " + ", ".join(self.state.pending_confirmations),
                 "cyan",
             )
 
@@ -1837,19 +2228,76 @@ class GovernanceHybridApp:
         return result
 
     def run_planning_specialists(self, round_no: int, reasoner_reviews: Dict[str, Any]) -> Dict[str, Any]:
-        backend = self.call_planning_specialist("BackendAgent", round_no, reasoner_reviews)
-        frontend = self.call_planning_specialist("FrontendAgent", round_no, reasoner_reviews)
-        security = self.call_planning_specialist("SecurityAgent", round_no, reasoner_reviews)
-        data = self.call_planning_specialist("DataAgent", round_no, reasoner_reviews)
-        devops = self.call_planning_specialist("DevOpsAgent", round_no, reasoner_reviews)
-
-        return {
-            "backend": backend,
-            "frontend": frontend,
-            "security": security,
-            "data": data,
-            "devops": devops,
+        subplans = {
+            "backend": {},
+            "frontend": {},
+            "security": {},
+            "data": {},
+            "devops": {},
         }
+
+        if self.should_run_specialist("BackendAgent"):
+            subplans["backend"] = self.call_planning_specialist("BackendAgent", round_no, reasoner_reviews)
+
+        if self.should_run_specialist("FrontendAgent"):
+            subplans["frontend"] = self.call_planning_specialist("FrontendAgent", round_no, reasoner_reviews)
+
+        subplans["security"] = self.call_planning_specialist("SecurityAgent", round_no, reasoner_reviews)
+
+        if self.should_run_specialist("DataAgent"):
+            subplans["data"] = self.call_planning_specialist("DataAgent", round_no, reasoner_reviews)
+
+        if self.should_run_specialist("DevOpsAgent"):
+            subplans["devops"] = self.call_planning_specialist("DevOpsAgent", round_no, reasoner_reviews)
+
+        return subplans
+
+    
+    def should_run_specialist(self, agent_name: str) -> bool:
+        caps = set(self.inferred_capabilities())
+        project_class = self.normalized_project_class()
+        exposure = self.get_contract_value("external_exposure")
+        sensitivity = self.get_contract_value("data_sensitivity")
+
+        if agent_name == "SecurityAgent":
+            return True
+
+        if agent_name == "FrontendAgent":
+            return (
+                "frontend" in caps
+                or "admin_panel" in caps
+                or project_class in {
+                    "static_website", "landing_page", "dashboard",
+                    "web_app", "fullstack_app", "mobile_app", "desktop_app"
+                }
+            )
+
+        if agent_name == "BackendAgent":
+            return (
+                "backend" in caps
+                or {"public_api", "ai_llm", "batch_jobs"} & caps
+                or project_class in {
+                    "web_app", "fullstack_app", "api_service",
+                    "automation_tool", "data_pipeline", "ai_system"
+                }
+            )
+
+        if agent_name == "DataAgent":
+            return (
+                "data" in caps
+                or self.get_contract_value("data_platform") != ""
+                or sensitivity not in {"", "none"}
+            )
+
+        if agent_name == "DevOpsAgent":
+            return (
+                "devops" in caps
+                or self.get_contract_value("hosting_target") != ""
+                or exposure in {"internal_only", "private_authenticated", "partner_facing", "public_internet"}
+            )
+
+        return False
+
 
     
     def architect_generate(
@@ -1886,6 +2334,335 @@ class GovernanceHybridApp:
 
         return self.normalize_plan(result, reasoner_reviews, specialist_subplans)
 
+    def generic_plan_defaults(self) -> Dict[str, Any]:
+        project_class = self.normalized_project_class()
+        caps = set(self.inferred_capabilities())
+
+        title_map = {
+            "cli_tool": "Validated CLI Architecture Plan",
+            "library_sdk": "Validated SDK Architecture Plan",
+            "static_website": "Validated Static Website Architecture Plan",
+            "landing_page": "Validated Landing Page Architecture Plan",
+            "api_service": "Validated API Service Architecture Plan",
+            "infrastructure_project": "Validated Infrastructure Architecture Plan",
+            "research_prototype": "Validated Research Prototype Architecture Plan",
+        }
+
+        if project_class in {"static_website", "landing_page"}:
+            return {
+                "title": title_map.get(project_class, "Validated Architecture Plan"),
+                "architecture_overview": {
+                    "system_style": "Static frontend delivery",
+                    "primary_components": [
+                        "Static site assets",
+                        "Page routing or site structure",
+                        "Content and media pipeline",
+                        "Hosting and CDN layer",
+                    ],
+                },
+                "technology_stack": {
+                    "frontend": self.get_contract_value("frontend_stack") or "Static HTML/CSS/JS or lightweight frontend framework",
+                    "backend": "No dedicated backend required unless later activated by confirmed capabilities",
+                    "data": self.get_contract_value("data_platform") or "Minimal or none",
+                    "hosting": self.get_contract_value("hosting_target") or "CDN or static hosting platform",
+                },
+                "system_components": [
+                    "Static page layer",
+                    "Reusable UI components",
+                    "Asset pipeline",
+                    "Hosting/CDN layer",
+                ],
+                "workflows": [
+                    "Build static assets",
+                    "Deploy assets to hosting target",
+                    "Serve content through CDN",
+                ],
+                "data_model": {
+                    "primary_entities": ["pages", "assets", "content_blocks"],
+                    "storage_notes": "Use file-based content or lightweight CMS only if required.",
+                },
+                "api_design": {
+                    "style": "No primary public API by default",
+                    "notes": "Only add APIs if confirmed requirements activate backend or integration capabilities.",
+                },
+                "deployment_and_operations": {
+                    "topology": "Static hosting with CDN",
+                    "environments": ["dev", "staging", "production"],
+                },
+            }
+
+        if project_class == "cli_tool":
+            return {
+                "title": title_map.get(project_class, "Validated Architecture Plan"),
+                "architecture_overview": {
+                    "system_style": "Local command-line application",
+                    "primary_components": [
+                        "CLI entrypoint",
+                        "Command parser",
+                        "Execution services",
+                        "Configuration and output handlers",
+                    ],
+                },
+                "technology_stack": {
+                    "runtime": self.get_contract_value("backend_stack") or "Python CLI runtime",
+                    "storage": self.get_contract_value("data_platform") or "Local files or optional lightweight storage",
+                    "distribution": self.get_contract_value("hosting_target") or "Package registry or direct binary distribution",
+                },
+                "system_components": [
+                    "CLI entrypoint",
+                    "Command handlers",
+                    "Business logic layer",
+                    "Config loader",
+                    "Logging and error handling",
+                ],
+                "workflows": [
+                    "User runs command",
+                    "Arguments are validated",
+                    "Requested operation executes",
+                    "Results are printed or saved",
+                ],
+                "data_model": {
+                    "primary_entities": ["commands", "options", "execution_results"],
+                    "storage_notes": "Prefer local configuration and predictable output artifacts.",
+                },
+                "api_design": {
+                    "style": "Command interface, not HTTP by default",
+                    "notes": "Public API endpoints should not be invented unless explicitly required.",
+                },
+                "deployment_and_operations": {
+                    "topology": "Local execution or packaged distribution",
+                    "environments": ["local_dev", "test", "release"],
+                },
+            }
+
+        if project_class == "library_sdk":
+            return {
+                "title": title_map.get(project_class, "Validated Architecture Plan"),
+                "architecture_overview": {
+                    "system_style": "Reusable library or SDK",
+                    "primary_components": [
+                        "Public API surface",
+                        "Core modules",
+                        "Configuration layer",
+                        "Testing and packaging pipeline",
+                    ],
+                },
+                "technology_stack": {
+                    "runtime": self.get_contract_value("backend_stack") or "Language runtime matching the SDK target",
+                    "packaging": self.get_contract_value("hosting_target") or "Package registry distribution",
+                },
+                "system_components": [
+                    "Public interfaces",
+                    "Core implementation modules",
+                    "Validation and error types",
+                    "Examples and documentation",
+                ],
+                "workflows": [
+                    "Developer installs package",
+                    "Developer calls SDK interfaces",
+                    "SDK validates input and returns structured results",
+                ],
+                "data_model": {
+                    "primary_entities": ["public_interfaces", "request_models", "response_models"],
+                    "storage_notes": "Persistent storage is optional and should not be assumed.",
+                },
+                "api_design": {
+                    "style": "Language-level package interfaces",
+                    "notes": "Do not default to REST endpoints for SDK projects.",
+                },
+                "deployment_and_operations": {
+                    "topology": "Package build, test, version, and publish pipeline",
+                    "environments": ["dev", "ci", "release"],
+                },
+            }
+
+        if project_class == "api_service":
+            return {
+                "title": title_map.get(project_class, "Validated Architecture Plan"),
+                "architecture_overview": {
+                    "system_style": "Service-oriented backend API",
+                    "primary_components": [
+                        "API service",
+                        "Business logic layer",
+                        "Persistence layer",
+                        "Background processing and operations",
+                    ],
+                },
+                "technology_stack": {
+                    "backend": self.get_contract_value("backend_stack") or "Backend service framework",
+                    "data": self.get_contract_value("data_platform") or "Transactional database plus object storage if needed",
+                    "hosting": self.get_contract_value("hosting_target") or "Managed container or app platform",
+                },
+                "system_components": [
+                    "API router",
+                    "Application services",
+                    "Persistence layer",
+                    "Auth and rate limiting",
+                    "Monitoring and deployment pipeline",
+                ],
+                "workflows": [
+                    "Client sends authenticated request",
+                    "Service validates input",
+                    "Business logic executes",
+                    "Data is read or written",
+                    "Structured response is returned",
+                ],
+                "data_model": {
+                    "primary_entities": ["users", "domain_records", "audit_events"],
+                    "storage_notes": "Schema should be derived from confirmed feature scope.",
+                },
+                "api_design": {
+                    "style": "HTTP or RPC service",
+                    "notes": "Design endpoints from confirmed features, not from generic web-app defaults.",
+                },
+                "deployment_and_operations": {
+                    "topology": "Managed service deployment with staging and production",
+                    "environments": ["dev", "staging", "production"],
+                },
+            }
+
+        if project_class == "infrastructure_project":
+            return {
+                "title": title_map.get(project_class, "Validated Architecture Plan"),
+                "architecture_overview": {
+                    "system_style": "Infrastructure and platform automation",
+                    "primary_components": [
+                        "Infrastructure definitions",
+                        "Provisioning pipeline",
+                        "Policy and secrets controls",
+                        "Monitoring and rollback mechanisms",
+                    ],
+                },
+                "technology_stack": {
+                    "infra": self.get_contract_value("backend_stack") or "IaC and automation tooling",
+                    "hosting": self.get_contract_value("hosting_target") or "Target cloud or on-prem environment",
+                },
+                "system_components": [
+                    "IaC modules",
+                    "Environment configuration",
+                    "CI/CD provisioning pipeline",
+                    "Policy enforcement",
+                    "Observability and recovery tooling",
+                ],
+                "workflows": [
+                    "Infrastructure code is validated",
+                    "Changes are reviewed",
+                    "Pipeline applies infrastructure",
+                    "Health checks and rollback controls run",
+                ],
+                "data_model": {
+                    "primary_entities": ["environments", "resources", "policies", "state"],
+                    "storage_notes": "State handling must be explicit and secure.",
+                },
+                "api_design": {
+                    "style": "No product API by default",
+                    "notes": "Automation interfaces may exist, but should not be assumed as REST endpoints unless required.",
+                },
+                "deployment_and_operations": {
+                    "topology": "Multi-environment infrastructure rollout",
+                    "environments": ["dev", "staging", "production"],
+                },
+            }
+
+        if project_class == "research_prototype":
+            return {
+                "title": title_map.get(project_class, "Validated Architecture Plan"),
+                "architecture_overview": {
+                    "system_style": "Experimental prototype",
+                    "primary_components": [
+                        "Prototype logic",
+                        "Experiment runner",
+                        "Evaluation outputs",
+                        "Optional lightweight interface",
+                    ],
+                },
+                "technology_stack": {
+                    "runtime": self.get_contract_value("backend_stack") or "Prototype-friendly runtime",
+                    "data": self.get_contract_value("data_platform") or "Experiment files, notebooks, or lightweight database",
+                },
+                "system_components": [
+                    "Prototype core",
+                    "Experiment scripts",
+                    "Evaluation and metrics outputs",
+                    "Documentation and reproducibility support",
+                ],
+                "workflows": [
+                    "Run experiment",
+                    "Capture outputs",
+                    "Evaluate results",
+                    "Iterate safely without overengineering",
+                ],
+                "data_model": {
+                    "primary_entities": ["experiments", "datasets", "results", "metrics"],
+                    "storage_notes": "Focus on reproducibility and traceability.",
+                },
+                "api_design": {
+                    "style": "Optional and requirement-driven",
+                    "notes": "Do not default to public endpoints for prototype work.",
+                },
+                "deployment_and_operations": {
+                    "topology": "Local, lab, or lightweight cloud execution",
+                    "environments": ["local_dev", "experiment", "demo"],
+                },
+            }
+
+        default_components = []
+        if "frontend" in caps:
+            default_components.append("Frontend application")
+        if "backend" in caps:
+            default_components.append("Backend service")
+        if "data" in caps:
+            default_components.append("Persistence layer")
+        if "ai_llm" in caps:
+            default_components.append("LLM integration layer")
+        if "devops" in caps:
+            default_components.append("Deployment and operations layer")
+        if not default_components:
+            default_components = ["Core application modules"]
+
+        return {
+            "title": title_map.get(project_class, "Validated Architecture Plan"),
+            "architecture_overview": {
+                "system_style": "Requirement-driven modular system",
+                "primary_components": default_components,
+            },
+            "technology_stack": {
+                "frontend": self.get_contract_value("frontend_stack") or "Only if confirmed by project requirements",
+                "backend": self.get_contract_value("backend_stack") or "Only if confirmed by project requirements",
+                "data": self.get_contract_value("data_platform") or "Only if confirmed by project requirements",
+                "hosting": self.get_contract_value("hosting_target") or "Only if confirmed by project requirements",
+            },
+            "system_components": default_components,
+            "workflows": [
+                "Translate confirmed requirements into implementation modules",
+                "Execute core project flows",
+                "Operate and monitor according to confirmed scope",
+            ],
+            "data_model": {
+                "primary_entities": ["domain_entities_to_be_derived_from_feature_scope"],
+                "storage_notes": "Do not assume storage patterns beyond confirmed requirements.",
+            },
+            "api_design": {
+                "style": "Requirement-driven",
+                "notes": "Only include APIs, commands, or interfaces that match the confirmed project profile.",
+            },
+            "deployment_and_operations": {
+                "topology": "Derived from confirmed hosting and exposure requirements",
+                "environments": ["dev", "staging", "production"] if "devops" in caps else ["local_dev", "release"],
+            },
+        }
+
+    def merge_plan_section(self, raw_value: Any, fallback_value: Any) -> Any:
+        if raw_value is None:
+            return fallback_value
+        if isinstance(raw_value, str) and not raw_value.strip():
+            return fallback_value
+        if isinstance(raw_value, list) and not raw_value:
+            return fallback_value
+        if isinstance(raw_value, dict) and not raw_value:
+            return fallback_value
+        return raw_value
+
 
     def normalize_plan(
         self,
@@ -1899,166 +2676,118 @@ class GovernanceHybridApp:
             item = contract.get(field, {})
             return str(item.get("value") or fallback)
 
-        title = str(raw.get("title") or "Validated Architecture Plan")
+        defaults = self.generic_plan_defaults()
+
+        title = str(raw.get("title") or defaults.get("title") or "Validated Architecture Plan")
         for token in ["Round 1", "Round 2", "Round 3", "Round 4", "(Round 1)", "(Round 2)", "(Round 3)", "(Round 4)"]:
             title = title.replace(token, "")
-        title = title.strip(" -–")
-        if not title:
-            title = "Validated Architecture Plan"
+        title = title.strip(" -") or "Validated Architecture Plan"
 
         plan = {
             "title": title,
             "executive_summary": raw.get("executive_summary")
-            or "Detailed validated architecture plan generated from the confirmed requirement contract.",
-
-            "architecture_overview": raw.get("architecture_overview") or {
-                "system_style": "Modular cloud-native application",
-                "primary_goal": c("project_goal"),
-                "target_users": c("target_users"),
-                "access_model": c("access_model"),
-            },
-
-            "technology_stack": raw.get("technology_stack") or {
-                "frontend": c("frontend_stack"),
-                "backend": c("backend_stack"),
-                "data_platform": c("data_platform"),
-                "hosting_target": c("hosting_target"),
-                "llm_integration": c(
-                    "llm_integration",
-                    "Secure backend-managed GPT-compatible integration",
-                ),
-            },
-
-            "functional_feature_map": raw.get("functional_feature_map") or {
-                "mvp_scope": c("mvp_scope"),
-                "expanded_scope": c("feature_scope"),
-                "future_scope": c(
-                    "future_scope",
-                    "Additional advanced features after MVP stabilization",
-                ),
-            },
-
-            "system_components": raw.get("system_components") or [
+                or raw.get("executive_summary".replace("_", ""))
+                or f"Implementation-grade architecture for {c('project_goal')}",
+            "architecture_overview": self.merge_plan_section(
+                raw.get("architecture_overview") or raw.get("architectureoverview"),
                 {
-                    "name": "Web Client",
-                    "responsibility": "Interactive UI, authentication UI, settings, and feature access",
+                    **defaults.get("architecture_overview", {}),
+                    "primary_goal": c("project_goal"),
+                    "target_users": c("target_users"),
+                    "access_model": c("access_model"),
                 },
+            ),
+            "technology_stack": self.merge_plan_section(
+                raw.get("technology_stack") or raw.get("technologystack"),
+                defaults.get("technology_stack", {}),
+            ),
+            "functional_feature_map": self.merge_plan_section(
+                raw.get("functional_feature_map") or raw.get("functionalfeaturemap"),
                 {
-                    "name": "API Gateway",
-                    "responsibility": "Authentication, validation, routing, throttling, and request governance",
+                    "feature_scope": c("feature_scope"),
+                    "mvp_scope": c("mvp_scope"),
+                    "future_scope": c("future_scope", "Planned after MVP based on validated direction."),
                 },
+            ),
+            "system_components": self.merge_plan_section(
+                raw.get("system_components") or raw.get("systemcomponents"),
+                defaults.get("system_components", []),
+            ),
+            "workflows": self.merge_plan_section(
+                raw.get("workflows"),
+                defaults.get("workflows", []),
+            ),
+            "data_model": self.merge_plan_section(
+                raw.get("data_model") or raw.get("datamodel"),
+                defaults.get("data_model", {}),
+            ),
+            "api_design": self.merge_plan_section(
+                raw.get("api_design") or raw.get("apidesign"),
+                defaults.get("api_design", {}),
+            ),
+            "security_and_compliance": self.merge_plan_section(
+                raw.get("security_and_compliance") or raw.get("securityandcompliance"),
                 {
-                    "name": "Application Service Layer",
-                    "responsibility": "Business logic, orchestration, and use-case execution",
+                    "risk_level": c("risk_level"),
+                    "data_sensitivity": c("data_sensitivity"),
+                    "external_exposure": c("external_exposure"),
+                    "security_baseline": c("security_baseline"),
+                    "privacy_retention_policy": c("privacy_retention_policy", "Derive retention and privacy controls from confirmed requirements."),
+                    "compliance_context": c("compliance_context", "Apply only if activated by confirmed risk and data profile."),
                 },
+            ),
+            "deployment_and_operations": self.merge_plan_section(
+                raw.get("deployment_and_operations") or raw.get("deploymentandoperations"),
+                defaults.get("deployment_and_operations", {}),
+            ),
+            "observability": self.merge_plan_section(
+                raw.get("observability"),
                 {
-                    "name": "LLM Adapter",
-                    "responsibility": "Provider abstraction, retries, safety checks, and token accounting",
+                    "baseline": c("observability_baseline", "Use only if the project profile requires operational observability."),
                 },
+            ),
+            "cost_and_scaling": self.merge_plan_section(
+                raw.get("cost_and_scaling") or raw.get("costandscaling"),
                 {
-                    "name": "Data Layer",
-                    "responsibility": "Persistence for users, sessions, messages, metadata, and audit events",
+                    "complexity_level": c("complexity_level", "moderate"),
+                    "execution_preference": c("execution_preference", "Prioritize maintainability and correctness."),
                 },
+            ),
+            "phased_implementation": self.merge_plan_section(
+                raw.get("phased_implementation") or raw.get("phasedimplementation"),
                 {
-                    "name": "Observability Layer",
-                    "responsibility": "Logs, metrics, traces, alerts, and audit monitoring",
+                    "mvp_first": c("mvp_scope"),
+                    "future_later": c("future_scope", "Phase future enhancements after MVP."),
                 },
-            ],
-
-            "workflows": raw.get("workflows") or {
-                "primary_flows": [
-                    "User authentication or approved guest access",
-                    "Feature request submission and validation",
-                    "Prompt or request assembly with policy checks",
-                    "Core service processing and optional LLM inference",
-                    "Persistence, monitoring, and operational oversight",
-                ]
-            },
-
-            "data_model": raw.get("data_model") or {
-                "entities": [
-                    "User",
-                    "Session",
-                    "Message",
-                    "FeatureArtifact",
-                    "Feedback",
-                    "UsageEvent",
-                    "AuditEvent",
-                ],
-                "storage_strategy": c("data_platform"),
-                "retention_policy": c("privacy_retention_policy"),
-            },
-
-            "api_design": raw.get("api_design") or {
-                "style": "REST plus streaming where needed",
-                "endpoints": [
-                    "/api/auth",
-                    "/api/users",
-                    "/api/sessions",
-                    "/api/messages",
-                    "/api/stream",
-                    "/api/feedback",
-                ],
-            },
-
-            "security_and_compliance": raw.get("security_and_compliance") or {
-                "baseline": c("security_baseline"),
-                "privacy": c("privacy_retention_policy"),
-                "compliance_context": c(
-                    "compliance_context",
-                    "Privacy-by-design baseline",
-                ),
-            },
-
-            "deployment_and_operations": raw.get("deployment_and_operations") or {
-                "hosting_target": c("hosting_target"),
-                "observability_baseline": c("observability_baseline"),
-                "ops_model": "Phased deployment with monitoring, rollback, and cost tracking",
-            },
-
-            "observability": raw.get("observability") or {
-                "baseline": c("observability_baseline"),
-            },
-
-            "cost_and_scaling": raw.get("cost_and_scaling") or {
-                "cost_position": "Usage-driven, especially if external model APIs are used",
-                "scaling_direction": "Horizontal application scaling with managed services, quotas, and caching",
-            },
-
-            "phased_implementation": raw.get("phased_implementation") or {
-                "phase_1": c("mvp_scope"),
-                "phase_2": c(
-                    "future_scope",
-                    "Expanded features after MVP stabilization",
-                ),
-            },
-
-            "development_guidelines": raw.get("development_guidelines") or [
-                "Keep service boundaries explicit",
-                "Design data contracts before implementation",
-                "Automate tests early",
-                "Never expose model secrets in the frontend",
-            ],
-
-            "risks_and_tradeoffs": raw.get("risks_and_tradeoffs") or {
-                "risks": [
-                    "API cost growth",
-                    "Public abuse pressure",
-                    "Latency variability",
-                    "Feature complexity",
-                ],
-                "tradeoffs": "A faster MVP may reduce governance depth, while stronger governance increases implementation overhead.",
-            },
-
-            "open_questions_resolved": raw.get("open_questions_resolved")
-            or reasoner_reviews.get("critic", {}),
-
-            "reasoner_reviews": reasoner_reviews,
-            "specialist_subplans": specialist_subplans,
+            ),
+            "development_guidelines": self.merge_plan_section(
+                raw.get("development_guidelines") or raw.get("developmentguidelines"),
+                {
+                    "constraints": c("constraints", "Keep implementation practical and maintainable."),
+                    "specialist_inputs_used": list(specialist_subplans.keys()),
+                    "reasoner_inputs_used": list(reasoner_reviews.keys()),
+                },
+            ),
+            "risks_and_tradeoffs": self.merge_plan_section(
+                raw.get("risks_and_tradeoffs") or raw.get("risksandtradeoffs"),
+                {
+                    "known_risks": [
+                        "Avoid introducing components that were not activated by the confirmed project profile."
+                    ],
+                    "tradeoffs": [
+                        "Favor requirement fit over generic architecture templates."
+                    ],
+                },
+            ),
+            "open_questions_resolved": self.merge_plan_section(
+                raw.get("open_questions_resolved") or raw.get("openquestionsresolved"),
+                [],
+            ),
             "generated_at": now_iso(),
         }
 
         return plan
+
 
 
     def auditor_validate(
