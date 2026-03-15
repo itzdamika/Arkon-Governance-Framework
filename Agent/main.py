@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from openai import OpenAI
+from dotenv import load_dotenv
 
 from rich import box
 from rich.console import Console
@@ -34,6 +35,8 @@ from reportlab.platypus import (
     Table as RLTable,
     TableStyle,
 )
+
+load_dotenv()
 
 # =========================================================
 # Helpers

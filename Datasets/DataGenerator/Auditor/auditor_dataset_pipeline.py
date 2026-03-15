@@ -14,6 +14,9 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from openai import OpenAI
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def now_iso() -> str:
@@ -114,8 +117,8 @@ class PipelineConfig:
     max_generation_attempts_per_batch: int = 4
     temperature_generation: float = 0.4
     temperature_validation: float = 0.0
-    generation_max_tokens: int = 32000
-    validation_max_tokens: int = 32000
+    generation_max_tokens: int = 12000
+    validation_max_tokens: int = 8000
     sleep_between_calls_sec: float = 1.5
     resume: bool = True
     seed: int = 42
@@ -136,6 +139,7 @@ class AzureOpenAIJsonClient:
     def complete_json(self, system_prompt: str, user_payload: Any, temperature: float, max_tokens: int, response_dir: Path, prefix: str) -> Any:
         user_text = user_payload if isinstance(user_payload, str) else json.dumps(user_payload, ensure_ascii=False)
         last_err: Optional[Exception] = None
+
         for attempt in range(1, 7):
             try:
                 resp = self.client.chat.completions.create(
@@ -144,8 +148,7 @@ class AzureOpenAIJsonClient:
                         {'role': 'system', 'content': system_prompt + '\n\nReturn only valid JSON.'},
                         {'role': 'user', 'content': user_text},
                     ],
-                    temperature=temperature,
-                    max_tokens=max_tokens,
+                    max_completion_tokens=max_tokens,
                 )
                 content = resp.choices[0].message.content or ''
                 raw_path = response_dir / f'{prefix}_raw_attempt_{attempt}.txt'
@@ -154,11 +157,19 @@ class AzureOpenAIJsonClient:
                 parsed_path = response_dir / f'{prefix}_parsed_attempt_{attempt}.json'
                 write_json(parsed_path, parsed)
                 return parsed
+
             except Exception as e:
                 last_err = e
+                msg = str(e)
+
+                if 'unsupported_parameter' in msg or 'invalid_request_error' in msg:
+                    raise RuntimeError(f'Permanent API request error: {e}') from e
+
                 wait = min(60, 2 ** attempt + random.random())
                 time.sleep(wait)
+
         raise RuntimeError(f'API call failed after retries: {last_err}')
+
 
 
 class AuditorDatasetPipeline:
@@ -354,8 +365,8 @@ def parse_args() -> PipelineConfig:
     parser.add_argument('--max-generation-attempts-per-batch', type=int, default=4)
     parser.add_argument('--temperature-generation', type=float, default=0.4)
     parser.add_argument('--temperature-validation', type=float, default=0.0)
-    parser.add_argument('--generation-max-tokens', type=int, default=32000)
-    parser.add_argument('--validation-max-tokens', type=int, default=32000)
+    parser.add_argument('--generation-max-tokens', type=int, default=12000)
+    parser.add_argument('--validation-max-tokens', type=int, default=8000)
     parser.add_argument('--sleep-between-calls-sec', type=float, default=1.5)
     parser.add_argument('--no-resume', action='store_true')
     parser.add_argument('--seed', type=int, default=42)
