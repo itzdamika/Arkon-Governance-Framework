@@ -1,0 +1,18 @@
+Metric,Before,After,Delta,Direction
+Total Rows,509,500,N/A,
+Structural Compliance Rate,0.9528,0.9520,-0.0008,↓ worsened
+Enum Compliance Rate,0.7053,0.6800,-0.0253,↓ worsened
+Conditional Field Compliance,0.7682,1.0000,+0.2318,↑ improved
+Cross-Field Consistency Rate,0.5344,0.6760,+0.1416,↑ improved
+Score Calibration Compliance,0.5737,1.0000,+0.4263,↑ improved
+Perfect Row Proportion (target <5%),0.3595,0.0020,-0.3575,↑ improved
+Project Class Entropy,3.7438,3.7445,+0.0008,↑ improved
+PC Normalised Entropy,0.9833,0.9835,+0.0002,↑ improved
+Project Classes Covered,14,14,N/A,
+Flaw Family Entropy,2.3856,2.3719,-0.0138,↓ worsened
+Unique Capability Combos,62,62,N/A,
+First-Pass Ratio (target 0.40),0.4440,0.4440,-0.0000,↓ worsened
+FP Ratio Deviation from Target,0.0440,0.0440,-0.0000,↑ improved
+Mean Rubric Score,6.6927,5.8376,-0.8551,↓ worsened
+Score Std Dev,2.5478,1.6695,-0.8783,↓ worsened
+Detail Template Compliance,1.0000,1.0000,+0.0000,=

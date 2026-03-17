@@ -1,0 +1,1926 @@
+{
+  "AUD-SYNC26-004": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=confidential requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-019": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-021": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-023": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-025": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-027": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-028": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-029": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=low, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-030": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-032": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-036": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-038": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-040": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-042": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-043": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=low, sensitivity=confidential requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-044": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-046": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-047": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=low, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-048": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-049": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-054": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-055": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-056": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-057": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=internal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-058": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=internal requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-059": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-060": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-064": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-067": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-069": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-070": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-073": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-076": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-077": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-078": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-080": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-081": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-082": [
+    {
+      "rule": "revision_no_fixreport",
+      "severity": "WARNING",
+      "detail": "revision_round should have non-empty fixreport"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    },
+    {
+      "rule": "revision_no_issue_reuse",
+      "severity": "ERROR",
+      "detail": "No prior issue IDs reappear in issueupdates"
+    }
+  ],
+  "AUD-SYNC26-083": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-084": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-085": [
+    {
+      "rule": "revision_no_fixreport",
+      "severity": "WARNING",
+      "detail": "revision_round should have non-empty fixreport"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    },
+    {
+      "rule": "revision_no_issue_reuse",
+      "severity": "ERROR",
+      "detail": "No prior issue IDs reappear in issueupdates"
+    }
+  ],
+  "AUD-SYNC26-086": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=confidential requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-087": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-089": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-091": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-093": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=low, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-102": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-111": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-113": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-118": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-119": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=internal requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-120": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-121": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-122": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=internal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-123": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=internal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-126": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-127": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-136": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-137": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-140": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-142": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-144": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-145": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=confidential requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-146": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=confidential requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-150": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=low, sensitivity=confidential requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-152": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-153": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=confidential requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-154": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=confidential requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-156": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-158": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-160": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-162": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-165": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-166": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-167": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-168": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=financial requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-169": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=financial requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-170": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-173": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-175": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-177": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-179": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-180": [
+    {
+      "rule": "conditional_llm",
+      "severity": "ERROR",
+      "detail": "capabilities includes 'aillm' but contract missing 'llmintegration'"
+    },
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-181": [
+    {
+      "rule": "conditional_llm",
+      "severity": "ERROR",
+      "detail": "capabilities includes 'aillm' but contract missing 'llmintegration'"
+    },
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-182": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-183": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-184": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-185": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-186": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-188": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-190": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-192": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-194": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-196": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-197": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-199": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-201": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-202": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-203": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=internal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-204": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=internal requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-205": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=internal requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-207": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-208": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-210": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-213": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-214": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-216": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-217": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=confidential requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-218": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=confidential requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-220": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-221": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=confidential requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-222": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=confidential requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-224": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-226": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-227": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-228": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-229": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=financial requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-230": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=financial requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-231": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=confidential requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-232": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=confidential requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-233": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-234": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-236": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-238": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-239": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=financial requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-240": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=financial requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-242": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-244": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-246": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-248": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-250": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-252": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-253": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-254": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-255": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=personal requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-256": [
+    {
+      "rule": "conditional_llm",
+      "severity": "ERROR",
+      "detail": "capabilities includes 'aillm' but contract missing 'llmintegration'"
+    },
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-257": [
+    {
+      "rule": "conditional_llm",
+      "severity": "ERROR",
+      "detail": "capabilities includes 'aillm' but contract missing 'llmintegration'"
+    },
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-259": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-260": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=health requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-261": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=health requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-262": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-263": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-264": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-265": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=confidential requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-276": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-278": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-280": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-283": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-285": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-287": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-290": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-292": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-293": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-294": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-296": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-298": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-301": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-306": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-310": [
+    {
+      "rule": "meta_mix_critical_missing",
+      "severity": "WARNING",
+      "detail": "intended_severity_mix includes 'critical' but no unresolved critical issues"
+    }
+  ],
+  "AUD-SYNC26-313": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-315": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-316": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-318": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-321": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-323": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=internal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-324": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=internal requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-327": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-328": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-329": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-333": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-336": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-339": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-344": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-350": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=internal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-351": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=internal requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-352": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=internal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-357": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-358": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-361": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-362": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-363": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-365": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-368": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-371": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-374": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-377": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-391": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-392": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-393": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-395": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-397": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-398": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=personal requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-399": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-401": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-404": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-407": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-410": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-415": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-417": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=internal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-418": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=internal requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-419": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=internal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-421": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-424": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-429": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-432": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-437": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-441": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=internal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-442": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=internal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-444": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-446": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=internal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-447": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=internal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-449": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-451": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-452": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=medium, sensitivity=personal requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-454": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-457": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-459": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-462": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-464": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=internal requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-465": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=internal requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-466": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=financial requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-467": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=financial requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-468": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=financial requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-469": [
+    {
+      "rule": "meta_mix_critical_missing",
+      "severity": "WARNING",
+      "detail": "intended_severity_mix includes 'critical' but no unresolved critical issues"
+    }
+  ],
+  "AUD-SYNC26-470": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-472": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-475": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-478": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-482": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-485": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-488": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-490": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-492": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=financial requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-493": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=financial requires 'compliancecontext'"
+    },
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-494": [
+    {
+      "rule": "conditional_compliance",
+      "severity": "ERROR",
+      "detail": "Risk=high, sensitivity=financial requires 'compliancecontext'"
+    }
+  ],
+  "AUD-SYNC26-496": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ],
+  "AUD-SYNC26-499": [
+    {
+      "rule": "revision_no_progression",
+      "severity": "ERROR",
+      "detail": "revision_round summary must contain one of ['meaningfully improved', 'stayed roughly flat', 'regressed']"
+    }
+  ]
+}
