@@ -1,0 +1,599 @@
+You are generating a premium synthetic training dataset for an internal architectural governance runtime. 
+
+Return ONLY valid JSON.
+Do not use markdown.
+Do not include comments.
+Do not include explanations.
+Do not include prose before or after the JSON.
+Do not include trailing commas.
+
+TASK
+Generate EXACTLY 50 rows as one JSON array.
+
+DATASET PURPOSE
+These rows train the AuditorAgent of a governance system that audits architecture plans against a locked requirement contract, structured requirement notes, issue history, and prior audit memory.
+
+HARD OUTPUT RULE
+Every row must match the compact runtime-aligned schema exactly.
+Use compact keys only.
+Never use snake_case keys anywhere inside the row.
+
+FORBIDDEN KEY EXAMPLES
+Never use:
+- sample_id
+- input_payload
+- target_output
+- project_goal
+- project_class
+- data_sensitivity
+- external_exposure
+- thinking_summary
+- rubric_scores
+- blocking_issues
+- requirement_conflicts
+- issue_updates
+- previous_audits
+
+Use:
+- sample_id at top level is allowed EXACTLY as shown below
+- input_payload at top level is allowed EXACTLY as shown below
+- target_output at top level is allowed EXACTLY as shown below
+
+But INSIDE nested payloads and outputs, always use compact keys:
+- projectgoal
+- projectclass
+- datasensitivity
+- externalexposure
+- thinkingsummary
+- rubricscores
+- blockingissues
+- requirementconflicts
+- issueupdates
+- previousaudits
+
+TOP-LEVEL SHAPE
+Each row must be:
+{
+  "sample_id": "AUD-SYNC26-001",
+  "dataset": "auditor",
+  "agent": "AuditorAgent",
+  "split": "train",
+  "profile": { ... },
+  "input_payload": { ... },
+  "target_output": { ... },
+  "metadata": { ... }
+}
+
+ALLOWED ENUMS
+
+profile.projectclass and frozenrequirementcontract.projectclass.value:
+- webapp
+- fullstackapp
+- mobileapp
+- desktopapp
+- apiservice
+- staticwebsite
+- landingpage
+- clitool
+- librarysdk
+- automationtool
+- datapipeline
+- aisystem
+- researchprototype
+- infrastructureproject
+
+capabilities labels:
+- frontend
+- backend
+- data
+- auth
+- aillm
+- integrations
+- analytics
+- realtime
+- payments
+- adminpanel
+- publicapi
+- batchjobs
+- devops
+
+complexitylevel:
+- simple
+- moderate
+- advanced
+- highscale
+
+risklevel:
+- low
+- medium
+- high
+
+datasensitivity:
+- none
+- internal
+- personal
+- financial
+- health
+- confidential
+
+externalexposure:
+- localonly
+- internalonly
+- privateauthenticated
+- partnerfacing
+- publicinternet
+
+Allowed issue severity:
+- critical
+- high
+- medium
+- low
+
+Allowed issue status:
+- unresolved
+- resolved
+- downgraded
+- new
+
+STRICT ENUM RULES
+- Never use phi, pci, pii, secret, public_internet, partner_api, private_authenticated, high, medium_complexity, web_app, api_service
+- For healthcare-like systems use datasensitivity="health"
+- For PCI/card/payment systems use datasensitivity="financial"
+- For B2B APIs requiring direct partner connectivity use externalexposure="partnerfacing"
+
+PROFILE SHAPE
+"profile": {
+  "domain": "<realistic domain>",
+  "projectclass": "<allowed label>",
+  "capabilities": ["<allowed capability>", "..."],
+  "complexitylevel": "<allowed label>",
+  "risklevel": "<allowed label>",
+  "datasensitivity": "<allowed label>",
+  "externalexposure": "<allowed label>"
+}
+
+INPUT PAYLOAD SHAPE
+"input_payload": {
+  "round": <integer>,
+  "frozenrequirementcontract": { ... },
+  "requirements": { ... },
+  "acceptedexceptions": { ... },
+  "issueledger": { ... },
+  "revisionmemory": { ... },
+  "previousaudits": [ ... ],
+  "reasonerreviews": { ... },
+  "specialistsubplans": { ... },
+  "plan": { ... },
+  "bestaudit": { ... }
+}
+
+CONTRACT FIELD OBJECT SHAPE
+Every frozenrequirementcontract field must be:
+{
+  "value": "<string>",
+  "source": "<short source label>",
+  "confirmed": true,
+  "rationale": "<brief reason>",
+  "updatedat": "2026-03-15T00:00:00Z"
+}
+
+MANDATORY CONTRACT FIELDS
+Always include:
+- projectgoal
+- targetusers
+- projectclass
+- capabilities
+- complexitylevel
+- risklevel
+- datasensitivity
+- externalexposure
+- accessmodel
+- featurescope
+- mvpscope
+- securitybaseline
+- frontendstack
+- backendstack
+- dataplatform
+- hostingtarget
+- privacyretentionpolicy
+- futurescope
+- constraints
+- observabilitybaseline
+- executionpreference
+
+Conditional:
+- include llmintegration if capabilities contains aillm
+- include compliancecontext if risklevel is high OR datasensitivity is personal/financial/health/confidential OR capabilities contains payments
+
+IMPORTANT DYNAMIC REQUIRED-FIELD RULE
+Do not omit fields just because they feel irrelevant.
+The runtime activates fields based on projectclass, capabilities, risklevel, datasensitivity, and externalexposure.
+So keep the mandatory set above populated with plausible values, even for simpler classes.
+However, values must still be semantically appropriate.
+
+REQUIREMENTS SHAPE
+requirements must be an object of objects, not arrays:
+{
+  "project": { ... },
+  "frontend": { ... },
+  "backend": { ... },
+  "security": { ... },
+  "data": { ... },
+  "devops": { ... },
+  "constraints": { ... },
+  "openquestions": { ... },
+  "confirmeddecisions": { ... }
+}
+
+Each section must contain short keyed notes.
+Good:
+"security": {
+  "transport": "mTLS required for all partner traffic",
+  "identity": "Service certificates issued from private CA"
+}
+
+Bad:
+"security": ["mTLS", "service certs"]
+
+ACCEPTED EXCEPTIONS
+acceptedexceptions is an object keyed by issue id.
+It may be {}.
+If present:
+{
+  "SEC-210": {
+    "issueid": "SEC-210",
+    "reason": "Temporary exception approved for MVP",
+    "usermessage": "We accept this tradeoff for the first release",
+    "createdat": "2026-03-15T00:00:00Z"
+  }
+}
+
+ISSUE LEDGER
+issueledger is an object keyed by issue id.
+For revision rounds it must be meaningful, not empty.
+Each issue object should usually include:
+{
+  "id": "SEC-010",
+  "title": "Missing mTLS enforcement",
+  "severity": "high",
+  "status": "unresolved",
+  "detail": "Prior audit found partner traffic was not protected with mTLS."
+}
+
+REVISION MEMORY
+revisionmemory is an object.
+Examples:
+{
+  "round_1": "Initial draft lacked tokenization and HA.",
+  "changes_for_round_2": "Added HA but still omitted tokenization."
+}
+
+PREVIOUS AUDITS
+previousaudits is a list.
+- first_pass rows usually use []
+- revision_round rows must include 1 to 3 concise prior audit entries
+
+REASONER REVIEWS
+Always include reasonerreviews as an object.
+Use richer content for medium/high complexity rows.
+Possible keys:
+- product
+- architectreasoner
+- security
+- constraints
+- critic
+
+SPECIALIST SUBPLANS
+Always include specialistsubplans as an object.
+Possible keys:
+- backend
+- frontend
+- security
+- data
+- devops
+
+PLAN SHAPE
+plan must contain:
+{
+  "thinkingsummary": "...",
+  "fixreport": [ ... ],
+  "title": "...",
+  "executivesummary": "...",
+  "architectureoverview": "...",
+  "technologystack": "...",
+  "functionalfeaturemap": "...",
+  "systemcomponents": "...",
+  "workflows": "...",
+  "datamodel": "...",
+  "apidesign": "...",
+  "securityandcompliance": "...",
+  "deploymentandoperations": "...",
+  "observability": "...",
+  "costandscaling": "...",
+  "phasedimplementation": "...",
+  "developmentguidelines": "...",
+  "risksandtradeoffs": "...",
+  "openquestionsresolved": "...",
+  "generatedat": "2026-03-15T00:00:00Z"
+}
+
+IMPLEMENTATION-GRADE RULE
+The plan must feel like a real architecture draft, not a stub.
+Do NOT write thin filler like:
+- "Go CLI"
+- "Low"
+- "Binary"
+- "MVP"
+- "Lint"
+- "None"
+as entire sections for strong rows.
+
+Minimum richness rule:
+For any row whose average rubric score is above 8.0, all major plan sections must contain concrete specifics.
+Concrete specifics means named components, data flows, deployment shape, security controls, and operational details.
+
+GOOD strong plan section example:
+"deploymentandoperations": "Distribute the Go CLI as signed binaries for macOS, Linux, and Windows through GitHub Releases. Use goreleaser for CI packaging, checksum generation, and semantic-versioned release promotion. Store update manifests in S3 and validate signatures before in-app update prompts."
+
+BAD strong plan section example:
+"deploymentandoperations": "Binary"
+
+PLAN CONSISTENCY RULES
+- staticwebsite or landingpage cannot rely on server-side runtime execution on purely static hosting
+- clitool should not pretend to be a browser UI app
+- librarysdk should not look like a hosted web platform
+- infrastructureproject should focus on environment/platform architecture rather than user-facing app screens
+- aisystem with strict local-model constraints must not switch to public model APIs
+- partnerfacing systems with mandatory mTLS must not silently downgrade to API keys over TLS
+- publicinternet systems handling sensitive data should usually include real auth, privacy, retention, and monitoring controls
+
+FIXREPORT RULES
+- If round = 1, fixreport may be []
+- If round > 1, fixreport must be a list of real fix items
+Each fixreport item:
+{
+  "issueid": "SEC-010",
+  "actiontaken": "Added client-certificate validation at the ingress layer and documented certificate rotation.",
+  "changedsections": ["apidesign", "securityandcompliance", "deploymentandoperations"],
+  "expectedoutcome": "The auditor should now find that partner traffic is protected with mTLS end to end."
+}
+
+TARGET OUTPUT SHAPE
+"target_output": {
+  "thinkingsummary": "...",
+  "rubricscores": {
+    "requirementsalignment": <0-10>,
+    "architecturequality": <0-10>,
+    "security": <0-10>,
+    "operability": <0-10>,
+    "internalconsistency": <0-10>
+  },
+  "summary": "...",
+  "strengths": ["...", "..."],
+  "concerns": ["...", "..."],
+  "blockingissues": ["...", "..."],
+  "recommendations": ["...", "..."],
+  "requirementconflicts": [ ... ],
+  "issueupdates": [ ... ]
+}
+
+NEVER OUTPUT THESE
+Do not output:
+- basescore
+- penalty
+- score
+- passed
+
+ABSOLUTE RUBRIC RULE
+Score against architecture quality in absolute terms, not relative optimism.
+If the plan is thin, generic, under-specified, or missing operational detail, architecturequality and operability must not be near-perfect even if there is no obvious contradiction.
+
+ANTI-INFLATION RULES
+- Do not give any row all 10s unless the plan is unusually strong, detailed, realistic, and issue-free
+- Do not give architecturequality >= 9 to a thin plan
+- Do not give operability >= 9 if deployment/observability/rollback/operations are sparse
+- Do not give internalconsistency >= 9 if the plan contains even one notable hosting-stack, security-requirement, or workflow contradiction
+- Do not give security >= 9 for high-risk or sensitive systems unless concrete controls are spelled out
+- If blockingissues is non-empty, at least one rubric dimension should usually be materially reduced
+- A "perfect" row is rare; keep such rows under 5% of the dataset
+
+SCORING CALIBRATION
+Assume the runtime later computes:
+base =
+0.30 * requirementsalignment
++ 0.25 * architecturequality
++ 0.20 * security
++ 0.15 * operability
++ 0.10 * internalconsistency
+
+Penalty for unresolved issues:
+- critical: 1.50
+- high: 0.60
+- medium: 0.20
+- low: 0.05
+
+Use this to calibrate rubrics realistically.
+A row can have decent rubrics but still be weak after penalties.
+Do not inflate rubrics when unresolved critical or multiple unresolved high issues remain.
+
+REQUIREMENT CONFLICTS
+Each item:
+{
+  "issueid": "SEC-012",
+  "field": "securitybaseline",
+  "currentvalue": "Bearer API keys over standard TLS",
+  "proposedvalue": "mTLS required for partner traffic",
+  "exactreason": "The plan drops the mandatory transport-level client authentication requirement.",
+  "severity": "critical"
+}
+
+FIELD ACCURACY RULE FOR CONFLICTS
+The field must match the violated requirement precisely.
+Do not mismatch unrelated concepts.
+Examples:
+- tokenization problem -> use field like securitybaseline or compliancecontext only if the contract framed it there
+- hosting mismatch -> hostingtarget
+- local-model violation -> llmintegration
+- wrong database -> dataplatform
+- missing MFA -> securitybaseline or accessmodel only if that is where the contract expressed it
+
+ISSUEUPDATES RULES
+Each issueupdates item:
+{
+  "id": "SEC-012",
+  "title": "Missing mTLS Enforcement",
+  "severity": "critical",
+  "status": "new",
+  "detail": "Newly introduced. Evidence: apidesign specifies bearer API keys over standard TLS and securityandcompliance omits client-certificate validation. Impact: lowers requirementsalignment and security because the frozen contract requires mTLS for partner traffic."
+}
+
+STRICT DETAIL TEMPLATE
+Every issueupdates.detail must contain ALL of the following:
+1. One explicit status word from this exact set:
+   - Fixed.
+   - Partially fixed.
+   - Unchanged.
+   - Newly introduced.
+2. Evidence: name exact plan sections that justify the judgment
+3. Impact: name one or more rubric dimensions affected
+4. If revision round and a tradeoff/regression happened, explicitly say so
+
+Allowed examples:
+- "Fixed. Evidence: apidesign now requires mTLS at ingress and securityandcompliance documents certificate validation and rotation. Impact: improves requirementsalignment and security."
+- "Partially fixed. Evidence: workflows mention MFA, but securityandcompliance still omits enrollment recovery and step-up enforcement. Impact: slightly improves security but leaves requirementsalignment below strong levels."
+- "Unchanged. Evidence: datamodel still stores raw PAN-adjacent fields and securityandcompliance still omits tokenization. Impact: keeps security and requirementsalignment materially depressed."
+- "Newly introduced. Evidence: deploymentandoperations keeps Vercel serverless hosting while apidesign adds long-lived WebSocket sessions. Impact: lowers operability and internalconsistency."
+
+SUMMARIES FOR REVISION ROUNDS
+If case_type is revision_round, summary must explicitly say one of:
+- meaningfully improved
+- stayed roughly flat
+- regressed
+
+And explain why.
+
+FIRST-PASS / REVISION BALANCE
+Generate the whole batch with this exact distribution target:
+- 40% first_pass
+- 60% revision_round
+
+If 50 is not divisible cleanly, round to the nearest whole counts while keeping revision_round the majority.
+Do not accidentally generate mostly first_pass rows.
+
+REVISION ROUND QUALITY RULES
+For revision_round rows:
+- previousaudits must not be empty
+- issueledger must not be empty
+- at least one prior issue id must reappear in issueupdates
+- issue status progression must be realistic
+- many revision rows should include mixes such as one issue resolved and one issue newly introduced, or one partially improved but still unresolved
+- fixreport should reference the prior issue ids
+- summary must compare this round to the prior round
+
+PERFECT / NEAR-PERFECT ROW RULES
+If a row has:
+- no blockingissues
+- no requirementconflicts
+- empty or all-resolved issueupdates
+then metadata must still use meaningful flaw-family labels.
+
+Use:
+- primary_flaw_family = "none" only for truly clean high-quality rows
+- secondary_flaw_families may be []
+- intended_severity_mix may be []
+
+But keep truly clean rows rare.
+No more than 5% of total rows should be nearly perfect.
+Most rows should contain at least one meaningful flaw or tradeoff.
+
+PROJECT-CLASS COVERAGE RULE
+Spread rows across the supported runtime classes.
+Do not over-cluster around webapp/fullstackapp/apiservice.
+Across the full batch, include broad coverage from:
+- webapp
+- fullstackapp
+- mobileapp
+- desktopapp
+- apiservice
+- staticwebsite
+- landingpage
+- clitool
+- librarysdk
+- automationtool
+- datapipeline
+- aisystem
+- researchprototype
+- infrastructureproject
+
+DIVERSITY RULES
+Use varied:
+- domains
+- project classes
+- capabilities
+- flaw families
+- severity mixes
+- deployment targets
+- security constraints
+- revision patterns
+
+Avoid near-duplicates.
+
+METADATA SHAPE
+{
+  "schema_version": "v2_compact_runtime_aligned",
+  "case_type": "first_pass" or "revision_round",
+  "primary_flaw_family": "<one label>",
+  "secondary_flaw_families": ["<label>", "<label>"],
+  "intended_severity_mix": ["critical", "high"],
+  "generation_source": "synthetic",
+  "quality_flags": [],
+  "notes": "<brief useful note>"
+}
+
+GOOD flaw-family labels:
+- security
+- requirementconflict
+- operability
+- architecturequality
+- internalconsistency
+- compliance
+- deployment
+- datahandling
+- regression
+- scalability
+- none
+
+METADATA CONSISTENCY RULE
+- Do not use primary_flaw_family="none" unless the row is genuinely clean
+- If there is a critical unresolved issue, intended_severity_mix must include "critical"
+- If there are unresolved highs but no criticals, include "high"
+- metadata must agree with target_output
+
+QUALITY FLAGS
+Usually use [].
+Use flags only when intentionally generating edge-case rows.
+
+EXAMPLE CONSISTENCY EXPECTATIONS
+- staticwebsite + GitHub Pages + PHP backend = invalid unless deliberately used as a flaw case
+- librarysdk + NPM package + TypeScript wrapper = valid pattern
+- clitool + localonly + signed binaries = valid pattern
+- infrastructureproject + GovCloud + FedRAMP + public AWS deployment = good flaw case
+- datapipeline + Snowflake required + PostgreSQL implemented = good requirement-conflict case
+- aisystem + local-model requirement + OpenAI public API = good critical conflict case
+
+FINAL PRE-SUBMISSION CHECKLIST
+Before finalizing each row, verify:
+- nested keys are compact
+- allowed enums only
+- requirements sections are dictionaries, not arrays
+- revision_round rows include real prior history
+- issue ids are stable and reused properly
+- issueupdates.detail follows the strict template exactly
+- plan richness matches score level
+- metadata matches actual flaws
+- first_pass vs revision_round batch ratio matches target
+- project-class coverage is broad across the batch
+- perfect rows are rare
+- no obviously impossible combinations unless intentionally used as a flaw case
+
+Now generate EXACTLY 30 rows as one JSON array.

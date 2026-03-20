@@ -1,0 +1,506 @@
+================================================================================
+ARCHITECT AGENT DATASET — COMPLETE GENERATION PROMPT
+================================================================================
+
+ANALYSIS OF main.py — ArchitectAgent
+=====================================
+
+The ArchitectAgent (lines 467-527, 2306-2338) receives a structured payload and must
+produce an implementation-grade architecture plan.
+
+INPUT PAYLOAD (from architect_generate, lines 2312-2325):
+{
+  "round": <integer>,
+  "frozen_requirement_contract": { ... },
+  "requirements": { ... },
+  "reasoner_reviews": { ... },
+  "specialist_subplans": { ... },
+  "issue_ledger": { ... },
+  "focus_issues": [ ... ],
+  "revision_memory": { ... },
+  "accepted_exceptions": { ... },
+  "previous_audits": [ ... ],
+  "previous_plan": { ... },
+  "best_plan": { ... }
+}
+
+OUTPUT (from ArchitectAgent prompt, lines 495-526):
+{
+  "thinking_summary": "...",
+  "fix_report": [ ... ],
+  "title": "...",
+  "executive_summary": "...",
+  "architecture_overview": "...",
+  "technology_stack": "...",
+  "functional_feature_map": "...",
+  "system_components": "...",
+  "workflows": "...",
+  "data_model": "...",
+  "api_design": "...",
+  "security_and_compliance": "...",
+  "deployment_and_operations": "...",
+  "observability": "...",
+  "cost_and_scaling": "...",
+  "phased_implementation": "...",
+  "development_guidelines": "...",
+  "risks_and_tradeoffs": "...",
+  "open_questions_resolved": "..."
+}
+
+KEY DIFFERENCES FROM AUDITOR DATASET:
+- Architect PRODUCES plans; Auditor EVALUATES them
+- Output is much richer — full architecture with concrete specifics
+- fix_report addresses prior audit issues (empty for round 1)
+- Plan quality must vary (some strong, some intentionally weak for training diversity)
+- The model must learn to translate requirements INTO architecture, not critique it
+
+
+================================================================================
+GENERATION PROMPT — USE THIS WITH GEMINI TO GENERATE 30 ROWS PER BATCH
+================================================================================
+
+You are generating a premium synthetic training dataset for the ArchitectAgent of an internal architectural governance runtime. I have generated [X] rows so far (ARC-PLAN26-001 to ARC-PLAN26-[X]). Generate the next 30 rows continuing from ARC-PLAN26-[X+1].
+
+Return ONLY valid JSON.
+Do not use markdown.
+Do not include comments.
+Do not include explanations.
+Do not include prose before or after the JSON.
+Do not include trailing commas.
+
+TASK
+Generate EXACTLY 30 rows as one JSON array.
+
+DATASET PURPOSE
+These rows train the ArchitectAgent of a governance system that generates implementation-grade architecture plans from locked requirement contracts, specialist sub-plans, reasoner reviews, issue history, and revision memory.
+
+TOP-LEVEL SHAPE
+Each row must be:
+{
+  "sample_id": "ARC-PLAN26-001",
+  "dataset": "architect",
+  "agent": "ArchitectAgent",
+  "split": "train",
+  "profile": { ... },
+  "input_payload": { ... },
+  "target_output": { ... },
+  "metadata": { ... }
+}
+
+ALLOWED ENUMS
+
+profile.projectclass:
+- webapp
+- fullstackapp
+- mobileapp
+- desktopapp
+- apiservice
+- staticwebsite
+- landingpage
+- clitool
+- librarysdk
+- automationtool
+- datapipeline
+- aisystem
+- researchprototype
+- infrastructureproject
+
+capabilities labels:
+- frontend
+- backend
+- data
+- auth
+- aillm
+- integrations
+- analytics
+- realtime
+- payments
+- adminpanel
+- publicapi
+- batchjobs
+- devops
+
+complexitylevel: simple, moderate, advanced, highscale
+risklevel: low, medium, high
+datasensitivity: none, internal, personal, financial, health, confidential
+externalexposure: localonly, internalonly, privateauthenticated, partnerfacing, publicinternet
+
+Allowed issue severity: critical, high, medium, low
+Allowed issue status: unresolved, resolved, downgraded, new
+
+STRICT ENUM RULES
+Never use: phi, pci, pii, secret, public_internet, partner_api, private_authenticated
+For healthcare use datasensitivity="health"
+For PCI/card systems use datasensitivity="financial"
+
+PROFILE SHAPE
+"profile": {
+  "domain": "<realistic domain>",
+  "projectclass": "<allowed label>",
+  "capabilities": ["<allowed capability>", "..."],
+  "complexitylevel": "<allowed label>",
+  "risklevel": "<allowed label>",
+  "datasensitivity": "<allowed label>",
+  "externalexposure": "<allowed label>"
+}
+
+INPUT PAYLOAD SHAPE
+"input_payload": {
+  "round": <integer>,
+  "frozen_requirement_contract": { ... },
+  "requirements": { ... },
+  "reasoner_reviews": { ... },
+  "specialist_subplans": { ... },
+  "issue_ledger": { ... },
+  "focus_issues": [ ... ],
+  "revision_memory": { ... },
+  "accepted_exceptions": { ... },
+  "previous_audits": [ ... ],
+  "previous_plan": { ... },
+  "best_plan": { ... }
+}
+
+CONTRACT FIELD OBJECT SHAPE
+Every frozen_requirement_contract field must be:
+{
+  "value": "<string>",
+  "source": "<short source label>",
+  "confirmed": true,
+  "rationale": "<brief reason>",
+  "updated_at": "2026-03-15T00:00:00Z"
+}
+
+MANDATORY CONTRACT FIELDS
+Always include:
+- project_goal, target_users, project_class, capabilities, complexity_level
+- risk_level, data_sensitivity, external_exposure, access_model
+- feature_scope, mvp_scope, security_baseline
+- frontend_stack, backend_stack, data_platform, hosting_target
+- privacy_retention_policy, future_scope, constraints
+- observability_baseline, execution_preference
+
+Conditional:
+- include llm_integration if capabilities contains aillm
+- include compliance_context if risklevel is high OR datasensitivity is personal/financial/health/confidential OR capabilities contains payments
+
+REQUIREMENTS SHAPE
+requirements must be an object of objects:
+{
+  "project": { "goal": "...", "target_users": "..." },
+  "frontend": { "framework": "...", "approach": "..." },
+  "backend": { "runtime": "...", "framework": "..." },
+  "security": { "auth": "...", "transport": "..." },
+  "data": { "db": "...", "cache": "..." },
+  "devops": { "ci": "...", "hosting": "..." },
+  "constraints": { ... },
+  "open_questions": { ... },
+  "confirmed_decisions": { ... }
+}
+
+REASONER REVIEWS SHAPE
+Always include reasoner_reviews as an object. Possible keys:
+- product: summary of product scope review
+- architect_reasoner: feasibility and architecture direction
+- security: key risks and required controls
+- constraints: cost/complexity/phased delivery notes
+- critic: contradictions and blindspots
+
+Each review should be 2-5 sentences of substantive analysis, not generic filler.
+
+SPECIALIST SUBPLANS SHAPE
+Always include specialist_subplans as an object. Possible keys:
+- backend: service_design, api_patterns, business_modules
+- frontend: app_structure, pages_and_flows, state_management
+- security: auth_design, authorization_model, secrets_management
+- data: entities, storage_design, retention_and_deletion
+- devops: deployment_topology, ci_cd_design, observability_stack
+
+Each subplan should be a concise but specific dict with 3-6 keys.
+
+ISSUE LEDGER
+For round 1: may be {}
+For round > 1: must contain real issues from prior audits
+Each issue:
+{
+  "<issue_id>": {
+    "id": "<issue_id>",
+    "title": "<descriptive title>",
+    "severity": "<critical|high|medium|low>",
+    "status": "<unresolved|resolved|downgraded|new>",
+    "detail": "<what the auditor found>"
+  }
+}
+
+FOCUS ISSUES
+For round 1: []
+For round > 1: list of 1-3 highest priority issues the architect must address
+Each: { "id": "SEC-010", "title": "Missing mTLS", "severity": "critical" }
+
+REVISION MEMORY
+For round 1: {}
+For round > 1:
+{
+  "round_1": "Initial draft lacked tokenization and HA.",
+  "changes_for_round_2": "Added HA but still omitted tokenization."
+}
+
+PREVIOUS AUDITS
+For round 1: []
+For round > 1: 1-3 concise prior audit summaries
+
+PREVIOUS PLAN and BEST PLAN
+For round 1: {}
+For round > 1: abbreviated version of prior plan (just title + key sections)
+
+TARGET OUTPUT SHAPE
+"target_output": {
+  "thinking_summary": "...",
+  "fix_report": [ ... ],
+  "title": "...",
+  "executive_summary": "...",
+  "architecture_overview": "...",
+  "technology_stack": "...",
+  "functional_feature_map": "...",
+  "system_components": "...",
+  "workflows": "...",
+  "data_model": "...",
+  "api_design": "...",
+  "security_and_compliance": "...",
+  "deployment_and_operations": "...",
+  "observability": "...",
+  "cost_and_scaling": "...",
+  "phased_implementation": "...",
+  "development_guidelines": "...",
+  "risks_and_tradeoffs": "...",
+  "open_questions_resolved": "..."
+}
+
+FIX REPORT RULES
+- If round = 1, fix_report must be []
+- If round > 1, fix_report must address focus_issues
+Each item:
+{
+  "issue_id": "SEC-010",
+  "action_taken": "Added client-certificate validation at the ingress layer and documented certificate rotation.",
+  "changed_sections": ["api_design", "security_and_compliance", "deployment_and_operations"],
+  "expected_outcome": "The auditor should now find that partner traffic is protected with mTLS end to end."
+}
+
+PLAN QUALITY RULES — THIS IS THE MOST IMPORTANT SECTION
+
+The target_output IS the architecture plan. It must be IMPLEMENTATION-GRADE, not generic.
+
+EVERY major plan section must contain CONCRETE SPECIFICS:
+- Named components, services, and modules
+- Specific technology choices with versions where relevant
+- Data flows between components
+- Deployment topology with specific infrastructure
+- Security controls with specific mechanisms
+- Operational details with specific tools
+
+GOOD plan section examples:
+
+"architecture_overview": "Three-tier architecture with a React 18 SPA served from CloudFront, communicating via REST APIs to a NestJS backend on ECS Fargate. The backend connects to Aurora PostgreSQL for persistence and ElastiCache Redis for session caching. Authentication flows through AWS Cognito with SAML federation for enterprise SSO."
+
+"technology_stack": "Frontend: React 18 with TypeScript, Tailwind CSS, and React Query for server state. Backend: NestJS on Node 20 with TypeORM for database access. Database: Aurora PostgreSQL 15 with read replicas. Cache: ElastiCache Redis 7. Infrastructure: AWS ECS Fargate behind an ALB with WAF, Route53 for DNS, ACM for TLS certificates."
+
+"deployment_and_operations": "Containers built via GitHub Actions CI pipeline, pushed to ECR, deployed via ArgoCD to ECS Fargate across two AZs. Blue-green deployments with automatic rollback on health check failure. Environments: dev (single AZ, smaller instances), staging (mirrors prod topology), production (multi-AZ, auto-scaling 2-8 tasks). Database migrations run as ECS tasks before deployment. Secrets managed via AWS Secrets Manager with automatic rotation."
+
+BAD plan section examples (NEVER do this):
+"architecture_overview": "Standard web architecture."
+"technology_stack": "React, Node, Postgres."
+"deployment_and_operations": "Deploy to cloud."
+
+MINIMUM RICHNESS RULE:
+- architecture_overview: 40+ words, name the architecture style, all major components, and how they connect
+- technology_stack: 30+ words, name specific technologies with context
+- functional_feature_map: 30+ words, map features to modules/services
+- system_components: 25+ words, list concrete components
+- workflows: 30+ words, describe at least 2 user/system workflows
+- data_model: 30+ words, name primary entities and relationships
+- api_design: 25+ words, specify API style, key endpoints/commands, auth mechanism
+- security_and_compliance: 30+ words, name specific controls
+- deployment_and_operations: 40+ words, specify topology, environments, CI/CD, rollback
+- observability: 25+ words, name specific tools and what they monitor
+- cost_and_scaling: 20+ words, scaling approach and cost controls
+- phased_implementation: 30+ words, define MVP phase and at least one future phase
+- development_guidelines: 20+ words, coding standards, PR process, testing requirements
+- risks_and_tradeoffs: 25+ words, name at least 2 specific risks with mitigations
+- open_questions_resolved: 15+ words, list resolved decisions
+
+PLAN CONSISTENCY RULES
+- staticwebsite/landingpage: cannot use server-side runtime on purely static hosting
+- clitool: should describe CLI architecture, not a browser UI
+- librarysdk: should describe package architecture, not a hosted platform
+- infrastructureproject: focus on platform/environment architecture
+- aisystem with local-model constraints: must not use public model APIs
+- partnerfacing with mandatory mTLS: must include mTLS in security and API sections
+- The plan MUST align with ALL frozen_requirement_contract fields
+
+PLAN QUALITY VARIATION (IMPORTANT FOR TRAINING DIVERSITY)
+Not every plan should be perfect. Generate a MIX:
+- 40% STRONG plans: Rich detail, all sections substantive, addresses all requirements
+- 35% MODERATE plans: Good structure but has 1-2 weak sections or minor misalignments
+- 15% WEAK plans: Thin sections, missing details, or misaligned with some requirements
+- 10% INTENTIONALLY FLAWED plans: Contains 1-2 deliberate contract violations or contradictions
+
+This variation teaches the model the RANGE of quality it needs to produce across different situations. The thinking_summary should reflect the plan quality — strong plans have confident summaries, weak plans acknowledge limitations.
+
+FIRST-PASS / REVISION BALANCE
+- 40% first_pass (round = 1)
+- 60% revision_round (round > 1)
+
+For revision rounds:
+- fix_report must address focus_issues
+- The plan should show IMPROVEMENT over previous_plan
+- thinking_summary must reference what was changed and why
+- Some revision rounds should fix issues cleanly
+- Some should fix one issue but introduce a new minor problem
+- Some should only partially fix issues
+
+METADATA SHAPE
+{
+  "schema_version": "v2_architect_aligned",
+  "case_type": "first_pass" or "revision_round",
+  "plan_quality": "strong" or "moderate" or "weak" or "flawed",
+  "primary_theme": "<one label>",
+  "generation_source": "synthetic",
+  "quality_flags": [],
+  "notes": "<brief useful note>"
+}
+
+plan_quality must match the actual plan content.
+
+primary_theme labels:
+- greenfield
+- migration
+- scalability
+- security_hardening
+- compliance
+- performance_optimization
+- cost_reduction
+- microservices_decomposition
+- api_first
+- data_intensive
+- realtime
+- ml_pipeline
+- devops_modernization
+- legacy_modernization
+
+PROJECT-CLASS COVERAGE
+Spread rows across all 14 project classes. Do not over-cluster.
+
+DIVERSITY RULES
+Use varied:
+- domains (healthcare, fintech, e-commerce, education, logistics, gaming, media, IoT, government, SaaS, etc.)
+- technology stacks (React/Node, Vue/Python, Angular/Java, Flutter/Go, Svelte/Rust, etc.)
+- hosting targets (AWS, GCP, Azure, Vercel, Cloudflare, self-hosted, hybrid, etc.)
+- architecture styles (monolith, microservices, serverless, event-driven, CQRS, hexagonal, etc.)
+- database choices (PostgreSQL, MySQL, MongoDB, DynamoDB, Cassandra, Redis, Snowflake, etc.)
+- security approaches (OAuth2, OIDC, mTLS, API keys, JWT, SAML, certificate-based, etc.)
+- deployment methods (Kubernetes, ECS, Lambda, Cloud Run, bare metal, Docker Compose, etc.)
+
+Avoid near-duplicates. Every row should feel like a different real project.
+
+EXAMPLE ROW STRUCTURE (abbreviated):
+
+{
+  "sample_id": "ARC-PLAN26-001",
+  "dataset": "architect",
+  "agent": "ArchitectAgent",
+  "split": "train",
+  "profile": {
+    "domain": "Healthcare Operations",
+    "projectclass": "fullstackapp",
+    "capabilities": ["frontend", "backend", "data", "auth"],
+    "complexitylevel": "moderate",
+    "risklevel": "high",
+    "datasensitivity": "health",
+    "externalexposure": "privateauthenticated"
+  },
+  "input_payload": {
+    "round": 1,
+    "frozen_requirement_contract": {
+      "project_goal": { "value": "Patient intake management system", "source": "PRD", "confirmed": true, "rationale": "Core business need", "updated_at": "2026-03-15T00:00:00Z" },
+      "target_users": { "value": "Clinic staff and patients", "source": "PRD", "confirmed": true, "rationale": "Primary users", "updated_at": "2026-03-15T00:00:00Z" },
+      ... (all mandatory fields)
+    },
+    "requirements": {
+      "project": { "goal": "Manage patient intake forms and medical history" },
+      "frontend": { "framework": "React 18 with TypeScript" },
+      "backend": { "runtime": "Node 20 with NestJS" },
+      "security": { "auth": "Cognito with MFA", "compliance": "HIPAA" },
+      "data": { "db": "Aurora PostgreSQL", "encryption": "AES-256 at rest" },
+      "devops": { "ci": "GitHub Actions", "hosting": "AWS ECS Fargate" },
+      "constraints": { "region": "us-east-1", "data_residency": "US only" },
+      "open_questions": {},
+      "confirmed_decisions": { "cloud": "AWS" }
+    },
+    "reasoner_reviews": {
+      "product": "Scope is well-defined for MVP. Intake forms and history are the core features.",
+      "security": "HIPAA compliance requires encryption at rest, audit logging, and BAA with AWS.",
+      "architect_reasoner": "NestJS with TypeORM on Fargate is feasible. Consider read replicas for reporting.",
+      "constraints": "Budget allows Fargate with auto-scaling. Target Q3 delivery is achievable."
+    },
+    "specialist_subplans": {
+      "backend": { "service_design": "Modular NestJS with domain modules for intake, patients, and auth", "api_patterns": "RESTful with OpenAPI 3.0 specs" },
+      "frontend": { "app_structure": "React SPA with route-based code splitting", "state_management": "React Query for server state, Zustand for UI state" },
+      "security": { "auth_design": "Cognito user pools with MFA, HIPAA-eligible configuration", "audit_and_logging_controls": "CloudTrail + custom audit log table" },
+      "data": { "entities": "patients, intake_forms, form_submissions, audit_log", "storage_design": "Aurora PostgreSQL with KMS encryption" },
+      "devops": { "deployment_topology": "Multi-AZ ECS Fargate behind ALB", "ci_cd_design": "GitHub Actions with ECR push and ECS deploy" }
+    },
+    "issue_ledger": {},
+    "focus_issues": [],
+    "revision_memory": {},
+    "accepted_exceptions": {},
+    "previous_audits": [],
+    "previous_plan": {},
+    "best_plan": {}
+  },
+  "target_output": {
+    "thinking_summary": "Designing a HIPAA-compliant patient intake system on AWS. Key decisions: NestJS modular backend for clean domain separation, Aurora PostgreSQL with KMS for data-at-rest encryption, Cognito with MFA for authentication. Prioritizing security and compliance controls given the health data sensitivity.",
+    "fix_report": [],
+    "title": "Patient Intake Portal Architecture",
+    "executive_summary": "A HIPAA-compliant fullstack application for clinic patient intake management, built with React 18 and NestJS on AWS ECS Fargate with Aurora PostgreSQL. The system handles patient registration, intake form submission, medical history capture, and staff review workflows with end-to-end encryption and comprehensive audit logging.",
+    "architecture_overview": "Three-tier architecture: React 18 SPA served via CloudFront, NestJS REST API on ECS Fargate behind an ALB with WAF, Aurora PostgreSQL for persistence with KMS encryption at rest and TLS in transit. Authentication flows through Cognito with MFA enforcement. All PHI data is encrypted and access is logged to a dedicated audit table and CloudTrail.",
+    "technology_stack": "Frontend: React 18, TypeScript, Tailwind CSS, React Query. Backend: NestJS on Node 20, TypeORM, class-validator. Database: Aurora PostgreSQL 15 with KMS, read replica for reporting. Auth: AWS Cognito with MFA. Infrastructure: ECS Fargate, ALB, WAF, CloudFront, Route53, ACM.",
+    "functional_feature_map": "Patient Registration module (self-service + staff-assisted), Intake Form Builder (configurable templates), Form Submission Workflow (patient fills -> staff reviews -> physician signs off), Medical History Viewer (timeline view with PDF export), Staff Dashboard (pending reviews, alerts, search).",
+    "system_components": "CloudFront CDN, ALB with WAF rules, ECS Fargate cluster (API service, background worker), Aurora PostgreSQL (primary + read replica), ElastiCache Redis (session store), S3 (document uploads with server-side encryption), Cognito (user pool + identity pool), CloudWatch + CloudTrail.",
+    "workflows": "Patient Registration: Patient signs up via Cognito -> MFA enrollment -> profile created in patients table -> welcome email via SES. Intake Submission: Patient selects form template -> fills sections -> uploads documents to S3 -> submits -> staff notified via SNS. Staff Review: Staff views pending submissions -> reviews PHI -> approves/requests changes -> physician sign-off -> record finalized.",
+    "data_model": "patients (id, cognito_sub, name, dob, contact, created_at), intake_forms (id, template_id, patient_id, status, submitted_at), form_fields (id, form_id, field_key, value_encrypted), documents (id, form_id, s3_key, content_type), audit_log (id, user_id, action, resource, timestamp, ip_address). All PII fields encrypted with application-level AES-256 before storage.",
+    "api_design": "RESTful API with OpenAPI 3.0 spec. Key endpoints: POST /api/patients (register), GET /api/patients/:id (profile), POST /api/intakes (submit form), GET /api/intakes?status=pending (staff queue), PATCH /api/intakes/:id/review (staff review), GET /api/audit-log (compliance). Auth: Cognito JWT tokens validated at ALB + API middleware. Rate limiting: 100 req/min per user.",
+    "security_and_compliance": "HIPAA controls: BAA with AWS, KMS encryption for all PHI at rest, TLS 1.3 in transit, Cognito MFA for all users, role-based access (patient, staff, physician, admin), PHI access audit logging to dedicated table + CloudTrail, automatic session timeout after 15 minutes, IP allowlisting for staff portal. WAF rules block SQL injection, XSS, and suspicious patterns.",
+    "deployment_and_operations": "CI/CD: GitHub Actions builds Docker images, pushes to ECR, deploys via ECS rolling update with health checks. Environments: dev (single AZ, t3.small), staging (multi-AZ, mirrors prod config), production (multi-AZ, auto-scaling 2-6 Fargate tasks, Aurora multi-AZ with failover). Rollback: ECS automatic rollback on failed health checks. Database migrations via TypeORM run as ECS one-off tasks before deployment. Secrets in AWS Secrets Manager with rotation.",
+    "observability": "CloudWatch metrics for ECS CPU/memory, ALB request counts, Aurora connections. Custom metrics: intake submission rate, review queue depth, average review time. CloudWatch Logs with structured JSON logging from NestJS. X-Ray distributed tracing for API latency analysis. PagerDuty alerts for: error rate > 1%, p99 latency > 2s, queue depth > 50.",
+    "cost_and_scaling": "Estimated monthly: ~$800 for moderate load (500 daily intakes). Fargate auto-scaling based on CPU (target 60%) and request count. Aurora auto-scaling for read replica. CloudFront caching reduces API load for static assets. Cost controls: reserved capacity for baseline, spot for dev/staging, S3 lifecycle policies for old documents.",
+    "phased_implementation": "Phase 1 (MVP, 8 weeks): Patient registration, basic intake form, staff review dashboard, core API, HIPAA security controls, CI/CD pipeline. Phase 2 (4 weeks): Custom form builder, document upload, medical history timeline, PDF export. Phase 3 (4 weeks): Analytics dashboard, SES notifications, Cognito SAML for enterprise SSO, advanced audit reporting.",
+    "development_guidelines": "TypeScript strict mode, ESLint + Prettier enforced in CI, minimum 80% test coverage for API endpoints, E2E tests with Cypress for critical workflows, PR reviews required (1 approval), trunk-based development with feature flags, ADR documents for major decisions.",
+    "risks_and_tradeoffs": "Risk: Cognito vendor lock-in. Mitigation: abstract auth behind service interface for future portability. Risk: Aurora cost at scale. Mitigation: read replica only activated when reporting load exceeds threshold. Tradeoff: chose server-side encryption over client-side for simpler key management, accepting slight performance overhead. Tradeoff: monolithic NestJS over microservices for MVP speed, with module boundaries designed for future extraction.",
+    "open_questions_resolved": "Decided on Aurora over RDS PostgreSQL for automatic failover and scaling. Confirmed S3 for document storage over EFS. Chose React Query over Redux for simpler server state management. MFA enforced for all user roles, not just staff."
+  },
+  "metadata": {
+    "schema_version": "v2_architect_aligned",
+    "case_type": "first_pass",
+    "plan_quality": "strong",
+    "primary_theme": "compliance",
+    "generation_source": "synthetic",
+    "quality_flags": [],
+    "notes": "HIPAA-compliant healthcare intake system with rich security controls."
+  }
+}
+
+FINAL CHECKLIST
+Before finalizing each row, verify:
+- All mandatory contract fields present with proper sub-structure
+- requirements is dict-of-dicts, not arrays
+- Plan sections meet minimum richness thresholds
+- Plan is consistent with project class and contract
+- fix_report is [] for round 1, populated for round > 1
+- revision_round rows have non-empty issue_ledger, focus_issues, previous_audits
+- plan_quality in metadata matches actual plan content
+- No forbidden enum values used
+- project-class coverage is broad across the batch
+- Domain and technology diversity is high
+- Every row feels like a different real project
+
+Now generate EXACTLY 30 rows as one JSON array.
