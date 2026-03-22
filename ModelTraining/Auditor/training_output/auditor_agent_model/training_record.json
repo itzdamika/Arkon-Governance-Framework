@@ -1,13 +1,13 @@
 {
-  "model_name": "microsoft/Phi-3-mini-4k-instruct",
+  "model_name": "microsoft/Phi-3-mini-128k-instruct",
   "dataset_path": "auditor_dataset_fixed.jsonl",
   "dataset_size": 799,
-  "formatted_size": 783,
-  "train_size": 671,
-  "val_size": 112,
+  "formatted_size": 799,
+  "train_size": 681,
+  "val_size": 118,
   "config": {
-    "lora_r": 32,
-    "lora_alpha": 64,
+    "lora_r": 64,
+    "lora_alpha": 128,
     "lora_dropout": 0.05,
     "target_modules": [
       "q_proj",
@@ -18,41 +18,42 @@
       "up_proj",
       "down_proj"
     ],
-    "num_epochs": 3,
+    "num_epochs": 5,
     "per_device_batch_size": 1,
     "gradient_accumulation": 8,
-    "learning_rate": 0.0002,
+    "learning_rate": 0.0001,
     "lr_scheduler": "cosine",
-    "warmup_ratio": 0.05,
+    "warmup_ratio": 0.1,
     "weight_decay": 0.01,
     "max_grad_norm": 1.0,
-    "max_seq_length": 4096,
+    "max_seq_length": 8192,
     "val_ratio": 0.15
   },
-  "trainable_parameters": 17825792,
-  "trainable_percentage": 0.8794322084973722,
-  "training_loss": 0.4284191540782414,
-  "eval_loss": 0.40465062856674194,
-  "perplexity": 1.4987787780855097,
-  "training_duration_minutes": 63.83738896449407,
+  "trainable_parameters": 35651584,
+  "trainable_percentage": 1.7435312416901074,
+  "training_loss": 0.38132277727127073,
+  "eval_loss": 0.37477827072143555,
+  "perplexity": 1.4546688361853837,
+  "training_duration_minutes": 109.8218755642573,
   "structural_metrics": {
-    "json_validity_rate": 0.8,
-    "schema_compliance_rate": 0.8,
-    "rubric_range_compliance": 0.8,
+    "json_validity_rate": 1.0,
+    "schema_compliance_rate": 1.0,
+    "rubric_range_compliance": 1.0,
     "issue_template_compliance": 1.0,
-    "severity_status_compliance": 0.9777777777777777
+    "severity_status_compliance": 0.9473684210526315
   },
   "semantic_metrics": {
     "rubric_mae": {
-      "requirements_alignment": 0.775,
-      "architecture_quality": 0.65,
-      "security": 1.025,
-      "operability": 1.025,
-      "internal_consistency": 0.95
+      "requirements_alignment": 0.72,
+      "architecture_quality": 0.7,
+      "security": 0.8,
+      "operability": 0.68,
+      "internal_consistency": 0.9
     },
-    "rubric_mae_overall": 0.885,
-    "issue_f1": 0.6029411764705882,
-    "blocking_agreement": 0.95
+    "rubric_mae_overall": 0.76,
+    "issue_f1": 0.6696296296296296,
+    "issue_f1_category": 0.8444444444444444,
+    "blocking_agreement": 0.9
   },
   "completion_only_masking": true,
   "seed": 42

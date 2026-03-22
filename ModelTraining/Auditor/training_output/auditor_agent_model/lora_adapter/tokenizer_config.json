@@ -121,7 +121,7 @@
   "eos_token": "<|endoftext|>",
   "extra_special_tokens": {},
   "legacy": false,
-  "model_max_length": 4096,
+  "model_max_length": 131072,
   "pad_token": "<|endoftext|>",
   "padding_side": "right",
   "sp_model_kwargs": {},

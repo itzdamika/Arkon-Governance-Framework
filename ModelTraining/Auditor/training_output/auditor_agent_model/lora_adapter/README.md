@@ -1,9 +1,9 @@
 ---
-base_model: microsoft/Phi-3-mini-4k-instruct
+base_model: microsoft/Phi-3-mini-128k-instruct
 library_name: peft
 pipeline_tag: text-generation
 tags:
-- base_model:adapter:microsoft/Phi-3-mini-4k-instruct
+- base_model:adapter:microsoft/Phi-3-mini-128k-instruct
 - lora
 - sft
 - transformers
