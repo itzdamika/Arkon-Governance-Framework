@@ -1,0 +1,32 @@
+{
+  "ARC-PLAN26-282": [
+    {
+      "type": "low_specificity",
+      "detail": "Only 2 named technology terms"
+    }
+  ],
+  "ARC-PLAN26-312": [
+    {
+      "type": "low_specificity",
+      "detail": "Only 2 named technology terms"
+    }
+  ],
+  "ARC-PLAN26-459": [
+    {
+      "type": "low_specificity",
+      "detail": "Only 2 named technology terms"
+    }
+  ],
+  "ARC-PLAN26-645": [
+    {
+      "type": "low_specificity",
+      "detail": "Only 2 named technology terms"
+    }
+  ],
+  "ARC-PLAN26-734": [
+    {
+      "type": "low_specificity",
+      "detail": "Only 2 named technology terms"
+    }
+  ]
+}

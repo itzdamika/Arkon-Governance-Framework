@@ -1,0 +1,10 @@
+{
+  "removed": [],
+  "fixed_enums": 0,
+  "fixed_conditionals": 0,
+  "removed_auditor_keys": 0,
+  "exact_dupes_removed": 0,
+  "near_dupes_removed": 0,
+  "stub_plans_flagged": 0,
+  "total_fixes": 0
+}
