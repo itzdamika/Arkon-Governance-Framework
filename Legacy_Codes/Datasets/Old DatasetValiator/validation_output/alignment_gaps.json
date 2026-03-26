@@ -1,0 +1,2680 @@
+{
+  "ARC-PLAN26-014": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none; pipeline only; waveform viewers are separate clinical applications consuming from clickhouse query api",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.14
+    }
+  ],
+  "ARC-PLAN26-015": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none for the migration infrastructure; integration engine admin console is part of existing middleware product not being",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.06
+    }
+  ],
+  "ARC-PLAN26-031": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-032": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    },
+    {
+      "field": "hosting_target",
+      "contract_value": "google cloud life sciences / batch",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-033": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-036": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-040": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - rest api only; internal team uses jupyter notebooks for prototype analysis",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.17
+    }
+  ],
+  "ARC-PLAN26-044": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-047": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-051": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none; prototype uses command-line scripts and jupyter notebooks for analysis",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-053": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-055": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-056": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-073": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - no user-facing frontend; data quality reports delivered via email html",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.1
+    }
+  ],
+  "ARC-PLAN26-078": [
+    {
+      "field": "backend_stack",
+      "contract_value": "none \u2014 no server-side runtime",
+      "sections_checked": [
+        "technology_stack",
+        "architecture_overview"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-080": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "not applicable \u2014 infrastructure project with no ui components",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.17
+    },
+    {
+      "field": "hosting_target",
+      "contract_value": "gke autopilot on gcp, us-central1 region",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-086": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-087": [
+    {
+      "field": "backend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack",
+        "architecture_overview"
+      ],
+      "match_ratio": 0.0
+    },
+    {
+      "field": "data_platform",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-089": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-091": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 cli tool, terminal output only",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.17
+    },
+    {
+      "field": "hosting_target",
+      "contract_value": "ec2 developer workstations, distributed as a go binary",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-099": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 internal rest api consumed by existing compliance dashboard ui and batch job runners",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.17
+    }
+  ],
+  "ARC-PLAN26-100": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 api-first; compliance officers access via existing internal compliance dashboard consuming this service",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.15
+    }
+  ],
+  "ARC-PLAN26-101": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 internal service with no browser ui; shadow reports accessed via internal analytics tools reading clickhouse",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.21
+    }
+  ],
+  "ARC-PLAN26-106": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 automation tool with no ui; reports exported as pdf and csv",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.22
+    }
+  ],
+  "ARC-PLAN26-107": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 no browser ui; results consumed via jupyter notebooks and exported evaluation reports",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.18
+    }
+  ],
+  "ARC-PLAN26-109": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 no frontend; pipeline outputs to snowflake consumed by existing tableau server",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.11
+    }
+  ],
+  "ARC-PLAN26-110": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 internal data pipeline; no user-facing frontend",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.17
+    }
+  ],
+  "ARC-PLAN26-114": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - api-only research prototype; internal research dashboard may be added post-mvp",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-115": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - internal api service with no browser interface",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.14
+    }
+  ],
+  "ARC-PLAN26-116": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - api service; partner developer portal (docs + api keys) is a separate project",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-117": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - generates csv and html reports delivered to s3 and emailed to finance team distribution list",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.23
+    }
+  ],
+  "ARC-PLAN26-118": [
+    {
+      "field": "backend_stack",
+      "contract_value": "none \u2014 fully static, no server-side runtime",
+      "sections_checked": [
+        "technology_stack",
+        "architecture_overview"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-122": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 cli-only tool with no browser interface",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-126": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 backend automation tool; operations staff access via a minimal internal web queue ui served by the backend (serve",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.09
+    }
+  ],
+  "ARC-PLAN26-132": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-135": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-136": [
+    {
+      "field": "backend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack",
+        "architecture_overview"
+      ],
+      "match_ratio": 0.0
+    },
+    {
+      "field": "data_platform",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-158": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none; pipeline output delivered via clickhouse query interface and exported csv/parquet reports",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.23
+    }
+  ],
+  "ARC-PLAN26-161": [
+    {
+      "field": "backend_stack",
+      "contract_value": "none; no server-side runtime",
+      "sections_checked": [
+        "technology_stack",
+        "architecture_overview"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-164": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none; pipeline is headless; airflow ui provides operational monitoring",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.14
+    }
+  ],
+  "ARC-PLAN26-170": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "n/a - backend automation tool; underwriter review interface is a separate internal app consuming this tool's api",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.15
+    }
+  ],
+  "ARC-PLAN26-180": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none; api-only service",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-183": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - cli only",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-192": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - data pipeline with grafana dashboards; no custom frontend",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.12
+    }
+  ],
+  "ARC-PLAN26-190": [
+    {
+      "field": "data_platform",
+      "contract_value": "none \u2014 stateless sdk; no database",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-198": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 prototype is api gateway only; no ui beyond apollo sandbox for query exploration",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.18
+    }
+  ],
+  "ARC-PLAN26-199": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none for inference service; lightweight react spa served via cloudfront for internal labeling moderators",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.21
+    }
+  ],
+  "ARC-PLAN26-201": [
+    {
+      "field": "hosting_target",
+      "contract_value": "s3 static hosting origin with cloudfront cdn; route53 for dns; acm for tls certificates",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.23
+    }
+  ],
+  "ARC-PLAN26-202": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none; cli binary only \u2014 no browser ui",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-200": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none (infrastructure project)",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-207": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none; internal review queue ui is a separate admin service not in scope",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-204": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none (infrastructure project; existing application platform consumes this infrastructure)",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-209": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none; no application ui -- bigquery outputs consumed by looker and slack notifications",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.22
+    }
+  ],
+  "ARC-PLAN26-206": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none (library sdk; no ui component)",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-217": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "n/a -- library only, no ui components",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    },
+    {
+      "field": "hosting_target",
+      "contract_value": "npm package distribution via npmjs.com; types published to definitelytyped if needed",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.22
+    }
+  ],
+  "ARC-PLAN26-226": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none (cli only)",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-227": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none (infrastructure project)",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    },
+    {
+      "field": "hosting_target",
+      "contract_value": "aks (azure kubernetes service) in azure west europe region; system node pool (d4s v3) and inventory node pool (e8s v3 me",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.16
+    }
+  ],
+  "ARC-PLAN26-231": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "n/a - library_sdk; no ui component.",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    },
+    {
+      "field": "data_platform",
+      "contract_value": "no persistent database; model artifacts sourced from local filesystem or s3 via configurable model_registry_uri.",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.09
+    }
+  ],
+  "ARC-PLAN26-233": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "n/a - infrastructure_project; no ui layer.",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-244": [
+    {
+      "field": "hosting_target",
+      "contract_value": "bare-metal port workstations; single-binary distribution",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-245": [
+    {
+      "field": "data_platform",
+      "contract_value": "none -- stateless library; no embedded database",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-242": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none (cli tool only)",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-246": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none (terminal tui via bubbletea)",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.2
+    },
+    {
+      "field": "data_platform",
+      "contract_value": "none (stateless sse consumer; no local database)",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.17
+    },
+    {
+      "field": "hosting_target",
+      "contract_value": "self-hosted on bare-metal shift-office workstations (linux amd64); distributed as a single compiled binary",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-247": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none (library; no ui components)",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    },
+    {
+      "field": "data_platform",
+      "contract_value": "none (in-memory processing only; no database dependency)",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.17
+    }
+  ],
+  "ARC-PLAN26-257": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - api service only; no user-facing ui",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-256": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    },
+    {
+      "field": "data_platform",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-258": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-259": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    },
+    {
+      "field": "data_platform",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-260": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-263": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    },
+    {
+      "field": "hosting_target",
+      "contract_value": "aurora multi-az in us-east-1 (primary) with aurora global database secondary in us-west-2",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-264": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-266": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-267": [
+    {
+      "field": "backend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack",
+        "architecture_overview"
+      ],
+      "match_ratio": 0.0
+    },
+    {
+      "field": "data_platform",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-268": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-272": [
+    {
+      "field": "hosting_target",
+      "contract_value": "aks (azure kubernetes service) within corporate azure tenant, private endpoints only",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.18
+    }
+  ],
+  "ARC-PLAN26-275": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none -- pipeline only; leak alerts consumed by existing field technician mobile app via rest api",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.14
+    }
+  ],
+  "ARC-PLAN26-277": [
+    {
+      "field": "backend_stack",
+      "contract_value": "none (static site)",
+      "sections_checked": [
+        "technology_stack",
+        "architecture_overview"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-280": [
+    {
+      "field": "backend_stack",
+      "contract_value": "none (static site); no server-side runtime",
+      "sections_checked": [
+        "technology_stack",
+        "architecture_overview"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-282": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    },
+    {
+      "field": "data_platform",
+      "contract_value": "none - library processes in-memory buffers with no persistent storage",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.12
+    }
+  ],
+  "ARC-PLAN26-283": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    },
+    {
+      "field": "data_platform",
+      "contract_value": "none - sdk processes in-memory streams; callers manage persistence",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-284": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - no frontend specialist; operational console is out of scope for this architecture",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.1
+    }
+  ],
+  "ARC-PLAN26-285": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-286": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - infrastructure project with no browser ui",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-289": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - automation tool; minimal status web ui is a future consideration only",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.22
+    }
+  ],
+  "ARC-PLAN26-304": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - headless system; inference results pushed to machine hmi via mqtt and to internal grafana dashboards",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.14
+    }
+  ],
+  "ARC-PLAN26-305": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - infrastructure project; no web ui; operational visibility via grafana dashboards and gitlab ci pipeline status",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.23
+    }
+  ],
+  "ARC-PLAN26-309": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 no browser frontend; defect results surfaced via api to line-side display terminals",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.18
+    }
+  ],
+  "ARC-PLAN26-313": [
+    {
+      "field": "data_platform",
+      "contract_value": "none (library operates on in-memory numpy arrays; no database or file storage)",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.22
+    }
+  ],
+  "ARC-PLAN26-314": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none (grafana serves as the analytics frontend; no custom web app delivered by this infrastructure project)",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.08
+    }
+  ],
+  "ARC-PLAN26-322": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-323": [
+    {
+      "field": "hosting_target",
+      "contract_value": "bare-metal linux server in machining laboratory",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-319": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - api service only",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-325": [
+    {
+      "field": "hosting_target",
+      "contract_value": "local workstation, distributed as a pip-installable package",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-326": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - api service only",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-328": [
+    {
+      "field": "hosting_target",
+      "contract_value": "go module registry (pkg.go.dev), distributed via go get",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.17
+    }
+  ],
+  "ARC-PLAN26-334": [
+    {
+      "field": "hosting_target",
+      "contract_value": "aws mwaa in us-east-1 vpc; snowflake us-east-1 deployment",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.14
+    }
+  ],
+  "ARC-PLAN26-338": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 infrastructure platform with no user-facing browser ui; developer portal managed separately",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.1
+    }
+  ],
+  "ARC-PLAN26-340": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 automation tool with no browser ui; operational visibility via cloudwatch dashboards",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-343": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none; automation tool with no end-user ui. adjuster review accessible via existing claims management system integration.",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-346": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none; api_service project class with no frontend. partner developer portal is out of scope.",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.09
+    }
+  ],
+  "ARC-PLAN26-347": [
+    {
+      "field": "backend_stack",
+      "contract_value": "none \u2014 static site generation only",
+      "sections_checked": [
+        "technology_stack",
+        "architecture_overview"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-349": [
+    {
+      "field": "data_platform",
+      "contract_value": "no persistent storage; streaming only to stdout",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-357": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 headless automation tool with no ui",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-358": [
+    {
+      "field": "data_platform",
+      "contract_value": "none \u2014 sdk is stateless; no embedded database",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-355": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - infrastructure project; argocd ui accessed via internal vpn only",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.22
+    }
+  ],
+  "ARC-PLAN26-365": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 infrastructure migration; no frontend component",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.2
+    },
+    {
+      "field": "hosting_target",
+      "contract_value": "ec2 + rds + s3 in us-east-1",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-368": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 api service only; no browser ui",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-369": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 department portal and admin panel handled by lightweight server-side rendered views; no dedicated spa",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.15
+    }
+  ],
+  "ARC-PLAN26-370": [
+    {
+      "field": "security_baseline",
+      "contract_value": "namespace-level rbac in gke, mtls between services via istio, google workspace sso for all access, gpu node pool taint/t",
+      "sections_checked": [
+        "security_and_compliance"
+      ],
+      "match_ratio": 0.15
+    }
+  ],
+  "ARC-PLAN26-371": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none -- library_sdk; no ui components",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    },
+    {
+      "field": "data_platform",
+      "contract_value": "no persistent database -- sdk is stateless except for in-memory token cache; audit logs written to configurable sink (fi",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.22
+    }
+  ],
+  "ARC-PLAN26-385": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 api service only; no frontend in scope",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.17
+    }
+  ],
+  "ARC-PLAN26-378": [
+    {
+      "field": "hosting_target",
+      "contract_value": "vercel edge network for global static asset delivery; automatic edge cdn from 35+ pops including asia pacific, europe, a",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.19
+    }
+  ],
+  "ARC-PLAN26-389": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 pure api service; developer documentation hosted on stoplight or redocly separately",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.1
+    }
+  ],
+  "ARC-PLAN26-379": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 data pipeline with no user-facing application; exception visibility provided via an existing internal bi tool (po",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.21
+    }
+  ],
+  "ARC-PLAN26-397": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - python library package only",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-398": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - api service only; partner organizations provide their own ui",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.11
+    }
+  ],
+  "ARC-PLAN26-400": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - library_sdk has no ui",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-401": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - automation_tool with no ui; coordinator review via exported reports only",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.11
+    }
+  ],
+  "ARC-PLAN26-404": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - infrastructure_project; operator dashboards via grafana (not custom-built)",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.12
+    },
+    {
+      "field": "hosting_target",
+      "contract_value": "bare-metal kubernetes (k3s) on experiment intranet servers in underground detector hall and surface control room",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.23
+    }
+  ],
+  "ARC-PLAN26-411": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "n/a - infrastructure project with no user-facing frontend",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-417": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - api service only; consumed by existing lab management portals",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.11
+    }
+  ],
+  "ARC-PLAN26-408": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "no frontend; api-only service with openapi 3.1 documentation hosted at /docs",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.22
+    }
+  ],
+  "ARC-PLAN26-415": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - headless automation tool with no browser ui; output via email digests and status api",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.23
+    }
+  ],
+  "ARC-PLAN26-418": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - api service only; no dedicated frontend provided",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.14
+    }
+  ],
+  "ARC-PLAN26-423": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - headless research platform; grafana serves as visualization frontend",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.12
+    }
+  ],
+  "ARC-PLAN26-435": [
+    {
+      "field": "data_platform",
+      "contract_value": "none; no database required",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-440": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-445": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "react 18 with typescript (archivist search ui)",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.17
+    }
+  ],
+  "ARC-PLAN26-447": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "no frontend; internal grpc service only",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-442": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-443": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    },
+    {
+      "field": "data_platform",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-448": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "no frontend; internal automation tool with no browser ui",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.17
+    }
+  ],
+  "ARC-PLAN26-454": [
+    {
+      "field": "data_platform",
+      "contract_value": "no database; in-memory state only within the sdk; consumers manage their own persistence",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.17
+    }
+  ],
+  "ARC-PLAN26-461": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - api service only, no frontend",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-467": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none; no browser ui; game client communication is via rest and websocket only",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-480": [
+    {
+      "field": "data_platform",
+      "contract_value": "none -- no database required",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-469": [
+    {
+      "field": "hosting_target",
+      "contract_value": "go module registry (pkg.go.dev); distributed as github.com/studio/gamesession-sdk via goproxy",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.11
+    }
+  ],
+  "ARC-PLAN26-470": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none; analytics dashboards delivered via grafana; no custom frontend built",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.11
+    }
+  ],
+  "ARC-PLAN26-481": [
+    {
+      "field": "data_platform",
+      "contract_value": "none \u2014 no database",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-482": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-484": [
+    {
+      "field": "hosting_target",
+      "contract_value": "bare-metal on location laptops (macos and windows); no cloud hosting",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.12
+    }
+  ],
+  "ARC-PLAN26-485": [
+    {
+      "field": "backend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack",
+        "architecture_overview"
+      ],
+      "match_ratio": 0.0
+    },
+    {
+      "field": "data_platform",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-486": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-487": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - api service only",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-491": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - api service only",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-493": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - api service only; partner developer portal is out of scope",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.22
+    }
+  ],
+  "ARC-PLAN26-510": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 infrastructure project; no frontend component",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-500": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - infrastructure project; internal ops dashboard is a grafana instance",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-492": [
+    {
+      "field": "backend_stack",
+      "contract_value": "none - fully static, no server-side runtime",
+      "sections_checked": [
+        "technology_stack",
+        "architecture_overview"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-517": [
+    {
+      "field": "backend_stack",
+      "contract_value": "none. static file delivery only.",
+      "sections_checked": [
+        "technology_stack",
+        "architecture_overview"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-518": [
+    {
+      "field": "data_platform",
+      "contract_value": "none. legislative data served exclusively from legislature's open data api; no local database or cache.",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.23
+    }
+  ],
+  "ARC-PLAN26-527": [
+    {
+      "field": "backend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack",
+        "architecture_overview"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-528": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-522": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - pipeline has no ui; county submission status exposed via snowflake reporting views queried by authorized tools",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.21
+    }
+  ],
+  "ARC-PLAN26-529": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-523": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - consumed by existing cad system and officer mdt terminal applications",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-530": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    },
+    {
+      "field": "data_platform",
+      "contract_value": "none; sdk is stateless with no persistent storage",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.17
+    }
+  ],
+  "ARC-PLAN26-531": [
+    {
+      "field": "backend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack",
+        "architecture_overview"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-533": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - headless automation tool; celery flower for operator monitoring",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.22
+    }
+  ],
+  "ARC-PLAN26-541": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 internal pipeline with no browser ui; pipeline-run metrics exposed via datadog dashboard",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.18
+    }
+  ],
+  "ARC-PLAN26-543": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 automation tool invoked via cli; migration status output to stdout and structured log files",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.21
+    }
+  ],
+  "ARC-PLAN26-552": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "not applicable; library package only",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    },
+    {
+      "field": "data_platform",
+      "contract_value": "not applicable; sdk has no persistent storage; consuming services own their data",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.18
+    }
+  ],
+  "ARC-PLAN26-553": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none; pipeline only; reconciliation reports delivered as s3-hosted html via internal bi tooling",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-561": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - pipeline only; analysts use bi tools directly against snowflake analytics schema",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.18
+    }
+  ],
+  "ARC-PLAN26-562": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - api service only; no web frontend",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.17
+    }
+  ],
+  "ARC-PLAN26-559": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    },
+    {
+      "field": "data_platform",
+      "contract_value": "no managed database; checkpoint state persisted to json file on local filesystem",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.11
+    }
+  ],
+  "ARC-PLAN26-556": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-586": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - api service only",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-591": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-598": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "n/a - library sdk, no frontend",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-599": [
+    {
+      "field": "data_platform",
+      "contract_value": "no persistent storage; operates on in-memory configuration structs and environment variable reads",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.1
+    }
+  ],
+  "ARC-PLAN26-594": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-602": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - automation tool with no interactive ui",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-604": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - backend automation services only; existing tenant portal and operations dashboard consume the new apis",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.13
+    }
+  ],
+  "ARC-PLAN26-622": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "n/a \u2014 library package only",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-626": [
+    {
+      "field": "hosting_target",
+      "contract_value": "bare-metal workstation, self-hosted",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-635": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none -- automation tool; coordinators interact via internal rest api or a thin html status page served by the fastapi ap",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.18
+    }
+  ],
+  "ARC-PLAN26-638": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - library sdk with no ui surface",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-639": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - npm library sdk; no ui surface",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-640": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - data pipeline; safety dashboard is a separate system outside scope",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.11
+    }
+  ],
+  "ARC-PLAN26-651": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - api service only; developer docs via openapi 3.1",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-642": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "not applicable - library_sdk with no ui component",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.2
+    },
+    {
+      "field": "data_platform",
+      "contract_value": "no persistent storage; in-memory data structures only",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.17
+    }
+  ],
+  "ARC-PLAN26-647": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - cli only (stdout, stderr, exit codes)",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.14
+    }
+  ],
+  "ARC-PLAN26-672": [
+    {
+      "field": "data_platform",
+      "contract_value": "none persistent; input files read from local filesystem, output written to specified output directory; no database",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.21
+    }
+  ],
+  "ARC-PLAN26-682": [
+    {
+      "field": "hosting_target",
+      "contract_value": "on-premise linux server in packing house network; served over local wi-fi to auditor tablets",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.08
+    }
+  ],
+  "ARC-PLAN26-679": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none; library only",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    },
+    {
+      "field": "backend_stack",
+      "contract_value": "typescript (node.js compatible, browser compatible via bundler)",
+      "sections_checked": [
+        "technology_stack",
+        "architecture_overview"
+      ],
+      "match_ratio": 0.14
+    },
+    {
+      "field": "data_platform",
+      "contract_value": "none; in-memory object graph only",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-688": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - library only; cli entry point via argparse",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.12
+    },
+    {
+      "field": "data_platform",
+      "contract_value": "local filesystem only - reads/writes geotiff files; no database",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.12
+    }
+  ],
+  "ARC-PLAN26-696": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-700": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-702": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-716": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "n/a - cli tool with stdout/stderr output only",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.14
+    }
+  ],
+  "ARC-PLAN26-714": [
+    {
+      "field": "hosting_target",
+      "contract_value": "on-premises kubernetes cluster in the control center ot dmz",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.14
+    }
+  ],
+  "ARC-PLAN26-721": [
+    {
+      "field": "data_platform",
+      "contract_value": "none - no database",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-730": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "n/a - automation tool with no browser frontend",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-732": [
+    {
+      "field": "data_platform",
+      "contract_value": "sqlite 3 (one database file per project); geojson export for isocontour interoperability.",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.18
+    }
+  ],
+  "ARC-PLAN26-734": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none (no ui; results accessed via w&b dashboard and duckdb queries in jupyter notebooks).",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.17
+    }
+  ],
+  "ARC-PLAN26-735": [
+    {
+      "field": "backend_stack",
+      "contract_value": "none (static site; no server-side runtime).",
+      "sections_checked": [
+        "technology_stack",
+        "architecture_overview"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-736": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none (api service with no ui; partner integrations consume the rest api directly).",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.18
+    }
+  ],
+  "ARC-PLAN26-744": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none (infrastructure project)",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-747": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none (automation tool; admin error review is a separate system)",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-737": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none -- cli only, stdout/stderr output",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.17
+    },
+    {
+      "field": "hosting_target",
+      "contract_value": "local developer workstation (windows, macos, linux)",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-738": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none -- api-only service; frontends are separate consumer applications",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.12
+    }
+  ],
+  "ARC-PLAN26-739": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none -- results consumed via influxdb by separate bi dashboard tool",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.12
+    }
+  ],
+  "ARC-PLAN26-756": [
+    {
+      "field": "observability_baseline",
+      "contract_value": "grafana dashboards backed by prometheus scraping custom rust metrics endpoints; benchmark results stored in time-series ",
+      "sections_checked": [
+        "observability"
+      ],
+      "match_ratio": 0.21
+    }
+  ],
+  "ARC-PLAN26-752": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 api service only.",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-753": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 data pipeline with no user interface.",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.17
+    },
+    {
+      "field": "hosting_target",
+      "contract_value": "gke autopilot with kubernetes deployments and statefulsets for stateful components.",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.1
+    }
+  ],
+  "ARC-PLAN26-755": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 api-only automation engine; consumed via cli and ci/cd pipelines.",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.22
+    }
+  ],
+  "ARC-PLAN26-771": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-772": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    },
+    {
+      "field": "data_platform",
+      "contract_value": "none, local filesystem only",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-773": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-774": [
+    {
+      "field": "backend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack",
+        "architecture_overview"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-775": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-777": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    },
+    {
+      "field": "data_platform",
+      "contract_value": "etcd cluster state managed by gke",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-790": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none -- cli_tool with stdout/stderr output; html report generated as a static file, not a served application",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.14
+    }
+  ],
+  "ARC-PLAN26-811": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-819": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - infrastructure project with no user-facing frontend",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.17
+    }
+  ],
+  "ARC-PLAN26-823": [
+    {
+      "field": "hosting_target",
+      "contract_value": "local execution on engineer workstation or ci runner; distributed via pip package",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.22
+    }
+  ],
+  "ARC-PLAN26-824": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - infrastructure project; no user-facing frontend",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-827": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - internal platform with no frontend; operations via kubectl and grafana dashboards",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.09
+    }
+  ],
+  "ARC-PLAN26-828": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - admin panel implemented as server-rendered fastapi admin interface with jinja2 templates; no spa framework",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.15
+    }
+  ],
+  "ARC-PLAN26-832": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - data pipeline; no user-facing frontend",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-834": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - analytics consumed via grafana dashboards and clickhouse sql; no spa frontend",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.18
+    }
+  ],
+  "ARC-PLAN26-836": [
+    {
+      "field": "security_baseline",
+      "contract_value": "strict avp length validation (value_length + 8-byte header must not exceed remaining buffer); integer overflow protectio",
+      "sections_checked": [
+        "security_and_compliance"
+      ],
+      "match_ratio": 0.22
+    }
+  ],
+  "ARC-PLAN26-825": [
+    {
+      "field": "hosting_target",
+      "contract_value": "local desktop installation on noc workstations (windows and macos)",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.12
+    }
+  ],
+  "ARC-PLAN26-843": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 sdk library; no ui components",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-851": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 infrastructure project; no frontend work in scope",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-845": [
+    {
+      "field": "hosting_target",
+      "contract_value": "bare-metal kubernetes on 3x intel nuc or equivalent restaurant server hardware; no cloud dependency",
+      "sections_checked": [
+        "deployment_and_operations"
+      ],
+      "match_ratio": 0.1
+    }
+  ],
+  "ARC-PLAN26-872": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 automation tool with no browser ui",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-883": [
+    {
+      "field": "data_platform",
+      "contract_value": "postgresql 16 on rds multi-az with kms cmk encryption; ebs gp3 volumes encrypted with kms cmks for eks node groups",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.22
+    }
+  ],
+  "ARC-PLAN26-891": [
+    {
+      "field": "data_platform",
+      "contract_value": "no database; operational data fetched live from kafka admin api; audit snapshots written to local json files",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.2
+    }
+  ],
+  "ARC-PLAN26-894": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "n/a \u2014 automation tool; operator interface is grafana dashboards",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.17
+    }
+  ],
+  "ARC-PLAN26-896": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none \u2014 library_sdk has no ui layer",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    },
+    {
+      "field": "data_platform",
+      "contract_value": "no persistent storage \u2014 all data returned from fifa api calls is passed to the caller",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.17
+    }
+  ],
+  "ARC-PLAN26-897": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "none - headless api service; admin portal is a separate project",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ],
+  "ARC-PLAN26-887": [
+    {
+      "field": "data_platform",
+      "contract_value": "no database \u2014 sdk is stateless; consumers own persistence",
+      "sections_checked": [
+        "technology_stack",
+        "data_model"
+      ],
+      "match_ratio": 0.17
+    }
+  ],
+  "ARC-PLAN26-881": [
+    {
+      "field": "frontend_stack",
+      "contract_value": "n/a \u2014 api service with no browser frontend",
+      "sections_checked": [
+        "technology_stack"
+      ],
+      "match_ratio": 0.0
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-You are generating a premium synthetic training dataset for an internal architectural governance runtime. I have generated 0 rows so far. Generate the next 3 rows starting from ARC-PLAN26-001.
+You are generating a premium synthetic training dataset for an internal architectural governance runtime. I have generated 0 rows so far. Generate the next 20 rows starting from ARC-PLAN26-001.
 
 Return ONLY valid JSONL (JSON Lines format).
 Each line must be one complete JSON object.
@@ -18,7 +18,7 @@ BAD (Breaks JSON):
 GOOD (Valid JSON):
 "workflows": "The user asks 'What is my balance?' and the bot replies 'You have $5'."
 
-CORRECT OUTPUT FORMAT (3 separate lines, no array brackets):
+CORRECT OUTPUT FORMAT (20 separate lines, no array brackets):
 {"sample_id":"ARC-PLAN26-001","dataset":"architect",...}
 {"sample_id":"ARC-PLAN26-002","dataset":"architect",...}
 {"sample_id":"ARC-PLAN26-003","dataset":"architect",...}
@@ -30,7 +30,7 @@ WRONG OUTPUT FORMAT (do NOT do this):
 ]
 
 TASK
-Generate EXACTLY 3 rows as JSONL (one JSON object per line).
+Generate EXACTLY 20 rows as JSONL (one JSON object per line).
 
 DATASET PURPOSE
 These rows train the ArchitectAgent of a governance system that generates implementation-grade architecture plans from locked requirement contracts, specialist sub-plans, reasoner reviews, issue history, and revision memory.
@@ -265,8 +265,7 @@ FINAL CHECKLIST (verify for EVERY row)
 10. fix_report is [] for round 1, addresses focus_issues for round > 1
 11. revision_round rows have non-empty issue_ledger, focus_issues, previous_audits
 12. plan_quality matches actual content quality
-13. 3 different project classes per batch
 14. Domain, technology, and architecture diversity is high
 15. No forbidden enum values
 
-Now generate EXACTLY 3 rows as JSONL.
+Now generate EXACTLY 20 rows as JSONL.
