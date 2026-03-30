@@ -1,0 +1,35 @@
+{
+  "training": {
+    "train_loss": 0.9957586996178878,
+    "eval_loss": 1.2365224361419678,
+    "perplexity": 3.443617219214926,
+    "duration_minutes": 220.44010841051738,
+    "trainable_params": 83066880,
+    "trainable_pct": 4.928993060856386
+  },
+  "structural": {
+    "json_validity_rate": 0.92,
+    "schema_compliance_rate": 0.88,
+    "section_coverage_f1": 0.9565217391304348,
+    "fix_report_struct_compliance": 0.98,
+    "fix_report_orphan_rate": 0.0,
+    "title_no_round_numbers": 0.7954545454545454,
+    "no_auditor_key_leaks": 1.0
+  },
+  "section_coverage": {
+    "mean_f1": 0.9565217391304348,
+    "mean_coverage_ratio": 0.9565217391304348
+  },
+  "rouge_l": {
+    "thinking_summary": 0.32604214335233894,
+    "executive_summary": 0.3566993297338178,
+    "architecture_overview": 0.2987063767660016
+  },
+  "llm_judge": {
+    "contract_alignment": 8.91304347826087,
+    "fix_report_accuracy": 7.521739130434782,
+    "architecture_quality": 8.326086956521738,
+    "security_coverage": 7.869565217391305,
+    "plan_completeness": 8.152173913043478
+  }
+}

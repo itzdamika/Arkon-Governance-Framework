@@ -1,0 +1,554 @@
+[
+  {
+    "sample_id": "ARC-PLAN26-252",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 9,
+      "architecture_quality": 8,
+      "security_coverage": 8,
+      "plan_completeness": 9,
+      "brief_justification": "The predicted plan correctly implements the required GPT-4o narration step and aligns with the llm_integration contract, including use of GCP Secret Manager and Cloud Run hosting. The fix_report clearly references ISS-001 and describes credible, specific actions. The architecture is detailed and implementation-ready, though slightly less specific than the reference in some parameter ranges. Security coverage is solid with mention of VPC Service Controls and secret management. All major sections are populated with meaningful content, showing a nearly complete and coherent plan."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-051",
+    "case_type": "first_pass",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 10,
+      "architecture_quality": 8,
+      "security_coverage": 7,
+      "plan_completeness": 8,
+      "brief_justification": "The predicted plan aligns closely with the reference contract—Azure hosting, Flower FL, PyTorch GCN, mTLS, and DP noise are all preserved. The fix_report is empty and correctly so, as no revision round occurred. The architecture is concrete and implementation-grade, though slightly less detailed than the reference (e.g., missing explicit DP epsilon and certificate validation logic). Security coverage is adequate but thinner than the reference, lacking explicit mention of mutual certificate validation and GDPR context. Most major sections are populated with meaningful content, though some (deployment, observability, phased implementation) are abbreviated."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-467",
+    "case_type": "first_pass",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 10,
+      "architecture_quality": 9,
+      "security_coverage": 8,
+      "plan_completeness": 9,
+      "brief_justification": "The predicted plan closely aligns with the reference contract—same tech stack (Go, Python, FastAPI, Redis, PostgreSQL, ECS Fargate) and hosting model, with mTLS and JWT auth consistent with the baseline. The fix_report is empty as expected for an initial submission. The architecture is detailed and implementation-grade, including fallback logic, shadow traffic, and scaling considerations. Security coverage is strong (mTLS, JWT, age-bracket gate) but lacks explicit GDPR erasure cascade details. All major sections are populated with meaningful content, though the workflows section appears truncated."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-452",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 9,
+      "architecture_quality": 8,
+      "security_coverage": 7,
+      "plan_completeness": 8,
+      "brief_justification": "The predicted plan closely aligns with the reference contract, maintaining the AWS ECS Fargate, Terraform, Go CLI, and Buildkite stack while correctly implementing the startup_timeout_seconds fix. The fix_report accurately documents the issue and credible actions, though the added Buildkite comment requirement slightly diverges from the reference. Architecture details are solid but somewhat less specific in deployment and observability. Security coverage is adequate but lacks explicit SOC 2 audit trail mention. Overall completeness is good, with minor thinness in observability and deployment sections."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-324",
+    "case_type": "first_pass",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 0,
+      "architecture_quality": 8,
+      "security_coverage": 8,
+      "plan_completeness": 9,
+      "brief_justification": "The predicted plan closely aligns with the reference contract, maintaining the same tech stack (Electron, FastAPI, PostgreSQL on Azure, Azure AD) and hosting model, with minor deviations like adding Azure Key Vault and CSV validation. The fix_report is empty, so no accuracy can be assessed. The architecture is detailed and implementation-grade, specifying concrete components and data flows. Security coverage is strong, addressing MFA, encryption, and key management. The plan is nearly complete across all major sections with meaningful content."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-683",
+    "case_type": "first_pass",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 10,
+      "architecture_quality": 9,
+      "security_coverage": 9,
+      "plan_completeness": 8,
+      "brief_justification": "The predicted plan closely follows the reference contract: Node.js 20, Fastify, PostGIS, OAuth 2.0 with PKCE, ECS Fargate, and Redis are all correctly represented. The fix_report is empty as expected for an initial submission. The architecture is detailed and implementation-grade, with clear component boundaries and AWS service usage. Security coverage is strong, including WAF, TLS 1.3, JWT validation, and consent enforcement at the DB layer. Some sections like workflows and phased implementation are truncated or less detailed, slightly reducing completeness."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-111",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 9,
+      "architecture_quality": 8,
+      "security_coverage": 9,
+      "plan_completeness": 8,
+      "brief_justification": "The predicted plan closely aligns with the reference contract, maintaining the same tech stack (Go, GKE Autopilot, PostgreSQL, Redis) and security baselines. The fix_report accurately documents both ISS-001 and ISS-002 with credible, specific actions and correct issue references. Architecture details are implementation-grade, though slightly less detailed than the reference in describing transaction rollback and mobile client behavior. Security coverage is strong, addressing AML and nonce enforcement thoroughly. Some sections like observability and phased_implementation are not shown, slightly reducing completeness."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-841",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 8,
+      "fix_report_accuracy": 7,
+      "architecture_quality": 8,
+      "security_coverage": 8,
+      "plan_completeness": 7,
+      "brief_justification": "The predicted plan aligns well with the contract, maintaining AWS, Kafka MSK, Flink, and ClickHouse stack choices, though it introduces minor inconsistencies like PyFlink masking instead of Go-based masking. The fix report correctly references both issues and provides credible actions, but the masking implementation detail diverges from the reference. Architecture quality is strong and implementation-grade, with clear component definitions. Security coverage is solid, addressing PCI-DSS scope reduction and DLQ isolation. Some sections (e.g., data_model, phased_implementation) appear truncated or less detailed, reducing overall completeness."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-761",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 8,
+      "architecture_quality": 9,
+      "security_coverage": 9,
+      "plan_completeness": 8,
+      "brief_justification": "The predicted plan aligns closely with the reference contract, correctly implementing mTLS and SNS-based rotation notifications using the specified AWS and Go stack. The fix report accurately documents changes for the two main issues, though it omits the audit log immutability fix (ISS-003). Architecture details are concrete and implementation-grade, with clear component and technology choices. Security coverage is strong, addressing mutual TLS, JWT, and OIDC controls. The plan is mostly complete but lacks explicit content for observability and phased implementation sections."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-518",
+    "case_type": "first_pass",
+    "scores": {
+      "contract_alignment": 10,
+      "fix_report_accuracy": 10,
+      "architecture_quality": 9,
+      "security_coverage": 8,
+      "plan_completeness": 9,
+      "brief_justification": "The predicted plan fully aligns with the contract: Astro static site, client-side API fetch, sessionStorage caching, and AWS CloudFront + S3 hosting are all preserved. The fix_report is empty as expected for the initial round. The architecture is detailed and implementation-ready, though slightly less specific about security headers and WAF configuration than the reference. Security coverage is good but could mention CSP and header enforcement. All major sections are populated with meaningful content, showing strong completeness."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-093",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 8,
+      "architecture_quality": 9,
+      "security_coverage": 8,
+      "plan_completeness": 9,
+      "brief_justification": "The predicted plan closely aligns with the contract, maintaining AWS ECS Fargate, ClickHouse, Redis, and S3 with SHA-256 artifact versioning. The fix_report correctly documents ISS-001 and ISS-002 with credible actions, though minor redundancy in describing implementation fixes slightly reduces accuracy. Architecture details are concrete and implementation-grade, with clear service boundaries and scaling parameters. Security coverage is strong, including mTLS and Cognito JWT, though less detail on PCI-DSS compliance than the reference. All major sections are populated with meaningful content, showing good completeness."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-555",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 8,
+      "architecture_quality": 8,
+      "security_coverage": 9,
+      "plan_completeness": 8,
+      "brief_justification": "The predicted plan aligns well with the contract, maintaining Azure hosting, FastAPI, and GDPR compliance requirements. The fix report correctly addresses ISS-001 and ISS-002 with credible technical actions, though it omits some sections (e.g., phased_implementation) mentioned in the reference. Architecture details are concrete and implementation-grade, though slightly less detailed than the reference. Security coverage is strong, with explicit PII scrubbing and Azure AD integration. Overall completeness is good but missing minor sections like observability and phased rollout specifics."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-437",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 8,
+      "architecture_quality": 8,
+      "security_coverage": 7,
+      "plan_completeness": 8,
+      "brief_justification": "The predicted plan aligns well with the contract—Go 1.22, AWS ECS Fargate, Redis Streams, PostgreSQL, and S3 are consistent with the reference. The fix_report correctly addresses ISS-002 with credible scaling changes, though the reaction time claim (5–10s) is optimistic. Architecture details are specific and implementation-grade, though slightly less detailed in scaling and observability. Security coverage is adequate but lighter on SSRF and rate-limiting details. Overall completeness is good, with all major sections present but thinner in data_model and deployment specifics."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-037",
+    "case_type": "first_pass",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 10,
+      "architecture_quality": 8,
+      "security_coverage": 9,
+      "plan_completeness": 8,
+      "brief_justification": "The predicted plan aligns closely with the reference contract—same AWS/Aurora/React/Spring stack, RLS enforcement, and SOC 2 controls—earning high contract alignment. No fix_report was required, so accuracy is perfect. Architecture quality is strong with concrete technology choices, though slightly less detailed than the reference (e.g., missing some job partitioning details). Security coverage is robust with Okta MFA, RLS, and SOC 2 controls. Plan completeness is good but not perfect; observability and deployment details are thinner and some data model elements are missing."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-034",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 9,
+      "architecture_quality": 8,
+      "security_coverage": 9,
+      "plan_completeness": 8,
+      "brief_justification": "The predicted plan aligns closely with the contract, correctly specifying PBKDF2 key derivation and PKCS#7 signatures per 21 CFR Part 11, though it omits explicit IQ/OQ/PQ validation lifecycle details. The fix_report accurately references ISS-001 and ISS-002 with credible, specific actions. Architecture and security sections are detailed and implementation-grade, covering AD LDAP, SQLCipher, and certificate-based signatures. Minor omissions in validation lifecycle and some brevity in phased_implementation reduce completeness and overall quality slightly."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-799",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 9,
+      "architecture_quality": 9,
+      "security_coverage": 8,
+      "plan_completeness": 9,
+      "brief_justification": "The predicted plan aligns closely with the reference, correctly implementing the longest-prefix extraction and NetworkPolicy fixes without contradicting the technology or hosting contract. The fix_report accurately references ISS-001 and ISS-002 with credible, specific actions and expected outcomes. The architecture overview is detailed and implementation-grade, though slightly less explicit about ingress restrictions than the reference. Security coverage is strong but could mention ingress limits explicitly. All major sections are populated with meaningful content, showing a complete and coherent plan."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-246",
+    "case_type": "first_pass",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 10,
+      "architecture_quality": 8,
+      "security_coverage": 7,
+      "plan_completeness": 8,
+      "brief_justification": "The predicted plan closely aligns with the reference contract, maintaining Go 1.22, Bubbletea, Lip Gloss, and single-binary deployment. The fix_report is empty and correctly reflects no revision round. The architecture is specific and implementation-grade, though slightly less detailed in concurrency and reconnect logic. Security coverage is adequate with API key handling and TLS mention but lacks deeper hardening or compliance notes. Most major sections are populated with meaningful content, though some (data_model, workflows) are thin."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-254",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 9,
+      "architecture_quality": 8,
+      "security_coverage": 9,
+      "plan_completeness": 8,
+      "brief_justification": "The predicted plan closely aligns with the reference contract, maintaining the same Python/Scapy/InfluxDB/SQLite stack and air-gapped lab constraints. The fix_report accurately documents both ISS-002 and ISS-003 with credible, specific actions and expected outcomes. Architecture details are concrete and implementation-grade, though slightly less detailed than the reference in module interconnections. Security coverage is strong, correctly addressing FDA 21 CFR Part 11 integrity requirements. Most sections are populated with meaningful content, though some (e.g., functional_feature_map) appear truncated."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-488",
+    "case_type": "first_pass",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 0,
+      "architecture_quality": 9,
+      "security_coverage": 8,
+      "plan_completeness": 9,
+      "brief_justification": "The predicted plan closely aligns with the reference contract, maintaining the same AWS EKS hosting, FastAPI async backend, Redis caching, PostgreSQL data platform, and GDPR PII-stripping control. The fix_report is empty, so no accuracy can be assessed. Architecture details are implementation-grade, specifying concrete components and scaling parameters. Security coverage is strong, addressing GDPR erasure and authentication, though slightly less detailed on middleware enforcement. All major sections are populated with meaningful content, showing a complete and coherent architecture."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-590",
+    "case_type": "first_pass",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 0,
+      "architecture_quality": 8,
+      "security_coverage": 7,
+      "plan_completeness": 8,
+      "brief_justification": "The predicted plan aligns closely with the reference contract—same GCP stack, Prefect orchestration, PostgreSQL, and Cloud Run Jobs—though it omits explicit mention of KMS encryption and GDPR compliance. No fix_report is provided, so fix_report_accuracy is zero. Architecture quality is strong with concrete task groups and service accounts, though slightly less detailed on data schema. Security coverage is decent but lacks explicit privacy-by-design and encryption details. Most major sections are populated with meaningful content, though observability and deployment details are thinner than the reference."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-788",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 8,
+      "fix_report_accuracy": 7,
+      "architecture_quality": 8,
+      "security_coverage": 7,
+      "plan_completeness": 8,
+      "brief_justification": "The predicted plan aligns well with the contract’s GCP + Azure OpenAI stack and async decoupling requirements, though it introduces Cloud Tasks not mentioned in the reference. The fix_report correctly addresses ISS-001 and ISS-002 but omits some details like idempotency and Cloud Logging IAM controls. Architecture quality is strong with concrete technologies and deployment details. Security coverage is adequate but less thorough than the reference (no explicit IAM or logging role restrictions). Most major sections are populated with meaningful content, though observability and phased implementation are missing."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-544",
+    "case_type": "first_pass",
+    "scores": {
+      "contract_alignment": 7,
+      "fix_report_accuracy": 0,
+      "architecture_quality": 8,
+      "security_coverage": 3,
+      "plan_completeness": 6,
+      "brief_justification": "The predicted plan aligns reasonably with the contract by maintaining the TypeScript/Node.js SDK and adapter pattern, though it deviates slightly with dependency versions and adds an extra UK adapter not in the reference. No fix_report is provided, so accuracy is zero. The architecture is specific and implementation-grade, describing concrete classes and data flow. Security coverage is minimal, with no mention of compliance or data protection. Several sections are present but thin or incomplete, leading to moderate completeness."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-232",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 9,
+      "architecture_quality": 9,
+      "security_coverage": 8,
+      "plan_completeness": 9,
+      "brief_justification": "The predicted plan closely follows the reference, correctly adding a JSON schema validation step in the CI pipeline and maintaining the static Gatsby + S3 + CloudFront architecture. The fix_report accurately describes the change and its rationale, though it omits the 'drift_flag' field mentioned in the reference. Architecture details are concrete and implementation-ready, with good coverage of CI, hosting, and caching. Security controls (WAF, OAC, HTTPS) are present but slightly less detailed than the reference’s IP allowlist enforcement. All major sections are populated with meaningful content."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-665",
+    "case_type": "first_pass",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 10,
+      "architecture_quality": 9,
+      "security_coverage": 8,
+      "plan_completeness": 9,
+      "brief_justification": "The predicted plan aligns closely with the reference contract: it correctly omits hosting and database layers, uses Python 3.10+, httpx, and Pydantic v2, and maintains the optional pandas dependency. The fix_report is empty as expected. Architecture details are specific and implementation-grade, with clear module delineation and async extensions. Security coverage is appropriate for a library SDK, mentioning API key redaction and rate-limit handling, though slightly less explicit than the reference. All major sections are populated with meaningful content, showing strong completeness."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-609",
+    "case_type": "first_pass",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 10,
+      "architecture_quality": 9,
+      "security_coverage": 9,
+      "plan_completeness": 8,
+      "brief_justification": "The predicted plan aligns closely with the reference contract—same Azure hosting, Django/React stack, Stripe for PCI compliance, and Azure AD B2C for MFA. The fix_report is empty as expected for a first-pass plan. Architecture details are strong and implementation-grade, though the use of django-jwt-auth slightly diverges from the reference’s MSAL token handling. Security coverage is robust with Key Vault, MFA, and encryption controls. The plan is nearly complete but the workflows section is truncated, reducing completeness slightly."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-660",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 8,
+      "architecture_quality": 8,
+      "security_coverage": 5,
+      "plan_completeness": 7,
+      "brief_justification": "The predicted plan aligns well with the contract, correctly specifying the orchestrator-based saga and Kafka topic schema consistent with the reference. The fix_report accurately documents changes and expected outcomes, though slightly less detailed than the reference. Architecture quality is solid and implementation-grade, but lacks explicit mention of hosting or monitoring stack. Security coverage is minimal, with no mention of compliance or data protection. Plan completeness is reasonable but missing several sections like observability and phased implementation."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-797",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 8,
+      "fix_report_accuracy": 9,
+      "architecture_quality": 8,
+      "security_coverage": 6,
+      "plan_completeness": 7,
+      "brief_justification": "The predicted plan aligns well with the contract, maintaining Tauri, Rust, and SQLCipher stack choices, though it downgrades some versions and omits TPM/Secure Enclave details. The fix_report correctly addresses ISS-001 with a persistent timestamp-based approach and credible SQL logic. Architecture quality is solid with concrete components and crypto details, but some inconsistencies (PBKDF2 vs argon2id) reduce precision. Security coverage is thinner than the reference, lacking TPM integration and detailed compliance measures. Plan completeness is moderate—most sections are present but deployment and security sections are minimal."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-425",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 9,
+      "architecture_quality": 8,
+      "security_coverage": 8,
+      "plan_completeness": 9,
+      "brief_justification": "The predicted plan closely follows the reference contract, maintaining the same tech stack (Flutter, Go, GKE, Vertex AI, Redis, PostgreSQL) and addressing both ISS-001 and ISS-002 correctly. The fix_report is specific, with credible actions and expected outcomes matching the issues. Architecture details are strong, though slightly less precise about feed re-scoring intervals and data flow than the reference. Security coverage includes COPPA and DSA compliance but could elaborate more on GDPR and audit logging. All major sections are populated with meaningful content, showing a nearly complete and coherent plan."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-847",
+    "case_type": "first_pass",
+    "scores": {
+      "contract_alignment": 10,
+      "fix_report_accuracy": 10,
+      "architecture_quality": 9,
+      "security_coverage": 8,
+      "plan_completeness": 9,
+      "brief_justification": "The predicted plan fully aligns with the static Eleventy + Netlify contract, correctly using YAML data files, eleventy-img, and Netlify Forms. The fix_report is empty as expected for a first-pass plan. Architecture details are specific and implementation-ready, though slightly less detailed on image optimization parameters than the reference. Security coverage is adequate for a low-risk static site, mentioning cookieless analytics and spam filtering. All major sections are populated with meaningful content, though deployment and observability details are somewhat brief."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-786",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 9,
+      "architecture_quality": 9,
+      "security_coverage": 8,
+      "plan_completeness": 9,
+      "brief_justification": "The predicted plan closely aligns with the reference, correctly specifying platform-specific EDR detection and userspace WireGuard (boringtun) per contract. The fix_report accurately documents both issues with credible actions and expected outcomes. Architecture details are concrete, listing specific crates and OS APIs. Security coverage is strong with mTLS, SQLCipher, and OS-native key handling, though minor elaboration on compliance controls could improve it. All major sections are populated with meaningful technical content."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-856",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 9,
+      "architecture_quality": 9,
+      "security_coverage": 9,
+      "plan_completeness": 8,
+      "brief_justification": "The predicted plan closely follows the reference contract, maintaining the same stack (React Native, FastAPI, AWS ECS, Cognito, PostgreSQL) and security baseline. The fix_report correctly references ISS-001 and ISS-002 with credible, specific actions that align with the reference intent, though it omits the idempotent 200-return behavior and supervisor escalation detail. The architecture is concrete and implementation-grade, with clear sync and retry semantics. Security coverage is strong, including MFA and tamper-evident audit trails. Minor omissions in section completeness (e.g., truncated functional_feature_map and missing observability details) slightly reduce the completeness score."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-025",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 8,
+      "fix_report_accuracy": 9,
+      "architecture_quality": 7,
+      "security_coverage": 8,
+      "plan_completeness": 7,
+      "brief_justification": "The predicted plan correctly fixes the three contract issues (Next.js 15, Cognito, PCI SAQ A) and aligns well with the required stack, though the addition of MSAL slightly diverges from the reference. The fix_report is detailed and maps accurately to the issues. The architecture is coherent and specific but somewhat thin in data_model and deployment details. Security coverage is solid, addressing Cognito, MFA, and PCI scope, though HIPAA/BAA compliance is not explicitly discussed. Overall completeness is moderate, with some sections underdeveloped."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-694",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 8,
+      "architecture_quality": 9,
+      "security_coverage": 9,
+      "plan_completeness": 8,
+      "brief_justification": "The predicted plan closely aligns with the contract, maintaining GKE Autopilot, Istio mTLS, Keycloak OIDC, PostgreSQL, and Redis as required. The fix_report correctly addresses ISS-002 and ISS-003 with credible technical actions, though it omits some rollback and observability details from the reference. Architecture quality is high, with concrete service definitions and technology choices. Security coverage is strong, retaining mTLS and OIDC controls. The plan is nearly complete, but lacks minor details in observability and phased implementation sections."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-197",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 8,
+      "fix_report_accuracy": 6,
+      "architecture_quality": 8,
+      "security_coverage": 7,
+      "plan_completeness": 8,
+      "brief_justification": "The predicted plan aligns well with the required GCP, Spring Boot, and Next.js stack, maintaining hosting and data platform consistency. However, the fix_report for ISS-002 is partially incorrect—it reintroduces PLATFORM_ADMIN in the authorization logic, contradicting the intended fix. Architecture details are strong and implementation-grade, with clear GKE topology and service definitions. Security coverage is decent but slightly inconsistent due to the authorization confusion. Most sections are populated with meaningful content, though minor omissions exist in observability and phased implementation."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-735",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 8,
+      "architecture_quality": 8,
+      "security_coverage": 9,
+      "plan_completeness": 8,
+      "brief_justification": "The predicted plan aligns closely with the contract, maintaining Hugo, Bootstrap 5, and Cloudflare Pages as required. The fix report correctly addresses ISS-001 and ISS-002 with credible actions, though some attribute examples (e.g., data-bs-toggle='off') are slightly inaccurate. The architecture is specific and implementation-grade, with clear CI/CD and hosting details. Security coverage is strong, explicitly removing 'unsafe-inline' and adding a CSP report-uri. The plan is mostly complete, though some sections like data model and phased implementation are abbreviated."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-785",
+    "case_type": "first_pass",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 10,
+      "architecture_quality": 9,
+      "security_coverage": 8,
+      "plan_completeness": 9,
+      "brief_justification": "The predicted plan closely aligns with the reference contract—Astro 4.x, MDX, TypeDoc, Pagefind, and Vercel Edge hosting are all correctly represented, though it mentions 'Vercel Pro' instead of 'Vercel Edge' which slightly diverges. The fix_report is empty and correctly reflects no changes. Architecture details are specific and implementation-grade, with clear build and CI descriptions. Security coverage is adequate for a static site but omits explicit CSP header mention. All major sections are populated with meaningful content, showing strong completeness."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-363",
+    "case_type": "first_pass",
+    "scores": {
+      "contract_alignment": 10,
+      "fix_report_accuracy": 0,
+      "architecture_quality": 9,
+      "security_coverage": 9,
+      "plan_completeness": 9,
+      "brief_justification": "The predicted plan fully aligns with the frozen contract, correctly using Java 21 Spring Boot and Azure hosting, fixing the Node.js inconsistency. No fix_report is provided, so fix_report_accuracy is zero. The architecture is detailed and implementation-grade, with clear microservice decomposition and concrete technology choices. Security coverage is strong, explicitly addressing SOC 2 controls, Azure Key Vault, and OIDC. The plan is nearly complete, with all major sections populated and only minor truncation in workflows."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-719",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 8,
+      "architecture_quality": 8,
+      "security_coverage": 8,
+      "plan_completeness": 7,
+      "brief_justification": "The predicted plan aligns well with the contract, maintaining Next.js 14, Vercel Edge, Salesforce integration, and reCAPTCHA v3 verification. The fix_report correctly references ISS-002 and describes credible actions, though it omits the IntersectionObserver performance optimization. Architecture details are specific and implementation-grade, though slightly less detailed than the reference. Security coverage is solid with server-side verification and rate limiting, but lacks mention of environment variable handling. Some sections like data_model and deployment_and_operations are thin, reducing overall completeness."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-188",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 9,
+      "architecture_quality": 9,
+      "security_coverage": 8,
+      "plan_completeness": 9,
+      "brief_justification": "The predicted plan closely aligns with the reference contract, maintaining the Electron/Vue/FastAPI/DuckDB stack and local-only data handling. The fix_report correctly documents ISS-003 with credible, specific actions and consistent section updates. Architecture details are implementation-grade, describing modules and data flow concretely. Security coverage is solid, addressing token expiry and safeStorage, though slightly less detailed on per-marketplace TTLs. All major sections are populated with meaningful content, showing strong completeness."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-811",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 9,
+      "architecture_quality": 8,
+      "security_coverage": 8,
+      "plan_completeness": 9,
+      "brief_justification": "The predicted plan closely aligns with the reference contract, maintaining Go 1.22, PostgreSQL RLS, Redis, ECS Fargate, and mTLS requirements. The fix_report accurately documents both issues with credible, specific actions and correct issue_ids. Architecture details are implementation-grade though slightly less detailed than the reference (e.g., missing HLRClient abstraction). Security coverage is strong with mTLS, JWT, and RLS but lacks explicit CPNI audit logging depth. All major sections are populated with meaningful content, showing good completeness."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-674",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 9,
+      "architecture_quality": 6,
+      "security_coverage": 8,
+      "plan_completeness": 4,
+      "brief_justification": "The predicted plan correctly identifies and resolves the two contract violations (React Native → Flutter 3, and SQLCipher encryption), showing strong contract alignment and accurate fix reporting. However, it lacks the full architecture content (no architecture_overview, technology_stack details, or deployment sections), reducing completeness and architectural quality. Security coverage is good due to explicit mention of SQLCipher and key derivation, but overall plan content is minimal."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-866",
+    "case_type": "first_pass",
+    "scores": {
+      "contract_alignment": 8,
+      "fix_report_accuracy": 0,
+      "architecture_quality": 7,
+      "security_coverage": 7,
+      "plan_completeness": 8,
+      "brief_justification": "The predicted plan aligns well with the contract—Node.js, TypeScript, PostgreSQL, DigitalOcean, and JWT via keytar are consistent—but it introduces a webhook push model instead of polling, slightly diverging from the reference. The fix_report is empty, so accuracy is zero. Architecture details are concrete but less rich than the reference (no audit table or polling TTL). Security coverage is adequate for JWT and keychain use but lacks mention of rate limiting or encryption in transit. Most sections are populated with meaningful content, though the data model and phased implementation are thin."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-781",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 9,
+      "architecture_quality": 8,
+      "security_coverage": 8,
+      "plan_completeness": 9,
+      "brief_justification": "The predicted plan closely aligns with the reference contract, maintaining the Go/AWS/Aurora/Redis stack and correctly implementing the read replica and tenant-scoped cache key fixes. The fix_report accurately documents both issues with credible technical actions and outcomes. Architecture details are specific and implementation-grade, though slightly less precise in describing the read replica routing mechanism. Security coverage is strong, addressing SOC 2 and GDPR controls, though less detailed than the reference. All major sections are populated with meaningful content, showing good completeness."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-392",
+    "case_type": "first_pass",
+    "scores": {
+      "contract_alignment": 10,
+      "fix_report_accuracy": 10,
+      "architecture_quality": 9,
+      "security_coverage": 8,
+      "plan_completeness": 9,
+      "brief_justification": "The predicted plan fully aligns with the static Astro + Netlify contract, maintaining the same stack, hosting, and no-runtime model. The fix_report is empty as expected for an initial submission. The architecture is specific and implementation-ready, though slightly less detailed than the reference in describing CI/CD triggers. Security coverage is appropriate for a low-risk static site, mentioning HTTPS and anonymized analytics. All major sections are present and meaningful, though the data_model section is truncated."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-372",
+    "case_type": "revision_round",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 8,
+      "architecture_quality": 9,
+      "security_coverage": 8,
+      "plan_completeness": 9,
+      "brief_justification": "The predicted plan closely aligns with the reference contract, maintaining AWS Bedrock, pgvector, Titan Embeddings, and Cognito as required technologies. The fix_report correctly documents both ISS-001 and ISS-002 with credible, specific actions, though it omits minor logging details. The architecture is implementation-grade with concrete stack choices and deployment details. Security coverage is strong with FERPA compliance and WAF, though less detailed than the reference. All major sections are populated with meaningful content, showing only minor omissions in risk and tradeoff analysis."
+    }
+  },
+  {
+    "sample_id": "ARC-PLAN26-364",
+    "case_type": "first_pass",
+    "scores": {
+      "contract_alignment": 9,
+      "fix_report_accuracy": 0,
+      "architecture_quality": 8,
+      "security_coverage": 8,
+      "plan_completeness": 7,
+      "brief_justification": "The predicted plan aligns closely with the GCP-based FERPA-compliant pipeline contract, maintaining Airflow, ClickHouse, and Cloud Run choices with correct data boundary controls. No fix_report is provided, so accuracy is zero. The architecture is specific and implementation-grade, though slightly less detailed than the reference (e.g., missing schema registry details). Security coverage is strong, addressing FERPA and PII boundaries but omitting VPC-SC mention. Plan completeness is moderate—most sections are populated but some (data_model, phased_implementation) are thin or truncated."
+    }
+  }
+]
