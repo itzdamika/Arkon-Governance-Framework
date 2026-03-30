@@ -1,0 +1,56 @@
+{
+  "agent": "ArchitectAgent",
+  "base_model": "microsoft/Phi-3-mini-128k-instruct",
+  "dataset_path": "architect_dataset_final.jsonl",
+  "dataset_size": 891,
+  "train_rows": 758,
+  "val_rows": 133,
+  "token_stats": {
+    "mean": 10105.634118967453,
+    "median": 10081.0,
+    "max": 16861
+  },
+  "config": {
+    "lora_r": 64,
+    "lora_alpha": 128,
+    "lora_dropout": 0.05,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ],
+    "num_epochs": 5,
+    "per_device_batch_size": 1,
+    "gradient_accumulation": 8,
+    "learning_rate": 0.0001,
+    "lr_scheduler": "cosine",
+    "warmup_ratio": 0.1,
+    "weight_decay": 0.01,
+    "max_grad_norm": 1.0,
+    "max_seq_length": 16896,
+    "max_new_tokens": 6144,
+    "val_ratio": 0.15
+  },
+  "trainable_parameters": 35651584,
+  "trainable_percentage": 1.7435312416901074,
+  "training_loss": 1.0168914292988025,
+  "eval_loss": 0.9893434047698975,
+  "perplexity": 2.6894680006235476,
+  "training_duration_minutes": 0.3015045441687107,
+  "structural_metrics": {
+    "json_validity_rate": 0.84,
+    "schema_compliance_rate": 0.16,
+    "section_coverage_f1": 0.599061539316271,
+    "fix_report_struct_compliance": 1.0,
+    "fix_report_orphan_rate": 0.0,
+    "title_no_round_numbers": 0.8095238095238095,
+    "no_auditor_key_leaks": 1.0
+  },
+  "completion_only_masking": true,
+  "chain_aware_split": true,
+  "seed": 42
+}
