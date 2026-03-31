@@ -1,0 +1,590 @@
+[
+  {
+    "sample_id": "AUD-SYNC26-191",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 7,
+      "rubric_calibration": 9,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies the core issue—over-engineering with ECS and databases violating the static hosting and zero compute constraints. Its reasoning is coherent and specific, though slightly less precise about cost implications. Recommendations are actionable but somewhat unconventional (GitHub hosting mention). Rubric scores align closely with the reference in both order and magnitude. Overall, it’s a strong and useful audit with minor deviations in detail and phrasing."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-661",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 9,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the same critical issue—missing biometric authentication—and provides coherent reasoning tied to the plan’s content. Its recommendations are specific and actionable, detailing how to integrate Face ID/Touch ID. Rubric scores are well aligned with the reference, with only minor deviations. Overall, it’s a high-quality, accurate audit closely matching the reference in both substance and clarity."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-677",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 10,
+      "rubric_calibration": 7,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies and resolves the same two critical issues (deployment region and data residency) with coherent reasoning and clear evidence. Its reasoning is specific and consistent with the reference, though it adds a minor irrelevant strength (Datadog). Recommendations are appropriately empty since all issues are resolved. Rubric calibration is slightly off, with inflated and deflated scores for some dimensions, but overall the audit remains highly accurate and useful."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-351",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 7,
+      "rubric_calibration": 3,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies the same core issue—disabling automated backups—as catastrophic for data resilience, and acknowledges the Multi-AZ fix. Its reasoning is coherent and specific, though slightly verbose. The recommendation is actionable but less precise than the reference (suggesting restoring defaults rather than specifying a retention period). Rubric calibration is poor, with operability and other scores diverging significantly from the reference. Overall, it’s a strong and useful audit despite rubric misalignment."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-004",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 8,
+      "rubric_calibration": 9,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies the same critical issue—use of public OpenAI APIs violating the zero-retention and Azure OpenAI requirement—with coherent reasoning and clear evidence. Its recommendations are actionable, specifying how to reroute requests to the secure endpoint. Rubric scores closely match the reference, with only minor deviations. Overall, it provides a strong, accurate, and useful assessment with slight differences in naming and minor detail depth."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-682",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 8,
+      "rubric_calibration": 7,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies the missing signed binaries process and lack of operational detail, matching the reference’s core issue. It adds extra but plausible concerns (CI pipeline, observability) that don’t contradict the reference. Reasoning is coherent and grounded, and recommendations are concrete and actionable. Rubric scores are directionally consistent but differ in magnitude, especially on requirements alignment and security. Overall, it’s a strong, useful audit with minor calibration differences."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-168",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 8,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the same critical issue—hardcoded API key violating the 'No hardcoded secrets' baseline—and provides coherent reasoning with additional context about PCI-DSS and public exposure. Recommendations are specific and actionable, matching the reference’s intent. Rubric scores are directionally consistent though slightly lower on architecture and operability, hence minor calibration deviation. Overall, it’s a high-quality, useful audit closely aligned with the reference."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-487",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 6,
+      "rubric_calibration": 9,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies the same critical issue—sending PHI to a public LLM API violating local model and HIPAA constraints. Its reasoning is coherent and specific, though slightly less precise in referencing the 'No data leaves VPC' baseline. The recommendation is somewhat actionable but diverges by suggesting Azure Cognitive Services instead of a local OSS model, reducing alignment. Rubric scores are well calibrated, and overall the audit would be quite useful for an architect."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-103",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 3,
+      "rubric_calibration": 8,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies the same strengths and finds no issues, matching the reference’s positive assessment. Reasoning is coherent and grounded in the architecture details, though slightly more generic. Recommendations are missing, reducing actionability. Rubric calibration is mostly aligned but slightly off on security and operability. Overall, it’s a high-quality audit but less actionable than the reference."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-206",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 7,
+      "rubric_calibration": 9,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies the same core issue—cloud dependency violating zero internet egress/local execution constraints—with coherent reasoning and evidence. Its recommendation is technically plausible but less directly actionable than the reference (edge gateway vs. local MQTT broker). Rubric scores are well aligned in relative magnitude. Overall, it provides a solid and useful critique with minor deviations in specificity and naming."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-169",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 10,
+      "rubric_calibration": 7,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies and resolves the same hardcoded secret issue as the reference, with clear reasoning about constructor-based key injection. Its reasoning is coherent and specific, though slightly more general in evidence citation. Rubric calibration diverges somewhat, with higher scores across all dimensions than the reference. Overall, it’s a high-quality, accurate audit with well-grounded conclusions."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-250",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 10,
+      "rubric_calibration": 9,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the same resolved issue (REQ-080) and mirrors the reference’s conclusion that all third-party dependencies were removed. Reasoning is coherent and grounded, with slightly more technical detail. Recommendations are appropriately empty since no issues remain. Rubric calibration is very close, with only minor score shifts. Overall, the audit is accurate and useful for confirming compliance."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-081",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 7,
+      "rubric_calibration": 8,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies the same core issue—missing GraphQL query depth limiting and associated DoS risk—and accurately marks ARC-087 as resolved. Reasoning is coherent and grounded, though slightly less precise in terminology and evidence references. The recommendation is actionable but uses a nonstandard package name and lacks depth-limit parameter guidance. Rubric calibration is close, with minor deviations in architecture and internal consistency scores. Overall, the audit is useful and well-aligned with the reference."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-512",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 10,
+      "rubric_calibration": 8,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the same resolved issue (incompatible tech stack) and provides coherent reasoning consistent with the reference. It maintains clear evidence and impact statements, showing strong understanding. Rubric scores are slightly misaligned—architecture_quality and operability are rated lower than in the reference—but overall the audit is accurate, specific, and actionable."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-815",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 10,
+      "rubric_calibration": 8,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies that the plan is strong, secure, and well-aligned, matching the reference’s lack of issues. Reasoning is coherent and specific to privacy and deployment details. Recommendations are appropriately empty given no issues. Rubric calibration is slightly off—architecture_quality and security differ from the reference—but overall the audit remains highly accurate and useful."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-683",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 10,
+      "rubric_calibration": 8,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the same resolved issue (OP-150) and provides coherent reasoning about goreleaser’s role in signing and release automation. Recommendations and concerns are appropriately empty given the resolved state. Rubric calibration is slightly off, with inflated scores for requirements alignment and internal consistency compared to the reference. Overall, the audit is accurate, well-reasoned, and actionable."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-385",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 8,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the same core issue—a violation of the mandated R technology stack—and provides coherent reasoning tied to the plan content. Its recommendations are actionable, specifying R equivalents for Python libraries. Rubric calibration is slightly off, with scores generally higher than the reference but maintaining relative order. Overall, the audit is highly accurate and useful for guiding remediation."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-627",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 7,
+      "rubric_calibration": 9,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies the same critical issue (public RDS violating the Private RDS Only baseline) and maintains coherent reasoning tied to the plan’s refusal to fix SEC-130. Its explanation is specific and technically grounded, though slightly overextends by mentioning KMS/Vault integration not in the reference. The recommendation is actionable but more complex than necessary. Rubric scores are well aligned with the reference, showing only minor deviations. Overall, it provides a useful and accurate assessment."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-505",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 9,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the same critical issue—use of a public LLM API violating local-only and confidentiality constraints—with clear evidence and impact reasoning. Its analysis is coherent and specific, showing strong understanding of compliance and data security implications. Recommendations are actionable, suggesting concrete restoration to local models. Rubric scores closely match the reference, with only minor deviation in architecture and consistency ratings. Overall, it provides a highly useful and accurate audit."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-050",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 3,
+      "rubric_calibration": 9,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies and explains the resolution of REQ-050 with AWS OpenSearch, matching the reference’s issue coverage and reasoning depth. Its reasoning is coherent and technically grounded, though slightly more verbose. However, it omits the actionable DLQ recommendation, reducing practical guidance. Rubric scores are well aligned except for a minor operability deviation. Overall, it’s a strong and accurate audit but less useful for next-step improvements."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-806",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 10,
+      "rubric_calibration": 8,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the same resolved issue (heavy SPA framework) and provides coherent reasoning about the switch to HTML improving performance and simplicity. Recommendations are consistent and actionable, though none are needed. Rubric calibration is slightly off—architecture_quality and internal_consistency differ by one point—but overall reasoning and alignment are strong and useful."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-697",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 8,
+      "rubric_calibration": 8,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies the same core violations—use of OpenAI and Qdrant Cloud instead of local deployments—matching the reference’s critical issues. Its reasoning is coherent and specific, though slightly overcomplicates the hosting details. Recommendations are actionable, clearly suggesting restoration of local models. Rubric scores are well aligned, with minor deviations in operability and internal consistency. Overall, it provides a solid, useful review closely aligned with the reference."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-211",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 9,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the same critical issue—plaintext password storage violating bcrypt requirements—and provides coherent reasoning tied to the plan’s evidence. Its recommendation to use Django’s built-in hashers is specific and actionable. Rubric scores are closely aligned with the reference, with only minor deviations in architecture and operability. Overall, it’s a high-quality, accurate audit with strong practical guidance."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-249",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 7,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies the same core issue—use of third-party pip dependencies violating the zero-dependency constraint—and provides coherent reasoning tied to the plan context. Recommendations are actionable and specific, mirroring the reference’s advice to use standard library modules. Rubric calibration is mostly aligned but slightly off in magnitude and consistency (e.g., internal_consistency and security scores differ). Overall, the audit is accurate and useful, though minor deviations in rubric scoring prevent a perfect match."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-150",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 6,
+      "reasoning_quality": 7,
+      "recommendation_actionability": 2,
+      "rubric_calibration": 4,
+      "overall_audit_quality": 6,
+      "brief_justification": "The predicted audit correctly identifies the resolution of the cloud leakage issue and the overall compliance with the no-cloud requirement, but it misses the single point of failure concern and provides no actionable recommendations. Its reasoning is coherent but less detailed than the reference. The rubric scores are inflated and misaligned with the reference, particularly on security and requirements alignment. Overall, it’s a decent but incomplete audit lacking depth and practical guidance."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-273",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 5,
+      "reasoning_quality": 4,
+      "recommendation_actionability": 6,
+      "rubric_calibration": 2,
+      "overall_audit_quality": 4,
+      "brief_justification": "The predicted audit correctly identifies the missing signed binaries issue but completely misses the 'Thin Plan' and lack of implementation detail. Reasoning is narrow and lacks depth about architectural or operational weaknesses. The recommendation to add a signing step is somewhat actionable but limited. Rubric scores are poorly calibrated—predicted values are much higher than the reference. Overall, the audit provides partial insight but is incomplete and over-optimistic."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-256",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 8,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the same critical issue—the violation of the 'Strictly local models only' constraint due to Azure OpenAI usage—and provides coherent reasoning tied to the plan content. Its recommendation to use a self-hosted PyTorch LoRA setup is actionable and specific. Rubric calibration is close, with minor deviations in security and operability scores. Overall, the audit is accurate, well-reasoned, and useful for architectural improvement."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-019",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 10,
+      "rubric_calibration": 9,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the same resolved issue (SEC-060) and provides coherent reasoning consistent with the reference. It maintains strong technical specificity and alignment with the architecture’s improvements. Rubric calibration is nearly perfect, with only a minor deviation in operability. Overall, the audit is clear, accurate, and actionable."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-585",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 10,
+      "rubric_calibration": 8,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the same resolved issue (SEC-092) and provides coherent reasoning about restoring DB encryption with GCP defaults. It maintains clear, specific evidence and no unnecessary concerns or recommendations, matching the reference’s structure. Rubric calibration is slightly off, with minor inflation in architecture_quality and internal_consistency, but overall the audit is accurate and useful."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-584",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 8,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies both the resolved MFA issue and the newly introduced missing DB encryption regression. Its reasoning is coherent and specific, clearly explaining the security implications. The recommendation to re-enable Cloud KMS keys is actionable and technically precise. Rubric calibration is mostly aligned, though the predicted audit slightly overestimates requirements alignment and changes severity labels. Overall, it provides a high-quality, useful review closely matching the reference."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-662",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 8,
+      "rubric_calibration": 9,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies the same core issues—biometric auth resolved and E2E encryption missing—with consistent severity and evidence. Its reasoning is coherent and specific, though slightly confused about transport vs payload encryption. Recommendations are actionable, naming concrete technologies, albeit with minor misalignment to the Swift context. Rubric scores closely match the reference, showing good calibration. Overall, it provides a useful and accurate architectural review with minor technical imprecision."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-533",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 7,
+      "recommendation_actionability": 5,
+      "rubric_calibration": 8,
+      "overall_audit_quality": 7,
+      "brief_justification": "The predicted audit correctly identifies the resolution of PCI tokenization and PII masking issues, matching the reference’s core findings. However, it introduces an inconsistency by mentioning AWS tools instead of Google Cloud, and omits the operability concern about DLP API limits. Reasoning is mostly coherent but slightly generic and less precise. Recommendations are empty, limiting actionability. Rubric scores are close but slightly inflated for requirements alignment and internal consistency."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-771",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 8,
+      "rubric_calibration": 7,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies the same core issues as the reference—fixing overengineering and introducing a new TLS/security regression—though it renames the security issue (SEC-19 → SEC-40). Reasoning is coherent and grounded in the plan details, with clear evidence and impact statements. The recommendation to re-enable TLS is actionable, albeit with a slightly tool-specific suggestion. Rubric scores are directionally consistent but somewhat harsher than the reference. Overall, the audit is accurate and useful for architectural improvement."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-123",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 6,
+      "rubric_calibration": 6,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies the same resolved issue (DEP-122) and captures the FluxCD adoption and zero trust improvements with clear reasoning. However, it omits actionable recommendations, leaving the 'recommendations' section empty. The rubric scores are inflated compared to the reference, reducing calibration accuracy. Overall, the audit is coherent and useful but slightly overconfident and less directive for next steps."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-279",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 7,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies the same core issue—batch processing violating real-time constraints—and provides coherent reasoning and actionable recommendations (Kafka/Spark Streaming). Minor differences exist in issue naming and severity classification. Rubric calibration is somewhat off, with operability and internal consistency scored differently, but overall the audit is accurate and useful."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-257",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 7,
+      "recommendation_actionability": 4,
+      "rubric_calibration": 7,
+      "overall_audit_quality": 7,
+      "brief_justification": "The predicted audit correctly identifies the same resolved issue (Cloud LLM Violation) and maintains alignment with the reference’s core findings. Reasoning is coherent but introduces unnecessary platform references (Azure) that reduce contextual accuracy. The recommendation is not actionable or relevant to the AWS-based architecture. Rubric scores are mostly aligned but slightly inflated for requirements_alignment and internal_consistency. Overall, the audit is useful but less precise and context-aware than the reference."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-274",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 10,
+      "rubric_calibration": 7,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies and resolves the same issues (ARC-002 and ARC-003) with coherent reasoning and clear evidence. Its reasoning is specific and consistent with the reference, though slightly less detailed in describing the improvements. Recommendations are appropriately empty since all issues are resolved. Rubric calibration diverges somewhat—security and requirements_alignment scores differ notably from the reference—so calibration is not perfect. Overall, it’s a high-quality, accurate audit."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-074",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 7,
+      "rubric_calibration": 9,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies the same core issue—the explicit violation of the no-Electron constraint—and captures its critical severity and impact. Reasoning is coherent and grounded, though slightly less focused on memory bloat than the reference. Recommendations are actionable but overly prescriptive and platform-specific. Rubric scores closely match the reference in relative ordering and magnitude. Overall, the audit is accurate and useful, with minor deviations in emphasis and tone."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-488",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 7,
+      "rubric_calibration": 10,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies both the resolved external LLM issue and the newly introduced indefinite data retention violation, matching the reference almost exactly. Its reasoning is clear and well-grounded in the plan details. The recommendation is actionable but deviates slightly from the mandated 7-year policy, reducing precision. Rubric scores are perfectly aligned with the reference. Overall, the audit is highly useful and accurate, with only minor deviation in compliance recommendation specifics."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-745",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 10,
+      "rubric_calibration": 6,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the same resolved issue (EKS overengineering) and provides coherent reasoning about the hosting change. It maintains clarity and specificity, with no missing or spurious issues. Recommendations are appropriately empty given the resolved state. However, rubric calibration diverges—predicted scores are inflated compared to the reference, especially in security and operability—reducing alignment accuracy."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-110",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 6,
+      "rubric_calibration": 7,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies the same core issue—the substitution of SQL Server with MongoDB—and expands on consistency risks, showing strong issue recognition and reasoning. However, its recommendations are less actionable and deviate from the reference’s clear SQL Server reversion guidance. Rubric calibration is mostly aligned but underrates security and operability compared to the reference. Overall, it provides a useful and technically sound review with minor misalignment in prescriptive advice."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-010",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 5,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies the same critical compliance issue—deployment to commercial AWS instead of GovCloud—and provides coherent reasoning and actionable recommendations. Minor differences in phrasing and omission of the spot instance concern slightly reduce completeness. Rubric calibration is weaker, as the predicted scores are inflated relative to the reference, especially for security and internal consistency."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-504",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 7,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies the core contradiction—using PHP/Apache on GitHub Pages—and provides coherent reasoning about static vs. dynamic hosting. Its recommendations are clear and actionable, directly addressing the incompatibility. However, rubric calibration diverges somewhat from the reference (notably lower requirements_alignment and higher internal_consistency), and some phrasing is slightly less precise about the 'physically impossible' deployment. Overall, it’s a strong, useful audit with minor calibration issues."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-626",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 4,
+      "rubric_calibration": 8,
+      "overall_audit_quality": 7,
+      "brief_justification": "The predicted audit correctly identifies the same critical issue—publicly accessible RDS violating the Private RDS Only baseline—with coherent reasoning and accurate severity. However, its recommendation is less actionable, introducing unrelated technologies instead of directly fixing the Terraform flag. Rubric calibration is close, with minor deviations in alignment and consistency scores. Overall, it provides a useful but slightly less precise audit than the reference."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-663",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 10,
+      "rubric_calibration": 8,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the same resolved issue (E2E encryption) and maintains alignment with the reference’s security and compliance conclusions. Reasoning is coherent and technically specific, showing understanding of AES-GCM and biometric MFA. Recommendations are appropriately empty since no issues remain. Rubric calibration is slightly off—requirements_alignment and internal_consistency are inflated compared to the reference—but overall the audit is accurate and useful."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-122",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 8,
+      "rubric_calibration": 9,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the same core GitOps violation (Jenkins + kubectl instead of FluxCD) and adds a plausible secondary issue about human-editable configs. Reasoning is detailed and well-grounded in the plan’s constraints. Recommendations are actionable, specifying replacement with Helm charts integrated with FluxCD. Rubric scores closely match the reference in both magnitude and ordering. Overall, the audit is accurate, specific, and useful for architectural improvement."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-676",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 8,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the same core compliance issue—deployment in the wrong region violating EU data residency—and provides coherent reasoning tied to GDPR context. Its recommendations are actionable and technically specific. Rubric calibration is close but slightly off in operability and internal consistency. Overall, it is a high-quality, well-aligned audit with minor deviations in scoring and issue labeling."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-611",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 8,
+      "rubric_calibration": 7,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies the main issue—a stubbed plan lacking implementation detail—and adds relevant specifics about missing workflows and observability. Its reasoning is coherent and grounded, though slightly more verbose than necessary. Recommendations are actionable, detailing CI/CD and deployment steps. Rubric calibration is mostly aligned but overestimates security and architecture quality relative to the reference. Overall, it’s a strong, useful audit with minor calibration drift."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-111",
+    "case_type": "",
+    "scores": {
+      "issue_identification": 8,
+      "reasoning_quality": 7,
+      "recommendation_actionability": 6,
+      "rubric_calibration": 4,
+      "overall_audit_quality": 7,
+      "brief_justification": "The predicted audit correctly identifies the core issue—flat file audit logs breaking ACID and compliance guarantees—but mislabels it under a new security issue (SEC-450) instead of the ACID transaction violation (DAT-111). Reasoning is coherent and grounded, though slightly less precise about transactional coupling. Recommendations are somewhat actionable but overly specific to SQL Server features not mentioned in the reference. Rubric calibration diverges significantly, especially internal consistency and security scores. Overall, it’s a useful but imperfect audit."
+    }
+  }
+]

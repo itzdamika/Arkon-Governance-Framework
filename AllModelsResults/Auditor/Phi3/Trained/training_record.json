@@ -1,0 +1,60 @@
+{
+  "model_name": "microsoft/Phi-3-mini-128k-instruct",
+  "dataset_path": "auditor_dataset_rescored.jsonl",
+  "dataset_size": 799,
+  "formatted_size": 799,
+  "train_size": 686,
+  "val_size": 113,
+  "config": {
+    "lora_r": 64,
+    "lora_alpha": 128,
+    "lora_dropout": 0.05,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ],
+    "num_epochs": 5,
+    "per_device_batch_size": 1,
+    "gradient_accumulation": 8,
+    "learning_rate": 0.0001,
+    "lr_scheduler": "cosine",
+    "warmup_ratio": 0.1,
+    "weight_decay": 0.01,
+    "max_grad_norm": 1.0,
+    "max_seq_length": 8192,
+    "val_ratio": 0.15
+  },
+  "trainable_parameters": 35651584,
+  "trainable_percentage": 1.7435312416901074,
+  "training_loss": 0.39216134104617806,
+  "eval_loss": 0.3975387215614319,
+  "perplexity": 1.4881574166300153,
+  "training_duration_minutes": 109.35331898927689,
+  "structural_metrics": {
+    "json_validity_rate": 0.98,
+    "schema_compliance_rate": 0.98,
+    "rubric_range_compliance": 0.98,
+    "issue_template_compliance": 1.0,
+    "severity_status_compliance": 0.9830508474576272
+  },
+  "semantic_metrics": {
+    "rubric_mae": {
+      "requirements_alignment": 0.7959183673469388,
+      "architecture_quality": 0.8979591836734694,
+      "security": 1.0408163265306123,
+      "operability": 1.183673469387755,
+      "internal_consistency": 1.2244897959183674
+    },
+    "rubric_mae_overall": 1.0285714285714285,
+    "issue_f1": 0.44680851063829785,
+    "issue_f1_category": 0.6631205673758865,
+    "blocking_agreement": 0.9183673469387755
+  },
+  "completion_only_masking": true,
+  "seed": 42
+}

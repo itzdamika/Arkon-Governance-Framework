@@ -1,0 +1,37 @@
+{
+  "model": "gemini-2.5-flash-lite",
+  "mode": "gemini25flash_lite_zero_shot",
+  "n_evaluated": 50,
+  "structural": {
+    "json_validity": 0.92,
+    "schema_compliance": 1.0,
+    "rubric_range": 1.0,
+    "issue_template": 0.2826086956521739,
+    "sev_status_enum": 0.967391304347826
+  },
+  "semantic": {
+    "issue_f1_exact": 0.5242063492063492,
+    "issue_f1_category": 0.6238095238095238,
+    "blocking_agreement": 0.0,
+    "rubric_mae_per_dim": {
+      "requirements_alignment": 0.9782608695652174,
+      "architecture_quality": 1.1956521739130435,
+      "security": 1.4782608695652173,
+      "operability": 1.1956521739130435,
+      "internal_consistency": 1.326086956521739
+    },
+    "rubric_mae_mean": 1.2347826086956522
+  },
+  "rouge_l": {
+    "thinking_summary": 0.11472848412856834,
+    "summary": 0.11766541175084512
+  },
+  "llm_judge": {
+    "issue_identification": 9.152173913043478,
+    "reasoning_quality": 8.608695652173912,
+    "recommendation_actionability": 8.695652173913043,
+    "rubric_calibration": 7.586956521739131,
+    "overall_audit_quality": 8.565217391304348,
+    "failed": 0
+  }
+}

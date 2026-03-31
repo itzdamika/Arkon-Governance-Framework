@@ -1,0 +1,37 @@
+{
+  "model": "gpt-4.1",
+  "mode": "gpt41_zero_shot",
+  "n_evaluated": 50,
+  "structural": {
+    "json_validity": 1.0,
+    "schema_compliance": 1.0,
+    "rubric_range": 1.0,
+    "issue_template": 0.2524271844660194,
+    "sev_status_enum": 0.8349514563106796
+  },
+  "semantic": {
+    "issue_f1_exact": 0.5231884057971014,
+    "issue_f1_category": 0.6666666666666667,
+    "blocking_agreement": 0.0,
+    "rubric_mae_per_dim": {
+      "requirements_alignment": 1.16,
+      "architecture_quality": 0.94,
+      "security": 1.42,
+      "operability": 1.3,
+      "internal_consistency": 1.36
+    },
+    "rubric_mae_mean": 1.236
+  },
+  "rouge_l": {
+    "thinking_summary": 0.18518597608838236,
+    "summary": 0.13470788399704106
+  },
+  "llm_judge": {
+    "issue_identification": 9.34,
+    "reasoning_quality": 8.76,
+    "recommendation_actionability": 8.78,
+    "rubric_calibration": 7.52,
+    "overall_audit_quality": 8.72,
+    "failed": 0
+  }
+}

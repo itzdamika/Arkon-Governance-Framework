@@ -1,0 +1,58 @@
+{
+  "agent": "ArchitectAgent",
+  "base_model": "meta-llama/Meta-Llama-3.1-8B-Instruct",
+  "dataset_path": "architect_dataset_final.jsonl",
+  "dataset_size": 891,
+  "train_rows": 758,
+  "val_rows": 133,
+  "token_stats": {
+    "mean": 7924.1750841750845,
+    "median": 7938.0,
+    "max": 13234
+  },
+  "config": {
+    "lora_r": 64,
+    "lora_alpha": 128,
+    "lora_dropout": 0.05,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ],
+    "num_epochs": 5,
+    "per_device_batch_size": 1,
+    "gradient_accumulation": 8,
+    "learning_rate": 0.0001,
+    "lr_scheduler": "cosine",
+    "warmup_ratio": 0.1,
+    "weight_decay": 0.01,
+    "max_grad_norm": 1.0,
+    "max_seq_length": 16896,
+    "max_new_tokens": 6144,
+    "val_ratio": 0.15
+  },
+  "trainable_parameters": 167772160,
+  "trainable_percentage": 3.563272887025285,
+  "training_loss": 0.7724784901267604,
+  "eval_loss": 1.0351394414901733,
+  "perplexity": 2.815498805602191,
+  "training_duration_minutes": 1.2325274468826442,
+  "structural_metrics": {
+    "json_validity_rate": 1.0,
+    "schema_compliance_rate": 1.0,
+    "section_coverage_f1": 1.0,
+    "fix_report_struct_compliance": 1.0,
+    "fix_report_orphan_rate": 0.0,
+    "title_no_round_numbers": 0.8,
+    "no_auditor_key_leaks": 1.0
+  },
+  "completion_only_masking": true,
+  "chain_aware_split": true,
+  "response_template": "<|start_header_id|>assistant<|end_header_id|>\n\n",
+  "end_token": "<|eot_id|>",
+  "seed": 42
+}

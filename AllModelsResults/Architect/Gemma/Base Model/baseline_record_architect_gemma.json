@@ -1,0 +1,41 @@
+{
+  "agent": "ArchitectAgent",
+  "base_model": "google/gemma-2-2b-it",
+  "mode": "base_model_zero_shot",
+  "dataset_path": "architect_dataset_final.jsonl",
+  "dataset_size": 891,
+  "val_rows": 133,
+  "n_evaluated": 50,
+  "config": {
+    "max_seq_length": 16896,
+    "max_new_tokens": 6144,
+    "val_ratio": 0.15
+  },
+  "structural_metrics": {
+    "json_validity": 0.56,
+    "schema_compliance": 0.0,
+    "section_coverage": 0.1357142857142857,
+    "section_f1": 0.163523976023976,
+    "fix_report_struct": 0.7878787878787878,
+    "title_no_round": 0.8333333333333334,
+    "auditor_leak_rate": 0.0
+  },
+  "rouge_l": {
+    "thinking_summary": 0.18093644601757825,
+    "executive_summary": 0.19916661642486785,
+    "architecture_overview": 0.19746923906553804
+  },
+  "llm_judge": {
+    "contract_alignment": 8.035714285714286,
+    "fix_report_accuracy": 4.714285714285714,
+    "architecture_quality": 6.785714285714286,
+    "security_coverage": 7.321428571428571,
+    "plan_completeness": 6.571428571428571,
+    "failed": 0
+  },
+  "end_token": "<end_of_turn>",
+  "system_prompt_handling": "prepended_into_user_message",
+  "seed": 42,
+  "lora_adapter": null,
+  "fine_tuned": false
+}

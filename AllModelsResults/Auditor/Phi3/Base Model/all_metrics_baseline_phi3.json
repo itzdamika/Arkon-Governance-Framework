@@ -1,0 +1,37 @@
+{
+  "model": "microsoft/Phi-3-mini-128k-instruct",
+  "mode": "base_model_zero_shot",
+  "n_evaluated": 50,
+  "structural": {
+    "json_validity": 0.14,
+    "schema_compliance": 0.7142857142857143,
+    "rubric_range": 0.8571428571428571,
+    "issue_template": 0.0,
+    "sev_status_enum": 0.3333333333333333
+  },
+  "semantic": {
+    "issue_f1_exact": 0.6666666666666667,
+    "issue_f1_category": 0.7142857142857143,
+    "blocking_agreement": 0.0,
+    "rubric_mae_per_dim": {
+      "requirements_alignment": 1.1428571428571428,
+      "architecture_quality": 1.2142857142857142,
+      "security": 1.0,
+      "operability": 2.2857142857142856,
+      "internal_consistency": 1.1666666666666667
+    },
+    "rubric_mae_mean": 1.361904761904762
+  },
+  "rouge_l": {
+    "thinking_summary": 0.11869288214885568,
+    "summary": 0.07134673696814556
+  },
+  "llm_judge": {
+    "issue_identification": 6.714285714285714,
+    "reasoning_quality": 5.857142857142857,
+    "recommendation_actionability": 6.142857142857143,
+    "rubric_calibration": 5.142857142857143,
+    "overall_audit_quality": 6.0,
+    "failed": 0
+  }
+}

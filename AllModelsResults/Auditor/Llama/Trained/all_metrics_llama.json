@@ -1,0 +1,41 @@
+{
+  "training": {
+    "train_loss": 0.25744985466779663,
+    "eval_loss": 0.4978896379470825,
+    "perplexity": 1.6452455407089117,
+    "duration_minutes": 107.60648465156555,
+    "trainable_params": 167772160,
+    "trainable_pct": 3.563272887025285
+  },
+  "structural": {
+    "json_validity_rate": 1.0,
+    "schema_compliance_rate": 1.0,
+    "rubric_range_compliance": 1.0,
+    "issue_template_compliance": 1.0,
+    "severity_status_compliance": 1.0
+  },
+  "semantic": {
+    "rubric_mae": {
+      "requirements_alignment": 0.64,
+      "architecture_quality": 0.92,
+      "security": 1.12,
+      "operability": 1.06,
+      "internal_consistency": 1.2
+    },
+    "rubric_mae_overall": 0.988,
+    "issue_f1": 0.4895833333333333,
+    "issue_f1_category": 0.7152777777777777,
+    "blocking_agreement": 0.98
+  },
+  "rouge_l": {
+    "thinking_summary": 0.4198300278233432,
+    "summary": 0.3557802010494349
+  },
+  "llm_judge": {
+    "issue_identification": 9.62,
+    "reasoning_quality": 8.76,
+    "recommendation_actionability": 8.82,
+    "rubric_calibration": 7.4,
+    "overall_audit_quality": 8.74
+  }
+}

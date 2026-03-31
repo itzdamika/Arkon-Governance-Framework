@@ -1,0 +1,266 @@
+[
+  {
+    "sample_id": "AUD-SYNC26-191",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 8,
+      "rubric_calibration": 9,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies all major issues from the reference—over-engineering, ECS/RDS violating S3 static hosting and zero compute cost constraints. Its reasoning is coherent and well-grounded, with clear evidence and impact statements. Recommendations are actionable, though slightly less specific than the reference (e.g., not mentioning third-party email service). Rubric scores closely match the reference in both magnitude and ordering. Overall, it’s a high-quality, faithful reproduction of the reference audit."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-004",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 9,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the same core issue—use of public OpenAI APIs violating zero-retention and Azure compliance requirements—and expands it with an additional, reasonable sub-issue about missing self-hosted options. Reasoning is coherent and specific, clearly tied to the plan’s content. Recommendations are actionable and directly address remediation steps. Rubric scores closely match the reference, with only a minor deviation in internal consistency. Overall, the audit is accurate, detailed, and useful for architectural improvement."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-682",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 7,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies the missing binary signing and thin operational details, matching the reference issues closely. Its reasoning is coherent and adds minor useful context like CI/CD, though slightly more expansive than the reference. Recommendations are actionable and specific. Rubric calibration is mostly aligned but slightly inflated in security and architecture quality. Overall, it provides a solid, practical audit with minor score drift."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-168",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 8,
+      "rubric_calibration": 9,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies the same critical issue—hardcoded API key violating the 'No hardcoded secrets' baseline—and provides coherent reasoning consistent with the reference. Recommendations are actionable, though the added rate-limiting suggestion is tangential. Rubric scores closely match the reference with minor deviations in architecture and operability. Overall, the audit is accurate and useful, with slightly more dramatic tone but solid technical grounding."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-487",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 9,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the same critical issue—sending PHI to a public Anthropic API in violation of local model and HIPAA constraints. Its reasoning is coherent and specific, clearly linking the violation to compliance and security impacts. The recommendation to deploy a local OSS model on EKS is actionable and aligned with the reference. Rubric scores are nearly identical in magnitude and ordering. Overall, the audit is highly accurate and useful, with only minor differences in naming and slightly less detail on the VPC boundary violation."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-206",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 9,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the same core issue—cloud dependency violating zero internet egress and local execution constraints—with clear evidence and consistent reasoning. Its recommendations are actionable, suggesting a local MQTT broker and internal endpoints. Rubric scores closely match the reference, differing only slightly in operability. Overall, it provides a precise, well-reasoned, and useful assessment for architectural improvement."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-169",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 10,
+      "rubric_calibration": 7,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the same resolved issue (hardcoded secrets) and provides coherent reasoning that matches the reference. It clearly explains the fix via constructor injection and confirms the security improvement. Recommendations are appropriately empty since the issue is resolved. Rubric calibration is slightly off, with higher architecture_quality, security, and operability scores than the reference, but the relative pattern is mostly preserved. Overall, it’s a strong, accurate audit with minor rubric inflation."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-815",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 10,
+      "rubric_calibration": 9,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies that there are no issues or concerns, matching the reference perfectly. Its reasoning is coherent and specific, though it slightly overstates security (10 vs. 9). Recommendations are appropriately empty given the flawless plan. Rubric calibration is nearly perfect except for the minor security score difference. Overall, it’s a high-quality, faithful audit."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-505",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 8,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the same critical issue—use of a public OpenAI API violating the local model requirement—and provides coherent reasoning tied to evidence in the plan. Recommendations are specific and actionable, clearly instructing a switch to a local Llama 3 deployment. Rubric scores are directionally consistent with the reference, though slightly lower in some dimensions. Overall, the audit is thorough, accurate, and useful for remediation."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-697",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 7,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies the same critical issues—use of OpenAI and Qdrant Cloud violating local-only constraints—and provides clear, actionable fixes (self-host Llama 3 and Qdrant). Reasoning is coherent and specific, though slightly less detailed than the reference. Rubric calibration is mostly aligned but internal_consistency and operability scores diverge more than expected. Overall, it’s a strong and useful audit with minor calibration gaps."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-211",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 8,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the same critical issue—plaintext password storage violating the bcrypt requirement—and provides coherent reasoning tied to the plan evidence. The recommendation to implement bcrypt hashing is clear and actionable. Rubric scores are directionally consistent though slightly higher than the reference in some areas. Overall, the audit is accurate, specific, and useful for remediation."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-249",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 8,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the same core issue—use of external pip dependencies violating the zero-dependency constraint—and provides coherent reasoning tied to the plan’s evidence. Recommendations are specific and actionable, mirroring the reference’s guidance to use standard libraries. Rubric scores are directionally consistent though slightly inflated, particularly for security and internal consistency. Overall, the audit is accurate, well-reasoned, and useful for remediation."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-273",
+    "scores": {
+      "issue_identification": 3,
+      "reasoning_quality": 4,
+      "recommendation_actionability": 5,
+      "rubric_calibration": 2,
+      "overall_audit_quality": 3,
+      "brief_justification": "The predicted audit missed the key issues of missing signed binaries and overall plan thinness, instead focusing on packaging and logging. Reasoning is somewhat coherent but not aligned with the reference’s core security and implementation concerns. Recommendations are partially actionable but misdirected. Rubric scores are overly generous and poorly aligned with the reference’s low ratings. Overall, the audit provides limited value for improving the plan."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-256",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 8,
+      "rubric_calibration": 7,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies the core violation of using Azure OpenAI instead of a local model, matching the reference’s critical issue. It adds an extra but plausible data‑in‑VPC concern, showing good reasoning depth. Recommendations are actionable and technically specific. Rubric calibration is mostly aligned but security is scored lower than the reference, slightly reducing consistency. Overall, the audit is coherent, specific, and useful for remediation."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-019",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 10,
+      "rubric_calibration": 9,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies and explains the resolution of the SEC-060 issue, matching the reference in both content and reasoning. Its analysis is coherent and specific, showing clear understanding of the architecture’s improvements. Recommendations are appropriately empty since no issues remain. Rubric scores are slightly lower but maintain correct relative ordering. Overall, it is a highly accurate and useful audit with minor calibration differences."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-584",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 7,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies both the resolved MFA issue and the new DB encryption regression, matching the reference closely. Its reasoning is coherent and grounded, though slightly less precise in severity framing. Recommendations are actionable and specific. Rubric calibration is somewhat off, with inflated alignment and reduced architecture/internal consistency scores. Overall, it provides a solid, useful audit with minor calibration discrepancies."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-279",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 8,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the core issue—batch processing violating real-time constraints—and provides coherent reasoning tied to Airflow and daily schedules. Recommendations to switch to Kinesis/Glue are actionable and aligned with the reference’s Kafka/Flink suggestion. Rubric scores are close in relative ordering, though slightly inflated for security and internal consistency. Overall, the audit is accurate, specific, and useful for architectural improvement."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-274",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 8,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies that all prior issues (ARC-002 and ARC-003) are resolved and provides coherent reasoning consistent with the reference. It adds a minor new concern about SQLite reliability, which is reasonable and well-argued. Recommendations are specific and actionable. Rubric scores are close to the reference, though slightly inflated for architecture_quality and slightly deflated for internal_consistency. Overall, the audit is accurate, detailed, and useful."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-074",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 9,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies all major issues from the reference, including the Electron violation, native stack failure, and memory bloat. Its reasoning is coherent and specific, clearly tied to the plan’s content. Recommendations are actionable, detailing concrete technologies and integration methods. Rubric scores closely match the reference in both magnitude and relative ordering. Overall, it provides a highly useful and accurate assessment with only minor differences in phrasing and severity emphasis."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-010",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 7,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the same critical compliance issue—deployment to commercial AWS instead of GovCloud—and provides coherent reasoning tied to the plan details. Recommendations are specific and actionable, directly addressing the partition misconfiguration. Rubric calibration is slightly off, as the predicted scores are higher than the reference for requirements alignment and internal consistency, but the relative ordering is mostly preserved. Overall, the audit is accurate, well-reasoned, and useful for remediation."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-504",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 8,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies the core contradiction—PHP on GitHub Pages—and adds a reasonable secondary issue about violating the zero-cost constraint. Reasoning is coherent and grounded in the plan’s constraints. Recommendations are actionable and specific. Rubric scores are close to the reference, with minor deviations in operability and requirements alignment. Overall, it provides a highly useful and accurate assessment."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-122",
+    "scores": {
+      "issue_identification": 9,
+      "reasoning_quality": 8,
+      "recommendation_actionability": 8,
+      "rubric_calibration": 9,
+      "overall_audit_quality": 8,
+      "brief_justification": "The predicted audit correctly identifies the same core issue—use of Jenkins with kubectl instead of FluxCD—and maintains alignment with the GitOps violation theme. Its reasoning is coherent and grounded, though slightly more verbose and less focused than the reference. Recommendations are actionable, adding Argo Rollouts as an alternative, which is reasonable. Rubric scores closely match the reference, with only minor deviations. Overall, it provides a useful and accurate assessment for architectural improvement."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-676",
+    "scores": {
+      "issue_identification": 10,
+      "reasoning_quality": 9,
+      "recommendation_actionability": 9,
+      "rubric_calibration": 9,
+      "overall_audit_quality": 9,
+      "brief_justification": "The predicted audit correctly identifies both critical issues—deployment to the wrong region and data residency violation—with matching severity and rationale. Its reasoning is coherent and specific, clearly tied to the plan’s content. Recommendations are actionable, detailing both the region fix and data residency enforcement. Rubric scores are slightly higher but maintain the same relative pattern. Overall, this audit is highly aligned and useful, with only minor deviations in rubric calibration."
+    }
+  },
+  {
+    "sample_id": "AUD-SYNC26-611",
+    "scores": {
+      "issue_identification": 8,
+      "reasoning_quality": 7,
+      "recommendation_actionability": 7,
+      "rubric_calibration": 6,
+      "overall_audit_quality": 7,
+      "brief_justification": "The predicted audit correctly identifies the main issue of the plan being too thin and lacking deployment details, matching the reference’s core concerns. Its reasoning is coherent but slightly less specific, omitting the 24-hour constraint and GA instrumentation. Recommendations are actionable but narrower in scope. Rubric calibration diverges somewhat, especially in security and architecture quality scores. Overall, it provides a useful but less comprehensive audit than the reference."
+    }
+  }
+]

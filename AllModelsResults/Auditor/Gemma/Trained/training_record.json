@@ -1,0 +1,63 @@
+{
+  "model_name": "google/gemma-2-2b-it",
+  "dataset_path": "auditor_dataset_rescored.jsonl",
+  "dataset_size": 799,
+  "formatted_size": 799,
+  "train_size": 686,
+  "val_size": 113,
+  "config": {
+    "lora_r": 64,
+    "lora_alpha": 128,
+    "lora_dropout": 0.05,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ],
+    "num_epochs": 5,
+    "per_device_batch_size": 1,
+    "gradient_accumulation": 8,
+    "learning_rate": 0.0001,
+    "lr_scheduler": "cosine",
+    "warmup_ratio": 0.1,
+    "weight_decay": 0.01,
+    "max_grad_norm": 1.0,
+    "max_seq_length": 8192,
+    "val_ratio": 0.15
+  },
+  "trainable_parameters": 83066880,
+  "trainable_percentage": 4.928993060856386,
+  "training_loss": 0.24884969619817512,
+  "eval_loss": 0.4793039560317993,
+  "perplexity": 1.6149499347378764,
+  "training_duration_minutes": 54.02062228520711,
+  "structural_metrics": {
+    "json_validity_rate": 1.0,
+    "schema_compliance_rate": 1.0,
+    "rubric_range_compliance": 1.0,
+    "issue_template_compliance": 1.0,
+    "severity_status_compliance": 1.0
+  },
+  "semantic_metrics": {
+    "rubric_mae": {
+      "requirements_alignment": 0.44,
+      "architecture_quality": 0.88,
+      "security": 1.0,
+      "operability": 1.18,
+      "internal_consistency": 1.1
+    },
+    "rubric_mae_overall": 0.92,
+    "issue_f1": 0.5104166666666666,
+    "issue_f1_category": 0.763888888888889,
+    "blocking_agreement": 0.98
+  },
+  "completion_only_masking": true,
+  "response_template": "<start_of_turn>model\n",
+  "end_token": "<end_of_turn>",
+  "system_role_handling": "merged into user message",
+  "seed": 42
+}

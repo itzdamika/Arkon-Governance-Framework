@@ -1,0 +1,27 @@
+{
+  "model": "meta-llama/Meta-Llama-3.1-8B-Instruct",
+  "mode": "base_model_zero_shot",
+  "n_evaluated": 50,
+  "structural": {
+    "json_validity": 0.72,
+    "schema_compliance": 0.2777777777777778,
+    "section_coverage": 0.2777777777777778,
+    "section_f1": 0.2777777777777778,
+    "fix_report_struct": 1.0,
+    "title_no_round": 0.7,
+    "auditor_leak_rate": 0.0
+  },
+  "rouge_l": {
+    "thinking_summary": 0.07524865933948158,
+    "executive_summary": 0.31845717014085123,
+    "architecture_overview": 0.2556046887663307
+  },
+  "llm_judge": {
+    "contract_alignment": 5.611111111111111,
+    "fix_report_accuracy": 4.916666666666667,
+    "architecture_quality": 3.6944444444444446,
+    "security_coverage": 3.4722222222222223,
+    "plan_completeness": 3.25,
+    "failed": 0
+  }
+}

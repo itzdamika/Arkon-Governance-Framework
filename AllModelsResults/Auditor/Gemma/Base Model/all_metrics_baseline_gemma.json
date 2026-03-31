@@ -1,0 +1,35 @@
+{
+  "model": "google/gemma-2-2b-it",
+  "mode": "base_model_zero_shot",
+  "structural": {
+    "json_validity_rate": 1.0,
+    "schema_compliance_rate": 1.0,
+    "rubric_range_compliance": 1.0,
+    "issue_template_compliance": 0.0,
+    "severity_status_compliance": 0.9137931034482759
+  },
+  "semantic": {
+    "rubric_mae": {
+      "requirements_alignment": 2.7,
+      "architecture_quality": 1.12,
+      "security": 1.72,
+      "operability": 1.34,
+      "internal_consistency": 1.88
+    },
+    "rubric_mae_overall": 1.752,
+    "issue_f1": 0.4680555555555555,
+    "issue_f1_category": 0.5,
+    "blocking_agreement": 0.72
+  },
+  "rouge_l": {
+    "thinking_summary": 0.22096138449981484,
+    "summary": 0.15806835830269436
+  },
+  "llm_judge": {
+    "issue_identification": 7.36,
+    "reasoning_quality": 6.3,
+    "recommendation_actionability": 6.12,
+    "rubric_calibration": 4.76,
+    "overall_audit_quality": 6.24
+  }
+}
