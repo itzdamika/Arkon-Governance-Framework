@@ -244,7 +244,7 @@ FIELD_PROMPTS = {
 
 CORE_REQUIRED_FIELDS = [
     "project_goal", "target_users", "project_class", "capabilities",
-    "access_model", "feature_scope", "mvp_scope", "risk_level",
+    "access_model", "feature_scope", "risk_level",
     "data_sensitivity", "external_exposure", "security_baseline",
 ]
 
@@ -1050,6 +1050,12 @@ class GovernanceHybridApp:
         if (risk == "high" or sensitivity in {"personal", "financial", "health", "confidential"} or "payments" in caps):
             required.append("compliance_context")
 
+        # mvp_scope is only meaningful for complex projects where MVP differs from full scope.
+        # For simple static sites and landing pages the MVP is trivially the full page — don't require it.
+        simple_classes = {"static_website", "landing_page", "cli_tool", "library_sdk", "research_prototype"}
+        if project_class not in simple_classes:
+            required.append("mvp_scope")
+
         return unique_strs(required)
 
     def missing_required_fields(self) -> List[str]:
@@ -1096,6 +1102,16 @@ class GovernanceHybridApp:
                 or exposure in {"private_authenticated", "partner_facing", "public_internet"}):
             defaults["compliance_context"] = (
                 "Adopt privacy-by-design with deletion support, retention enforcement, secret storage, auditability, and explicit handling of user data and logs."
+            )
+
+        # Auto-derive mvp_scope for simple project types where MVP == full scope.
+        project_class = self.normalized_project_class()
+        simple_classes = {"static_website", "landing_page", "cli_tool", "library_sdk", "research_prototype"}
+        if project_class in simple_classes:
+            feature_scope = self.get_contract_value("feature_scope")
+            defaults["mvp_scope"] = (
+                f"Full feature set delivered at initial launch: {feature_scope}."
+                if feature_scope else "Complete project delivered at initial launch with all requested features."
             )
 
         for field_name, value in defaults.items():
@@ -1313,46 +1329,43 @@ class GovernanceHybridApp:
         if not targets:
             return False
 
-        # Use at most the first target
+        # Strategy 4: Affirmation — confirm the primary target field or all pending.
         field_name = targets[0]
-
-        # Strategy 4: Affirmation for a specific field that has an unconfirmed value
         if analysis["is_affirmation"]:
             current = self.state.requirement_contract[field_name]
             if current.value.strip() and not current.confirmed:
                 self.confirm_fields([field_name])
                 self.sync_pending_confirmations()
                 return True
-            # Also handle confirming pending fields
             if self.state.pending_confirmations:
                 self.confirm_fields(self.state.pending_confirmations)
                 self.sync_pending_confirmations()
                 return True
             return False
 
-        # Strategy 5: Store the direct answer
+        # Strategy 5: Store the direct answer for ALL identified target fields.
+        # This handles compound answers like "features are X and Y; MVP is the full release".
         value = str(analysis.get("answer_value") or "").strip()
         if not value:
-            # If we have no clean answer value but the user typed something,
-            # use the raw text for free-form fields
-            allowed = self.allowed_values_for_field(field_name)
-            if not allowed:  # Free-form field - use raw text
-                value = text
-            else:
-                value = text  # Will be canonicalized
+            # Fall back to raw text for free-form fields.
+            value = text
 
-        if value:
+        stored_any = False
+        for target_field in targets:
+            if not value:
+                continue
             self.set_contract_field(
-                field_name=field_name,
+                field_name=target_field,
                 value=value,
                 source="user_direct_answer",
                 confirmed=True,
                 rationale="Captured from user's direct answer.",
             )
-            self.sync_pending_confirmations()
-            return True
+            stored_any = True
 
-        return False
+        if stored_any:
+            self.sync_pending_confirmations()
+        return stored_any
 
     def maybe_compact_context(self) -> None:
         if len(self.state.dialogue) < 24:
@@ -1603,11 +1616,17 @@ class GovernanceHybridApp:
 
     def single_requirement_step(self, agent_name: str) -> bool:
         messages = self.build_agent_messages(agent_name)
-        for _ in range(self.state.max_tool_rounds):
+        # Reserve the last 2 rounds as a forced-text round if the agent
+        # has been burning tool calls without producing a visible reply.
+        force_text_after = max(1, self.state.max_tool_rounds - 2)
+        for round_idx in range(self.state.max_tool_rounds):
+            # On the penultimate round, stop providing tools so the model
+            # MUST produce a text reply rather than another tool call.
+            use_tools = round_idx < force_text_after
             resp = self.llm.completion(
                 model=self.llm.chat_deployment,
                 messages=messages,
-                tools=self.tool_schemas(agent_name),
+                tools=self.tool_schemas(agent_name) if use_tools else None,
                 temperature=0.2,
                 max_tokens=1500,
             )
@@ -1784,14 +1803,31 @@ class GovernanceHybridApp:
         # CASE 1: We already asked the user if they want to plan
         # -------------------------------------------------------
         if self.state.planning_confirmation_requested:
-            # Check for direct affirmation to start planning
-            if self.all_required_locked() and self._user_wants_to_start(user_text):
+            wants_to_start = self._user_wants_to_start(user_text)
+
+            # Bug fix: when the user clearly wants to start planning, auto-confirm any
+            # pending fields that already have a stored value. These are fields the agent
+            # proposed and the user never explicitly rejected — treating a "yes, let's go"
+            # as implicit confirmation prevents the bot from blocking on its own pending queue.
+            if wants_to_start and self.state.pending_confirmations:
+                self.confirm_fields(self.state.pending_confirmations)
+                self.sync_pending_confirmations()
+
+            if self.all_required_locked() and wants_to_start:
                 self._start_planning()
                 return
-            # Not starting yet — try to capture any requirements in what they said
+
+            # Not starting yet — try to capture any additional requirements in what they said
             self.capture_direct_user_answer(user_text)
+
+            # Re-check after capture
+            if self.all_required_locked() and wants_to_start:
+                self._start_planning()
+                return
+
             if not self.all_required_locked():
                 self.state.planning_confirmation_requested = False
+
             # Let the agent respond naturally (it knows it already asked about planning)
             self._run_agent_step()
             return
@@ -1832,11 +1868,27 @@ class GovernanceHybridApp:
 
     def _run_agent_step(self) -> None:
         hops = 0
+        emitted = False
         while hops < self.state.max_requirement_hops and self.state.phase == PHASE_REQUIREMENTS:
             emitted = self.single_requirement_step(self.state.active_agent)
             if emitted:
                 break
             hops += 1
+
+        # Bug fix: if the agent exhausted all hops without producing a visible reply,
+        # show a safe recovery message so the conversation never goes silent.
+        if not emitted and self.state.phase == PHASE_REQUIREMENTS:
+            missing = self.missing_required_fields()
+            if missing:
+                field_label = missing[0].replace("_", " ")
+                recovery = (
+                    f"I still need a bit more information before we can start planning. "
+                    f"Could you tell me about the **{field_label}**?"
+                )
+            else:
+                recovery = "Everything looks good! Would you like me to start the planning phase now?"
+            self.append_dialogue("assistant", recovery, self.state.active_agent)
+            self.panel(self.state.active_agent, recovery, "yellow")
 
     def _user_wants_to_start(self, text: str) -> bool:
         """
