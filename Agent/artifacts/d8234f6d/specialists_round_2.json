@@ -1,0 +1,627 @@
+{
+  "reasoner_reviews": {
+    "product": {
+      "summary": "All major requirement fields are confirmed and aligned with the project goal of building a public conversational AI chatbot. The architecture baseline is coherent, secure, and implementation-ready, with resolved issues across privacy, compliance, moderation, authentication, and frontend design. Remaining focus areas include operational scalability, cost management for LLM usage, and completion of compliance execution tasks such as the DPIA. The system demonstrates strong modularity, maintainability, and Azure-based deployment readiness.",
+      "requirement_completeness_score": 9.3,
+      "coverage": {
+        "project": "Fully covered with clear goal, scope, and class definitions.",
+        "frontend": "Resolved with React-based architecture and accessibility compliance.",
+        "backend": "Defined with FastAPI and GPT API integration.",
+        "security": "Comprehensive baseline with OAuth2/JWT, RBAC, and moderation.",
+        "data": "PostgreSQL platform with personal data handling and retention policy.",
+        "devops": "Azure hosting and observability baseline defined.",
+        "constraints": "Quality, maintainability, and implementation readiness emphasized."
+      },
+      "blindspots": [
+        "Operational scalability under high concurrent load.",
+        "Automated cost monitoring for LLM API usage.",
+        "Execution of DPIA and consent management testing before production."
+      ],
+      "functional_gaps": [
+        "Phased rollout strategy for multimodal features not yet finalized.",
+        "Detailed caching and autoscaling validation pending stress testing."
+      ],
+      "ux_considerations": [
+        "Ensure accessibility (WCAG 2.1) compliance across all user flows.",
+        "Maintain responsive design for mobile and desktop.",
+        "Include clear user consent and data management interfaces."
+      ],
+      "future_phase_candidates": [
+        "Advanced analytics dashboard for conversation insights.",
+        "Adaptive personalization based on user behavior.",
+        "Integration with external APIs for extended functionality.",
+        "Enhanced multimodal support (voice, image, video)."
+      ],
+      "next_focus": [
+        "Complete and document the Data Protection Impact Assessment (DPIA).",
+        "Implement automated cost monitoring and alerting for LLM API usage.",
+        "Conduct load and stress testing to validate autoscaling and caching strategies.",
+        "Finalize moderation policy governance and escalation workflows.",
+        "Plan phased rollout for multimodal features to manage risk and cost."
+      ]
+    },
+    "architect_reasoner": {
+      "summary": "The architecture for the public conversational AI chatbot is mature, secure, and implementation-ready. All major requirement fields are confirmed, and previous high-severity issues have been resolved. The system integrates a FastAPI backend with GPT API, React frontend, PostgreSQL data layer, and Azure-based hosting. Compliance, moderation, and authentication flows are well-defined. Remaining focus areas include DPIA completion, cost monitoring for LLM usage, and scalability validation.",
+      "feasibility": "High. The technical stack (FastAPI, React, PostgreSQL, Azure) is proven and compatible with GPT API integration. The design supports modular scaling and compliance alignment. Operational feasibility depends on cost control and infrastructure tuning for high concurrency.",
+      "proposed_architecture_direction": "Adopt a modular service-oriented architecture with clear separation between frontend, backend, data, and moderation services. Use FastAPI for backend APIs, React for frontend UI, and PostgreSQL for persistent storage. Integrate GPT via secure API key management. Deploy on Azure using containerized microservices with CI/CD pipelines and observability tooling.",
+      "recommended_modules": {
+        "frontend": "React-based SPA with accessibility (WCAG 2.1) and responsive design.",
+        "backend": "FastAPI application with modular endpoints for chat, user management, and moderation.",
+        "llm_gateway": "Secure GPT API integration layer with caching and rate limiting.",
+        "data_layer": "PostgreSQL with ORM (SQLAlchemy) and anonymization workflows.",
+        "auth_service": "OAuth2/JWT with Azure AD B2C and RBAC authorization.",
+        "moderation_service": "Automated and manual review workflows for abuse prevention.",
+        "compliance_service": "Consent management, DPIA documentation, and retention configuration.",
+        "observability": "Centralized logging, tracing, metrics, and alerting integrated with Azure Monitor."
+      },
+      "data_and_api_notes": {
+        "data_handling": "Personal data stored in PostgreSQL with configurable retention (default 12 months). Support anonymization and deletion workflows.",
+        "api_security": "All endpoints protected via HTTPS, OAuth2/JWT, and rate limiting. GPT API key stored securely in Azure Key Vault.",
+        "privacy_compliance": "GDPR/CCPA alignment with consent management and DPIA requirement before production.",
+        "data_access": "RBAC-controlled access to user and conversation data."
+      },
+      "infrastructure_direction": {
+        "hosting": "Microsoft Azure using containerized deployment (Azure Kubernetes Service).",
+        "storage": "Azure Database for PostgreSQL with automated backups and encryption at rest.",
+        "networking": "Azure Front Door for global routing and DDoS protection.",
+        "scalability": "Horizontal autoscaling for backend pods and caching layer (Redis).",
+        "monitoring": "Azure Monitor and Application Insights for telemetry and uptime tracking."
+      },
+      "devops_direction": {
+        "ci_cd": "GitHub Actions or Azure DevOps pipelines for build, test, and deploy.",
+        "observability": "Structured logging, tracing, and metrics integrated with Azure Monitor.",
+        "cost_control": "Automated cost monitoring and alerting for LLM API usage.",
+        "testing": "Load and stress testing before production to validate autoscaling and caching.",
+        "release_strategy": "Phased rollout for multimodal features to manage risk and cost."
+      },
+      "design_principles": [
+        "Security-first design with least privilege and encrypted communication.",
+        "Compliance-aware architecture supporting GDPR/CCPA and user consent.",
+        "Modularity for maintainability and scalability.",
+        "Observability and transparency across all services.",
+        "Accessibility and responsive UX for public users.",
+        "Operational resilience through autoscaling and monitoring.",
+        "Cost efficiency via caching and usage analytics."
+      ]
+    },
+    "security": {
+      "summary": "The architecture for the public conversational AI chatbot is implementation-ready, secure, and compliant. All major requirement fields are confirmed, and previous high-severity issues have been resolved. The system integrates FastAPI, React, PostgreSQL, and Azure hosting with strong modularity and maintainability. Remaining focus areas include DPIA completion, cost monitoring for LLM usage, and scalability validation before production.",
+      "key_risks": [
+        "Operational scalability under high concurrent load.",
+        "LLM API cost escalation without automated monitoring.",
+        "Incomplete execution of DPIA and consent management testing.",
+        "Potential latency issues in multimodal feature rollout."
+      ],
+      "required_controls": [
+        "Implement automated cost monitoring and alerting for LLM API usage.",
+        "Conduct load and stress testing to validate autoscaling and caching strategies.",
+        "Complete and document the Data Protection Impact Assessment (DPIA) before production.",
+        "Finalize moderation policy governance and escalation workflows.",
+        "Apply phased rollout for multimodal features to manage risk and cost."
+      ],
+      "privacy_notes": "Personal data is stored in PostgreSQL with configurable retention (default 12 months). Anonymization and deletion workflows are supported. GDPR/CCPA compliance is integrated through consent management and DPIA documentation. Data access is RBAC-controlled, and all communication is encrypted via HTTPS.",
+      "compliance_notes": "The system aligns with GDPR and CCPA standards. DPIA completion is mandatory before production. Consent management and retention configuration are implemented. Azure hosting provides compliance with ISO 27001 and SOC 2 standards. Continuous compliance monitoring should be maintained.",
+      "moderation_notes": "A dedicated moderation service integrates automated and manual review workflows for abuse prevention. Policies follow ethical AI guidelines and include escalation paths for flagged content. Moderation logs are auditable and integrated with observability systems.",
+      "incident_response_notes": "Incident response will follow Azure Security Center protocols with defined escalation paths. Automated alerts for anomalies, data breaches, and abuse events are configured. Manual review and post-incident analysis workflows are required to ensure accountability and continuous improvement."
+    },
+    "constraints": {
+      "summary": "The architecture for the public conversational AI chatbot is implementation-ready, secure, and compliant. All major requirement fields are confirmed, and previous high-severity issues have been resolved. The system integrates FastAPI, React, PostgreSQL, and Azure hosting with strong modularity and maintainability. Remaining focus areas include DPIA completion, cost monitoring for LLM usage, and scalability validation before production.",
+      "cost_range": "Medium to High (Azure hosting, LLM API usage, and multimodal feature support drive recurring costs; caching and phased rollout can mitigate expenses)",
+      "complexity_profile": "High — due to multimodal capabilities, compliance requirements, and integration of multiple services (frontend, backend, moderation, observability, and LLM gateway).",
+      "maintainability_notes": "The modular service-oriented design with FastAPI, React, and PostgreSQL supports maintainability. Clear separation of concerns, RBAC, and observability improve long-term sustainability. Automated testing, CI/CD, and structured logging reduce operational overhead.",
+      "phased_delivery": {
+        "phase_1": "Core text-based chatbot MVP with authentication, moderation, and compliance baseline.",
+        "phase_2": "Add multimodal (voice/image) capabilities and advanced analytics dashboard.",
+        "phase_3": "Optimize scalability, caching, and cost monitoring; finalize DPIA and compliance audits.",
+        "phase_4": "Public rollout with continuous monitoring, feedback loops, and adaptive personalization."
+      },
+      "tradeoffs": "Full feature parity with ChatGPT at launch increases cost and complexity. Phased rollout mitigates risk but delays some advanced features. Strong compliance and moderation controls may slightly reduce performance but are necessary for public exposure.",
+      "implementation_pressure_points": [
+        "Operational scalability under high concurrent load.",
+        "LLM API cost escalation without automated monitoring.",
+        "Completion of DPIA and consent management testing.",
+        "Latency and caching optimization for multimodal features.",
+        "Governance and escalation workflows for moderation."
+      ]
+    },
+    "critic": {
+      "summary": "All major requirements for the public conversational AI chatbot are confirmed and aligned. The architecture is implementation-ready, secure, and compliant, integrating FastAPI, React, PostgreSQL, and Azure hosting. All prior high-severity issues are resolved. Remaining focus areas are operational scalability, LLM API cost control, and completion of compliance execution tasks such as the DPIA. The design demonstrates strong modularity, maintainability, and observability readiness.",
+      "contradictions": [
+        "The frozen requirement still lists 'retain data indefinitely' while the resolved issue specifies configurable retention (default 12 months). This inconsistency between the requirement contract and the resolved compliance fix must be reconciled."
+      ],
+      "blindspots": [
+        "Operational scalability validation under high concurrent load.",
+        "Automated cost monitoring and alerting for LLM API usage.",
+        "Execution and documentation of the Data Protection Impact Assessment (DPIA)."
+      ],
+      "unresolved_questions": {
+        "Q1": "Has the configurable retention policy (default 12 months) been formally updated in the frozen requirement contract to replace 'retain data indefinitely'?",
+        "Q2": "What is the planned timeline and responsible owner for completing the DPIA before production?",
+        "Q3": "How will automated cost monitoring integrate with Azure billing and LLM API usage metrics?"
+      },
+      "corrective_actions": [
+        "Update the frozen requirement contract to reflect the resolved configurable retention policy (default 12 months) instead of indefinite retention.",
+        "Define and schedule DPIA completion with assigned accountability before production deployment.",
+        "Implement automated cost monitoring and alerting for LLM API usage integrated with Azure cost management.",
+        "Conduct load and stress testing to validate autoscaling and caching strategies.",
+        "Finalize moderation policy governance and escalation workflows.",
+        "Plan and document phased rollout for multimodal features to manage risk and cost."
+      ],
+      "priority_order": [
+        "Update privacy retention requirement to match compliance fix.",
+        "Complete and document DPIA before production.",
+        "Implement automated cost monitoring and alerting for LLM API usage.",
+        "Conduct load and stress testing for scalability validation.",
+        "Finalize moderation governance workflows.",
+        "Plan phased rollout for multimodal features."
+      ]
+    }
+  },
+  "specialist_subplans": {
+    "backend": {
+      "service_design": {
+        "architecture_style": "Modular service-oriented architecture using FastAPI microservices deployed on Azure Kubernetes Service (AKS).",
+        "core_services": {
+          "gateway_service": "Handles routing, authentication, rate limiting, and API versioning.",
+          "conversation_service": "Manages chat sessions, message persistence, and conversation history.",
+          "llm_proxy_service": "Encapsulates GPT API calls with caching, batching, and fallback logic.",
+          "user_service": "Manages user profiles, authentication, and RBAC roles.",
+          "moderation_service": "Automated and manual content review workflows integrated with abuse prevention.",
+          "compliance_service": "Handles consent management, retention configuration, and DPIA documentation."
+        },
+        "data_layer": {
+          "primary_storage": "Azure Database for PostgreSQL with encryption at rest.",
+          "cache_layer": "Azure Cache for Redis for session and GPT response caching.",
+          "backup_policy": "Daily encrypted backups with 30-day retention."
+        },
+        "deployment": {
+          "hosting": "Microsoft Azure using AKS or App Service.",
+          "networking": "Azure Front Door with WAF and DDoS protection.",
+          "secrets_management": "Azure Key Vault for API keys and credentials."
+        }
+      },
+      "api_patterns": {
+        "style": "REST + WebSocket hybrid for real-time chat streaming.",
+        "authentication": "OAuth2/JWT via Azure AD B2C.",
+        "authorization": "RBAC with roles for user, moderator, and admin.",
+        "versioning": "URI-based (v1).",
+        "rate_limiting": "Per-IP and per-user limits enforced at gateway.",
+        "key_endpoints": [
+          "/api/v1/chat/start",
+          "/api/v1/chat/{session_id}/message",
+          "/api/v1/chat/{session_id}/stream",
+          "/api/v1/user/login",
+          "/api/v1/moderation/check"
+        ]
+      },
+      "business_modules": {
+        "chat_module": "Handles user conversations, GPT responses, and message persistence.",
+        "user_module": "Manages authentication, profiles, and session tokens.",
+        "moderation_module": "Filters harmful content and manages abuse reports.",
+        "analytics_module": "Tracks usage metrics, token consumption, and audit logs.",
+        "admin_module": "Provides dashboards for moderation and system health monitoring.",
+        "compliance_module": "Implements consent management, retention, and anonymization workflows."
+      },
+      "llm_integration_design": {
+        "provider": "OpenAI GPT API via secure HTTPS.",
+        "access_method": "API key stored in Azure Key Vault with automatic rotation.",
+        "request_handling": "LLM proxy batches and caches requests to reduce cost and latency.",
+        "response_filtering": "Moderation service validates GPT output before returning to user.",
+        "cost_monitoring": "Automated tracking integrated with Azure Cost Management and alerting.",
+        "fallback_strategy": "Graceful degradation to cached or templated responses if GPT API fails."
+      },
+      "background_jobs": {
+        "framework": "Celery with Redis broker.",
+        "scheduled_tasks": [
+          "Data retention and anonymization cleanup.",
+          "LLM cost monitoring and alert generation.",
+          "Backup verification and integrity checks.",
+          "Moderation queue processing for flagged content.",
+          "Usage analytics aggregation and reporting."
+        ],
+        "execution_environment": "Azure Container Instances or AKS CronJobs."
+      },
+      "failure_handling": {
+        "api_failures": "Retry with exponential backoff; fallback to cached responses.",
+        "database_failures": "Automatic failover using Azure Database HA; transaction rollback on error.",
+        "llm_timeout": "Graceful degradation with user notification and retry option.",
+        "security_incidents": "Automated alerting via Azure Security Center; manual escalation workflow.",
+        "moderation_failures": "Fallback to stricter automated filters; log for manual review.",
+        "data_retention_jobs": "Error logging and retry queue for failed anonymization tasks."
+      },
+      "scaling_notes": {
+        "strategy": "Horizontal autoscaling for stateless services; vertical scaling for PostgreSQL.",
+        "load_testing": "Mandatory pre-production stress tests to validate autoscaling and caching.",
+        "caching": "Redis-based caching for GPT responses and session data to reduce API load.",
+        "global_distribution": "Azure Front Door for global routing and latency optimization.",
+        "observability": "Azure Monitor and Application Insights for telemetry, tracing, and alerting.",
+        "cost_efficiency": "Use reserved instances and caching to mitigate LLM API cost spikes."
+      },
+      "backend_risks": {
+        "scalability_risk": "High concurrent load may exceed autoscaling thresholds; mitigated by load testing and caching.",
+        "cost_risk": "LLM API usage may escalate costs; mitigated by automated monitoring and batching.",
+        "compliance_risk": "DPIA completion required before production; must be tracked and documented.",
+        "moderation_risk": "Edge cases in content filtering may require manual escalation workflows.",
+        "latency_risk": "Multimodal features may increase response time; phased rollout recommended.",
+        "data_retention_risk": "Ensure configurable retention replaces indefinite storage to maintain GDPR/CCPA compliance."
+      }
+    },
+    "frontend": {},
+    "security": {
+      "auth_design": {
+        "authentication_method": "OAuth2 with JWT tokens issued via Azure AD B2C",
+        "session_management": "Stateless JWT validation with short-lived access tokens and refresh tokens stored securely in HttpOnly cookies",
+        "password_policy": "Enforced via Azure AD B2C configuration (minimum length, complexity, MFA optional)",
+        "transport_security": "TLS 1.3 enforced across all endpoints; HSTS enabled at Azure Front Door",
+        "api_security": "All API endpoints require bearer tokens; rate limiting and IP throttling applied at gateway",
+        "token_rotation": "Automatic rotation of signing keys via Azure Key Vault integration"
+      },
+      "authorization_model": {
+        "model_type": "Role-Based Access Control (RBAC)",
+        "roles": [
+          "user",
+          "moderator",
+          "admin"
+        ],
+        "permissions": {
+          "user": [
+            "chat:create",
+            "chat:view_own",
+            "profile:update"
+          ],
+          "moderator": [
+            "chat:review_flagged",
+            "user:warn",
+            "content:remove"
+          ],
+          "admin": [
+            "system:configure",
+            "audit:view",
+            "user:manage"
+          ]
+        },
+        "policy_enforcement": "Authorization middleware validates JWT claims and role permissions before route execution",
+        "admin_controls": "Administrative actions logged and auditable; least-privilege enforced"
+      },
+      "secrets_management": {
+        "vault": "Azure Key Vault",
+        "stored_items": [
+          "GPT API key",
+          "JWT signing keys",
+          "database credentials",
+          "encryption keys"
+        ],
+        "rotation_policy": "Automatic rotation every 90 days or on compromise",
+        "access_control": "Managed identities for services; no hardcoded secrets in code or CI/CD pipelines",
+        "encryption": "AES-256 for stored secrets; TLS 1.3 for retrieval"
+      },
+      "abuse_prevention": {
+        "moderation_service": "Dedicated moderation microservice with automated and manual review workflows",
+        "automated_filters": [
+          "toxicity detection",
+          "PII leakage prevention",
+          "prompt injection detection"
+        ],
+        "manual_review": "Escalation dashboard for moderators with audit trail",
+        "rate_limiting": "Per-IP and per-user rate limits enforced at gateway",
+        "ddos_protection": "Azure Front Door with WAF and DDoS protection enabled",
+        "user_reporting": "In-app abuse reporting integrated with moderation queue"
+      },
+      "privacy_controls": {
+        "data_retention": "Configurable retention (default 12 months) with user opt-in for longer storage",
+        "data_anonymization": "Automatic anonymization of PII after retention period",
+        "user_rights": [
+          "data access",
+          "rectification",
+          "erasure",
+          "portability"
+        ],
+        "consent_management": "Explicit consent collection and tracking for data processing",
+        "encryption": {
+          "at_rest": "AES-256",
+          "in_transit": "TLS 1.3"
+        },
+        "compliance_alignment": "GDPR and CCPA compliant; DPIA completion required pre-production"
+      },
+      "audit_and_logging_controls": {
+        "logging_scope": [
+          "authentication events",
+          "data access",
+          "moderation actions",
+          "system configuration changes"
+        ],
+        "log_storage": "Centralized in Azure Monitor with retention of 12 months",
+        "integrity_protection": "Immutable log storage with access control and tamper detection",
+        "traceability": "OpenTelemetry tracing integrated with FastAPI and Azure Application Insights",
+        "alerting": "Automated alerts for anomalies, failed logins, and data access violations"
+      },
+      "incident_response_notes": {
+        "framework": "Azure Security Center incident response workflow",
+        "detection": "Automated anomaly detection and alerting integrated with Azure Monitor",
+        "containment": "Immediate token revocation and service isolation procedures",
+        "notification": "User and regulatory notifications per GDPR Article 33 within 72 hours of breach confirmation",
+        "forensics": "Post-incident forensic analysis with audit log correlation",
+        "continuous_improvement": "Lessons learned documented and controls updated after each incident"
+      },
+      "security_risks": {
+        "identified": [
+          "Operational scalability under high concurrent load",
+          "LLM API cost escalation without automated monitoring",
+          "Incomplete DPIA execution before production",
+          "Latency and caching inefficiencies in multimodal rollout"
+        ],
+        "mitigations": [
+          "Conduct load and stress testing to validate autoscaling and caching strategies",
+          "Implement automated cost monitoring and alerting integrated with Azure billing",
+          "Complete and document DPIA before production deployment",
+          "Apply phased rollout for multimodal features to manage risk and cost"
+        ],
+        "residual_risk_level": "Medium after mitigation"
+      }
+    },
+    "data": {
+      "entities": {
+        "User": {
+          "fields": {
+            "id": "UUID (PK)",
+            "email": "VARCHAR(255), unique, encrypted",
+            "display_name": "VARCHAR(100)",
+            "role": "ENUM('user','moderator','admin')",
+            "created_at": "TIMESTAMP WITH TIME ZONE",
+            "last_login": "TIMESTAMP WITH TIME ZONE",
+            "consent_status": "BOOLEAN",
+            "retention_opt_in": "BOOLEAN"
+          },
+          "notes": "PII separated from chat content; encrypted at rest; RBAC applied."
+        },
+        "Conversation": {
+          "fields": {
+            "id": "UUID (PK)",
+            "user_id": "UUID (FK -> User.id)",
+            "started_at": "TIMESTAMP WITH TIME ZONE",
+            "ended_at": "TIMESTAMP WITH TIME ZONE",
+            "context_summary": "TEXT",
+            "is_anonymized": "BOOLEAN DEFAULT FALSE"
+          },
+          "notes": "Links user sessions to messages; anonymized after retention period."
+        },
+        "Message": {
+          "fields": {
+            "id": "UUID (PK)",
+            "conversation_id": "UUID (FK -> Conversation.id)",
+            "sender_type": "ENUM('user','assistant','moderator')",
+            "content": "TEXT",
+            "created_at": "TIMESTAMP WITH TIME ZONE",
+            "moderation_status": "ENUM('approved','flagged','removed')",
+            "token_usage": "INTEGER"
+          },
+          "notes": "Stores chat messages; moderation logs linked; content encrypted at rest."
+        },
+        "LLMRequestLog": {
+          "fields": {
+            "id": "UUID (PK)",
+            "conversation_id": "UUID (FK -> Conversation.id)",
+            "request_payload_hash": "CHAR(64)",
+            "response_time_ms": "INTEGER",
+            "tokens_used": "INTEGER",
+            "cost_estimate_usd": "NUMERIC(10,4)",
+            "created_at": "TIMESTAMP WITH TIME ZONE"
+          },
+          "notes": "Used for cost monitoring and performance analytics; no raw content stored."
+        },
+        "AuditEvent": {
+          "fields": {
+            "id": "UUID (PK)",
+            "actor_id": "UUID (FK -> User.id, nullable)",
+            "event_type": "VARCHAR(100)",
+            "event_detail": "JSONB",
+            "created_at": "TIMESTAMP WITH TIME ZONE",
+            "ip_address": "INET"
+          },
+          "notes": "Captures security, moderation, and compliance events for audit trails."
+        }
+      },
+      "storage_design": {
+        "primary_db": "Azure Database for PostgreSQL (v14+)",
+        "caching_layer": "Azure Cache for Redis for session and token caching",
+        "encryption": {
+          "at_rest": "AES-256 via Azure-managed keys",
+          "in_transit": "TLS 1.3 enforced"
+        },
+        "backup_policy": {
+          "frequency": "Daily full backup",
+          "retention": "30 days",
+          "encryption": "Enabled"
+        },
+        "partitioning": "Time-based partitioning for Message and LLMRequestLog tables",
+        "indexing": "GIN index on JSONB fields; B-tree on foreign keys and timestamps"
+      },
+      "schema_notes": {
+        "orm": "SQLAlchemy with Alembic migrations",
+        "naming_conventions": "snake_case for tables and columns",
+        "foreign_key_constraints": "ON DELETE CASCADE for dependent entities",
+        "data_isolation": "Separate schema for audit and moderation data",
+        "compliance_alignment": "GDPR/CCPA-compliant schema with consent and retention tracking"
+      },
+      "retention_and_deletion": {
+        "policy": "Configurable retention (default 12 months) with user opt-in for longer storage",
+        "workflow": {
+          "step_1": "Identify records older than retention threshold",
+          "step_2": "Anonymize or soft-delete user and conversation data",
+          "step_3": "Schedule hard deletion after 30 days grace period",
+          "step_4": "Log all actions in AuditEvent"
+        },
+        "user_rights": {
+          "data_export": "Available via API endpoint /api/v1/user/data/export",
+          "data_deletion": "User-initiated deletion triggers anonymization workflow"
+        },
+        "compliance": "Retention and deletion logs auditable; DPIA completion required pre-production"
+      },
+      "analytics_events": {
+        "conversation_started": [
+          "user_id",
+          "timestamp",
+          "channel"
+        ],
+        "message_sent": [
+          "conversation_id",
+          "sender_type",
+          "token_usage",
+          "moderation_status"
+        ],
+        "llm_request_logged": [
+          "conversation_id",
+          "tokens_used",
+          "response_time_ms",
+          "cost_estimate_usd"
+        ],
+        "user_login": [
+          "user_id",
+          "timestamp",
+          "ip_address"
+        ],
+        "moderation_flagged": [
+          "message_id",
+          "flag_reason",
+          "review_outcome"
+        ],
+        "data_retention_action": [
+          "user_id",
+          "action_type",
+          "timestamp"
+        ]
+      },
+      "consistency_notes": {
+        "transaction_model": "ACID transactions for PostgreSQL writes",
+        "read_consistency": "Read committed isolation level",
+        "cache_invalidation": "Redis keys expire automatically; invalidation on message updates",
+        "eventual_consistency": "Analytics and audit logs processed asynchronously via Celery",
+        "data_integrity": "Foreign key constraints and periodic integrity checks"
+      },
+      "migration_notes": {
+        "tooling": "Alembic for schema migrations; versioned migration scripts in CI/CD",
+        "initial_seed": "Admin user, default roles, and compliance configuration",
+        "backward_compatibility": "Schema migrations tested in staging before production rollout",
+        "data_anonymization_migration": "Legacy data anonymized during first migration to new retention model"
+      },
+      "data_risks": {
+        "privacy_risk": "Personal data exposure if anonymization fails; mitigated by encryption and audit logging",
+        "compliance_risk": "DPIA must be completed before production; retention misconfiguration could breach GDPR",
+        "cost_risk": "LLMRequestLog growth may increase storage cost; mitigated by partitioning and summarization",
+        "scalability_risk": "High message volume may stress PostgreSQL; mitigated by partitioning and caching",
+        "operational_risk": "Backup or purge job failure could delay deletion; mitigated by monitoring and alerting"
+      }
+    },
+    "devops": {
+      "deployment_topology": {
+        "model": "Containerized microservices on Azure Kubernetes Service (AKS)",
+        "components": {
+          "frontend": "React SPA served via Azure Front Door and Azure App Service",
+          "backend": "FastAPI microservices (gateway, conversation, LLM proxy, moderation, auth)",
+          "database": "Azure Database for PostgreSQL (managed, encrypted at rest)",
+          "cache": "Azure Cache for Redis for session and GPT response caching",
+          "storage": "Azure Blob Storage for logs and media assets",
+          "networking": "Azure Front Door + WAF + DDoS Protection",
+          "secrets": "Azure Key Vault for API keys and credentials"
+        },
+        "scaling": {
+          "backend": "Horizontal autoscaling based on CPU/memory and latency metrics",
+          "database": "Vertical scaling with read replicas for high concurrency",
+          "cache": "Autoscale Redis cluster for peak load handling"
+        },
+        "security_zones": {
+          "public_zone": "Frontend and gateway exposed via HTTPS",
+          "private_zone": "Backend, database, and cache isolated in VNet with NSGs",
+          "management_zone": "Admin and observability tools restricted via RBAC"
+        }
+      },
+      "environments": {
+        "dev": {
+          "purpose": "Feature development and integration testing",
+          "resources": "Lightweight AKS cluster, test PostgreSQL, mock GPT API",
+          "access": "Developer RBAC with limited data exposure"
+        },
+        "staging": {
+          "purpose": "Pre-production validation, load testing, and compliance checks",
+          "resources": "Scaled AKS cluster mirroring production topology",
+          "access": "QA and compliance teams with audit logging enabled"
+        },
+        "production": {
+          "purpose": "Public deployment with full observability and compliance enforcement",
+          "resources": "High-availability AKS cluster, managed PostgreSQL, Redis, Front Door",
+          "access": "RBAC-controlled admin access, monitored via Azure Security Center"
+        }
+      },
+      "ci_cd_design": {
+        "pipeline_tooling": "GitHub Actions integrated with Azure DevOps",
+        "stages": [
+          "lint_and_unit_test",
+          "integration_test",
+          "security_scan",
+          "build_container_images",
+          "deploy_to_staging",
+          "automated_load_test",
+          "manual_approval",
+          "blue_green_deploy_to_production"
+        ],
+        "security_controls": {
+          "secrets_management": "Azure Key Vault integration for CI/CD secrets",
+          "dependency_scanning": "Automated via Dependabot and Snyk",
+          "artifact_signing": "Container image signing before deployment"
+        },
+        "release_strategy": "Blue-green deployment with phased rollout for multimodal features"
+      },
+      "observability_stack": {
+        "logging": "Structured JSON logs via Azure Monitor and Application Insights",
+        "metrics": "Latency, throughput, error rates, token usage, cost metrics",
+        "tracing": "OpenTelemetry integrated with FastAPI and frontend events",
+        "alerting": "Azure Monitor alerts for anomalies, cost spikes, and compliance breaches",
+        "dashboards": {
+          "performance": "Response time and uptime KPIs",
+          "cost": "LLM API usage and Azure billing trends",
+          "security": "Authentication failures and moderation events",
+          "compliance": "Retention and consent audit metrics"
+        }
+      },
+      "rollback_strategy": {
+        "method": "Blue-green deployment with versioned container images",
+        "trigger_conditions": [
+          "Deployment health check failure",
+          "Error rate > threshold",
+          "Compliance or moderation service outage"
+        ],
+        "execution": "Automatic rollback to last stable version via Azure DevOps pipeline",
+        "data_consistency": "Database migrations reversible; Redis cache flushed post-rollback"
+      },
+      "backup_and_recovery": {
+        "database_backups": "Daily encrypted backups with 30-day retention via Azure Backup",
+        "application_state": "Configuration snapshots stored in Azure Blob Storage",
+        "recovery_objectives": {
+          "RTO": "≤ 2 hours",
+          "RPO": "≤ 15 minutes"
+        },
+        "testing": "Quarterly disaster recovery drills and restore validation",
+        "data_retention": "Configurable (default 12 months) with anonymization and deletion workflows"
+      },
+      "cost_controls": {
+        "monitoring": "Automated cost tracking via Azure Cost Management and custom LLM usage metrics",
+        "alerts": "Threshold-based notifications for GPT API usage and compute scaling",
+        "optimization": {
+          "caching": "Redis caching and batching of GPT API calls",
+          "autoscaling": "Dynamic scaling to minimize idle resource cost",
+          "reserved_instances": "Use for predictable workloads",
+          "budget_enforcement": "Azure Budgets with monthly caps and escalation alerts"
+        },
+        "reporting": "Weekly cost reports integrated into observability dashboards"
+      },
+      "devops_risks": {
+        "scalability": "High concurrent load may exceed autoscaling thresholds; mitigated by load testing and caching",
+        "cost_escalation": "LLM API usage spikes can inflate costs; mitigated by automated monitoring and batching",
+        "compliance_execution": "DPIA completion and consent testing must occur before production",
+        "latency": "Multimodal feature rollout may introduce latency; phased deployment recommended",
+        "incident_response": "Requires continuous tuning of alert thresholds and escalation workflows",
+        "resource_constraints": "Limited resources may delay full multimodal rollout; phased delivery mitigates risk"
+      }
+    }
+  }
+}
