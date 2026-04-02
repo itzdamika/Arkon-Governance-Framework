@@ -88,8 +88,7 @@ scores = {}
 for dim in dims:
     scores[dim] = st.slider(dim.replace("_", " ").title(), 0, 10, 5, key=f"score_{dim}")
 
-justification = st.text_area("Brief Justification (be critical, 2-3 sentences)", 
-                             placeholder="e.g. The model ignored the private VPC constraint...")
+justification = st.text_area("Brief Justification (be critical, 2-3 sentences)",  placeholder="e.g. The model ignored the private VPC constraint...")
 
 blocking = st.checkbox("Blocking Agreement? (Would you approve this to move to the next phase?)", value=False)
 
