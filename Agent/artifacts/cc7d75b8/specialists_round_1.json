@@ -1,0 +1,567 @@
+{
+  "reasoner_reviews": {
+    "product": {
+      "summary": "All foundational requirements for the personal portfolio landing page are fully captured and confirmed. The project is a low-risk, static HTML/CSS site hosted on Vercel with no backend or data storage. The scope includes all key sections (About, Projects, Contact, Blog, Testimonials, Résumé). Security, privacy, and compliance contexts are appropriately minimal for a public static site.",
+      "requirement_completeness_score": 1.0,
+      "coverage": "All major requirement domains—project definition, frontend, backend, security, data, devops, constraints—are covered and confirmed.",
+      "blindspots": "No explicit accessibility or performance optimization requirements are defined. No content management or update workflow specified.",
+      "functional_gaps": "Contact form handling is undefined (if any). Blog content source and update mechanism not specified.",
+      "ux_considerations": "Ensure responsive design, clear navigation, and consistent visual identity. Optimize for fast load times and accessibility compliance (WCAG).",
+      "future_phase_candidates": "Add CMS integration for blog updates, analytics tracking, SEO enhancements, and accessibility audits.",
+      "next_focus": "Clarify content update workflow (manual vs. automated) and confirm accessibility and performance targets before moving to planning."
+    },
+    "architect_reasoner": {
+      "summary": "The project is a low-risk, static personal portfolio website built with HTML and CSS, hosted on Vercel. It targets employers, clients, collaborators, and personal contacts. The site will include About, Projects, Contact, Blog, Testimonials, and Résumé sections. There is no backend or data platform, and the site will be publicly accessible with no data retention. Security and compliance requirements are minimal but follow standard best practices for public static sites.",
+      "feasibility": "Highly feasible. The static architecture aligns perfectly with the project’s simplicity, low risk, and lack of dynamic data. Hosting on Vercel ensures easy deployment, scalability, and integrated CDN performance. The only potential complexity lies in defining how blog content and contact interactions are managed.",
+      "proposed_architecture_direction": "Adopt a static site architecture using HTML, CSS, and optional lightweight JavaScript for interactivity. Use a modular file structure for maintainability. Consider Markdown or JSON-based content for blog posts if manual updates are acceptable. Integrate Vercel’s build and deployment pipeline for continuous delivery. Ensure responsive design and accessibility compliance.",
+      "recommended_modules": {
+        "core_ui": "Static HTML templates for each section (About, Projects, Contact, Blog, Testimonials, Résumé).",
+        "styling": "CSS with responsive grid/flexbox layout and reusable component classes.",
+        "content_management": "Manual content updates via Git commits or optional static content files (Markdown/JSON).",
+        "contact_handling": "Static mailto link or integration with a third-party form service (e.g., Formspree) if needed.",
+        "analytics": "Optional integration with privacy-friendly analytics (e.g., Plausible or Vercel Analytics).",
+        "accessibility": "WCAG 2.1 AA compliance baseline with semantic HTML and ARIA roles."
+      },
+      "data_and_api_notes": {
+        "data_storage": "None; all content is static.",
+        "api_usage": "None required unless adding external form or analytics service.",
+        "privacy": "No personal data collected or retained.",
+        "compliance": "Meets privacy-by-design principles due to absence of user data."
+      },
+      "infrastructure_direction": {
+        "hosting": "Vercel static hosting with automatic HTTPS and CDN edge caching.",
+        "deployment": "Git-based CI/CD pipeline triggered on push to main branch.",
+        "scalability": "Inherent via Vercel’s global edge network.",
+        "monitoring": "Basic uptime and error tracking via Vercel dashboard."
+      },
+      "devops_direction": {
+        "version_control": "Git repository (GitHub or GitLab) integrated with Vercel.",
+        "build_pipeline": "Static build triggered on commit; no build dependencies beyond HTML/CSS.",
+        "observability": "Leverage Vercel’s built-in analytics and optional external uptime monitoring.",
+        "maintenance": "Manual content updates; minimal operational overhead."
+      },
+      "design_principles": {
+        "simplicity": "Keep architecture minimal and maintainable.",
+        "performance": "Optimize assets, use lazy loading for images, and leverage CDN caching.",
+        "accessibility": "Ensure semantic markup and color contrast compliance.",
+        "security": "Follow least privilege, HTTPS-only, and no client-side secrets.",
+        "maintainability": "Use modular file organization and consistent naming conventions.",
+        "scalability": "Design for easy future integration of CMS or analytics without rearchitecture."
+      }
+    },
+    "security": {
+      "summary": "The project defines a low-risk, static personal portfolio website built with HTML and CSS, hosted on Vercel. It targets employers, clients, collaborators, and personal contacts. The site includes About, Projects, Contact, Blog, Testimonials, and Résumé sections. There is no backend, database, or data retention. Security and compliance requirements are minimal but follow standard best practices for public static sites. Accessibility, performance optimization, and content update workflows remain open for refinement before implementation planning.",
+      "key_risks": [
+        "Undefined content update workflow for blog and contact sections may lead to maintenance friction.",
+        "Accessibility and performance targets not yet formalized, risking non-compliance with WCAG or slow load times.",
+        "Potential exposure of email address if using a static mailto link for contact.",
+        "Lack of explicit analytics or monitoring configuration could reduce visibility into site health."
+      ],
+      "required_controls": [
+        "Implement HTTPS-only hosting (Vercel default).",
+        "Apply WCAG 2.1 AA accessibility baseline.",
+        "Use semantic HTML and responsive CSS for usability and SEO.",
+        "Avoid embedding personal contact data directly; use obfuscation or third-party form service if needed.",
+        "Enable Vercel’s built-in CDN caching and automatic SSL.",
+        "Add basic uptime and error monitoring via Vercel dashboard or external service."
+      ],
+      "privacy_notes": "No personal data is collected or stored. If a contact form is added, ensure it uses a privacy-compliant third-party service or anonymized email relay. Maintain a clear privacy notice even if minimal data is processed.",
+      "compliance_notes": "Complies with privacy-by-design principles due to absence of user data. Accessibility compliance (WCAG 2.1 AA) should be verified before launch. No GDPR or CCPA obligations beyond transparency and contact information disclosure.",
+      "moderation_notes": "No user-generated content or interactive features requiring moderation. Ensure blog content and testimonials are curated manually to prevent reputational or copyright issues.",
+      "incident_response_notes": "Given the static nature, incidents are limited to defacement or hosting misconfiguration. Response plan: restore from Git version control, verify DNS and SSL integrity, and redeploy via Vercel. Maintain minimal audit logs for deployment events."
+    },
+    "constraints": {
+      "summary": "A low-risk, static personal portfolio website built with HTML and CSS, hosted on Vercel. It targets employers, clients, collaborators, and personal contacts, featuring About, Projects, Contact, Blog, Testimonials, and Résumé sections. The architecture is static with no backend or data storage, ensuring simplicity, security, and maintainability. Accessibility, performance optimization, and content update workflows are the main areas for refinement before implementation.",
+      "cost_range": "Low (estimated $0–$200/year for hosting, domain, and optional third-party services)",
+      "complexity_profile": "Very low architectural complexity; moderate design and content complexity due to multiple sections and responsive layout requirements.",
+      "maintainability_notes": "High maintainability due to static architecture and minimal dependencies. Manual content updates via Git are simple but may become cumbersome if blog updates are frequent. Modular HTML/CSS structure and consistent naming conventions will support long-term upkeep.",
+      "phased_delivery": {
+        "phase_1": "MVP static site with all core sections (About, Projects, Contact, Blog, Testimonials, Résumé) using HTML/CSS and hosted on Vercel.",
+        "phase_2": "Add accessibility and performance optimizations (WCAG 2.1 AA compliance, image optimization, lazy loading).",
+        "phase_3": "Integrate optional analytics and monitoring (Vercel Analytics or Plausible).",
+        "phase_4": "Introduce optional CMS or Markdown-based content workflow for blog updates."
+      },
+      "tradeoffs": {
+        "simplicity_vs_scalability": "Static architecture maximizes simplicity but limits dynamic content management.",
+        "manual_updates_vs_automation": "Manual Git-based updates reduce complexity but increase maintenance effort for frequent content changes.",
+        "privacy_vs_functionality": "Avoiding backend and data collection enhances privacy but restricts interactive features like contact forms.",
+        "performance_vs_design_flexibility": "Highly optimized static assets may constrain design experimentation."
+      },
+      "implementation_pressure_points": [
+        "Define and document content update workflow for blog and contact sections.",
+        "Ensure accessibility compliance (WCAG 2.1 AA) through semantic HTML and color contrast testing.",
+        "Optimize performance via asset compression, caching, and responsive image handling.",
+        "Protect contact information from spam harvesting (use obfuscation or third-party form service).",
+        "Establish basic monitoring and uptime alerts using Vercel’s built-in tools."
+      ]
+    },
+    "critic": {
+      "summary": "All foundational requirements for the personal portfolio landing page are complete and consistent. The project is a low-risk, static HTML/CSS site hosted on Vercel with no backend or data storage. The architecture, security, and compliance contexts are appropriate for a public static site. Remaining refinement areas include accessibility, performance optimization, and defining the content update workflow for the blog and contact sections.",
+      "contradictions": [],
+      "blindspots": [
+        "Accessibility and performance optimization requirements are not explicitly defined.",
+        "Content update workflow for blog and contact sections remains unspecified.",
+        "No explicit analytics or monitoring configuration beyond Vercel defaults."
+      ],
+      "unresolved_questions": {
+        "Q1": "How will blog content be updated — manually via Git commits, or through a lightweight CMS or Markdown workflow?",
+        "Q2": "Will the contact section use a static mailto link or integrate a third-party form service (e.g., Formspree)?",
+        "Q3": "What accessibility and performance targets (e.g., WCAG 2.1 AA, Lighthouse score thresholds) should be enforced?"
+      },
+      "corrective_actions": [
+        "Define and confirm the content update workflow for blog and contact sections.",
+        "Establish explicit accessibility and performance targets before planning.",
+        "Decide on analytics and monitoring approach (Vercel Analytics, Plausible, or none).",
+        "Document contact information protection strategy to prevent spam exposure."
+      ],
+      "priority_order": [
+        "Define content update workflow (Q1, Q2).",
+        "Set accessibility and performance baselines (Q3).",
+        "Confirm analytics and monitoring configuration.",
+        "Finalize contact protection and privacy notice."
+      ]
+    }
+  },
+  "specialist_subplans": {
+    "backend": {},
+    "frontend": {
+      "app_structure": {
+        "type": "static_site",
+        "framework": "none",
+        "languages": [
+          "HTML",
+          "CSS"
+        ],
+        "hosting": "Vercel",
+        "directory_layout": {
+          "root": "/",
+          "folders": {
+            "assets": [
+              "images",
+              "fonts",
+              "icons"
+            ],
+            "styles": [
+              "global.css",
+              "sections.css",
+              "responsive.css"
+            ],
+            "scripts": [
+              "optional.js (for minor interactivity)"
+            ],
+            "content": [
+              "about.html",
+              "projects.html",
+              "contact.html",
+              "blog.html",
+              "testimonials.html",
+              "resume.html"
+            ]
+          }
+        },
+        "build_pipeline": "Static deployment via Git push to Vercel with automatic HTTPS and CDN caching"
+      },
+      "pages_and_flows": {
+        "home": {
+          "purpose": "Landing page introducing the portfolio and navigation to all sections",
+          "navigation": [
+            "About Me",
+            "Projects",
+            "Blog",
+            "Testimonials",
+            "Contact",
+            "Résumé"
+          ]
+        },
+        "about": {
+          "content": "Personal introduction, skills summary, and professional background",
+          "flow": "Static content displayed with responsive layout"
+        },
+        "projects": {
+          "content": "Showcase of selected projects with descriptions, images, and links",
+          "flow": "Grid or card layout with hover effects"
+        },
+        "blog": {
+          "content": "Static posts manually updated via Git or Markdown files",
+          "flow": "List of posts linking to individual static pages"
+        },
+        "testimonials": {
+          "content": "Curated quotes or feedback from clients and collaborators",
+          "flow": "Static section with styled quote blocks"
+        },
+        "contact": {
+          "content": "Contact information and optional form or mailto link",
+          "flow": "Static mailto link or third-party form integration (Formspree recommended)"
+        },
+        "resume": {
+          "content": "Résumé preview and downloadable PDF link",
+          "flow": "Static link to hosted PDF file"
+        }
+      },
+      "state_management": {
+        "approach": "None required; all content is static",
+        "interactivity": "Optional lightweight JavaScript for menu toggles or animations",
+        "data_flow": "Direct rendering from static HTML; no dynamic state or API calls"
+      },
+      "ui_modules": {
+        "navigation_bar": "Responsive top navigation with anchor links and active section highlighting",
+        "footer": "Consistent footer with social links and copyright notice",
+        "project_cards": "Reusable HTML/CSS components for project showcases",
+        "testimonial_blocks": "Styled quote containers with attribution",
+        "contact_section": "Static contact info or embedded form service",
+        "blog_post_template": "Reusable layout for individual blog posts",
+        "resume_download_button": "Accessible button linking to résumé PDF"
+      },
+      "accessibility_notes": {
+        "standards": "WCAG 2.1 AA compliance baseline",
+        "techniques": [
+          "Semantic HTML structure (header, main, footer, nav, article, section)",
+          "ARIA roles for navigation and interactive elements",
+          "Color contrast ratio ≥ 4.5:1",
+          "Keyboard navigability for all interactive elements",
+          "Alt text for all images and icons"
+        ],
+        "testing": "Manual audit using Lighthouse and WAVE tools before launch"
+      },
+      "frontend_security_notes": {
+        "exposure": "Public internet, read-only access",
+        "controls": [
+          "HTTPS enforced via Vercel",
+          "No client-side secrets or API keys",
+          "Email obfuscation or third-party form service to prevent spam harvesting",
+          "Content integrity maintained via Git version control",
+          "Automatic SSL and CDN caching enabled"
+        ],
+        "incident_response": "Restore from Git repository and redeploy via Vercel in case of defacement"
+      },
+      "performance_notes": {
+        "optimization_targets": {
+          "load_time": "< 2 seconds on broadband",
+          "Lighthouse_score": "≥ 90 performance score"
+        },
+        "techniques": [
+          "Image compression and responsive image sizes",
+          "CSS minification and deferred non-critical styles",
+          "Lazy loading for images and media",
+          "Leverage Vercel CDN edge caching",
+          "Preload key fonts and assets"
+        ],
+        "monitoring": "Use Vercel Analytics or Plausible for performance tracking"
+      },
+      "frontend_risks": {
+        "unresolved": [
+          "Blog content update workflow may become cumbersome if frequent updates are needed",
+          "Accessibility compliance must be verified before launch",
+          "Potential exposure of email address if using static mailto link"
+        ],
+        "mitigation": [
+          "Consider Markdown-based blog workflow or lightweight CMS in future phase",
+          "Perform accessibility audit and fix issues before deployment",
+          "Use obfuscated email or Formspree integration for contact section"
+        ]
+      }
+    },
+    "security": {
+      "auth_design": {
+        "authentication_required": false,
+        "rationale": "The site is fully public and read-only with no user accounts or gated content.",
+        "controls": [
+          "Restrict administrative access to Vercel and Git repository via strong authentication (e.g., SSO or 2FA).",
+          "Ensure deployment tokens and Git credentials are stored securely and not embedded in code."
+        ]
+      },
+      "authorization_model": {
+        "model": "Public read-only access",
+        "admin_scope": "Deployment and content updates restricted to repository maintainers.",
+        "controls": [
+          "Use least-privilege access for collaborators in Git and Vercel.",
+          "Review access permissions periodically to prevent unauthorized deployments."
+        ]
+      },
+      "secrets_management": {
+        "approach": "No runtime secrets required for static site.",
+        "controls": [
+          "If third-party services (e.g., Formspree, analytics) are added, store API keys in Vercel environment variables.",
+          "Never commit secrets or tokens to version control.",
+          "Rotate any third-party tokens periodically if used."
+        ]
+      },
+      "abuse_prevention": {
+        "risk_profile": "Low, due to static content and no user input.",
+        "controls": [
+          "Use email obfuscation or third-party form service to prevent spam harvesting.",
+          "Enable Vercel’s built-in DDoS and edge protection.",
+          "Apply content integrity checks (e.g., Subresource Integrity for external scripts if any)."
+        ]
+      },
+      "privacy_controls": {
+        "data_collection": "None by default.",
+        "policy": "No data retention; privacy notice should clarify that no personal data is collected.",
+        "controls": [
+          "If analytics are added, use privacy-friendly, cookie-free solutions (e.g., Plausible, Vercel Analytics).",
+          "Ensure compliance with privacy-by-design principles even for minimal data exposure."
+        ]
+      },
+      "audit_and_logging_controls": {
+        "scope": "Deployment and hosting events only.",
+        "controls": [
+          "Leverage Vercel’s deployment logs and Git commit history as audit trail.",
+          "Monitor uptime and error logs via Vercel dashboard.",
+          "Retain minimal logs sufficient for incident investigation without storing user data."
+        ]
+      },
+      "incident_response_notes": {
+        "likely_incidents": [
+          "Site defacement or unauthorized deployment.",
+          "Hosting misconfiguration or DNS compromise."
+        ],
+        "response_plan": [
+          "Restore from Git version control and redeploy via Vercel.",
+          "Verify DNS and SSL certificate integrity.",
+          "Review access logs and rotate credentials if compromise is suspected."
+        ],
+        "communication": "Notify site owner and revoke compromised tokens immediately."
+      },
+      "security_risks": {
+        "identified": [
+          "Exposure of contact email leading to spam.",
+          "Potential misconfiguration of Vercel project permissions.",
+          "Lack of explicit accessibility and performance baselines.",
+          "Limited visibility into uptime or errors if monitoring not configured."
+        ],
+        "mitigations": [
+          "Use obfuscated email or third-party form relay.",
+          "Enforce least-privilege access and 2FA for deployment accounts.",
+          "Define accessibility (WCAG 2.1 AA) and performance targets before launch.",
+          "Enable Vercel Analytics or external uptime monitoring."
+        ],
+        "residual_risk": "Minimal; acceptable for a low-risk static personal portfolio site."
+      }
+    },
+    "data": {
+      "entities": {
+        "site_sections": [
+          "About Me",
+          "Projects",
+          "Contact",
+          "Blog",
+          "Testimonials",
+          "Résumé"
+        ],
+        "content_assets": [
+          "HTML pages",
+          "CSS stylesheets",
+          "images",
+          "downloadable résumé file"
+        ],
+        "optional_integrations": [
+          "Formspree or similar contact form service",
+          "Vercel Analytics or Plausible"
+        ],
+        "deployment_artifacts": [
+          "Static build files",
+          "Vercel configuration",
+          "Git repository"
+        ]
+      },
+      "storage_design": {
+        "type": "static file hosting",
+        "platform": "Vercel CDN edge network",
+        "structure": {
+          "root": "/",
+          "folders": {
+            "assets": "images, fonts, downloadable files",
+            "styles": "CSS files",
+            "pages": "HTML files per section",
+            "optional": "Markdown or JSON for blog posts if manual workflow chosen"
+          }
+        },
+        "access_model": "public read-only via HTTPS",
+        "data_sensitivity": "internal (no personal data stored)"
+      },
+      "schema_notes": {
+        "content_schema": {
+          "blog_post": {
+            "fields": [
+              "title",
+              "date",
+              "content",
+              "tags"
+            ],
+            "storage": "static Markdown or JSON file",
+            "update_method": "manual Git commit"
+          },
+          "testimonial": {
+            "fields": [
+              "author_name",
+              "quote",
+              "source"
+            ],
+            "storage": "static HTML or JSON fragment"
+          }
+        },
+        "contact_schema": {
+          "option_1": "mailto link (no data storage)",
+          "option_2": "third-party form service (Formspree) with transient data handling"
+        }
+      },
+      "retention_and_deletion": {
+        "policy": "no data retention",
+        "user_data": "none collected or stored",
+        "third_party": "if using Formspree, rely on their retention policy; ensure deletion after delivery",
+        "content_updates": "manual overwrite via Git commits; old versions retained in Git history"
+      },
+      "analytics_events": {
+        "optional_events": [
+          "page_view",
+          "resume_download",
+          "contact_form_submission"
+        ],
+        "collection_method": "privacy-friendly analytics (Vercel Analytics or Plausible)",
+        "data_scope": "aggregated, anonymized metrics only",
+        "storage_location": "external analytics provider or Vercel dashboard"
+      },
+      "consistency_notes": {
+        "update_consistency": "manual Git commits ensure version control consistency",
+        "deployment_consistency": "Vercel CI/CD ensures atomic deployments and rollback capability",
+        "content_integrity": "static assets verified via checksum during build",
+        "observability": "basic uptime and error tracking via Vercel dashboard"
+      },
+      "migration_notes": {
+        "initial_state": "manual upload or Git push to Vercel",
+        "future_migration": "optional transition to CMS or Markdown-based workflow for blog updates",
+        "data_migration": "none required; static content only",
+        "rollback_strategy": "restore previous commit and redeploy"
+      },
+      "data_risks": {
+        "risk_items": [
+          "Exposure of email address via static mailto link (spam risk)",
+          "Third-party form service may temporarily store contact data",
+          "Manual content updates may lead to inconsistent metadata if not standardized",
+          "No analytics visibility if monitoring not configured"
+        ],
+        "mitigations": [
+          "Use email obfuscation or form relay service",
+          "Select privacy-compliant analytics provider",
+          "Define content metadata schema for blog/testimonials",
+          "Enable Vercel’s HTTPS and CDN caching for integrity and performance"
+        ]
+      }
+    },
+    "devops": {
+      "deployment_topology": {
+        "type": "static_site",
+        "hosting_provider": "Vercel",
+        "architecture": "Single-tier static deployment served via Vercel CDN edge network",
+        "components": {
+          "frontend": "HTML/CSS static assets",
+          "optional_integrations": [
+            "Formspree or similar for contact form",
+            "Plausible or Vercel Analytics for metrics"
+          ]
+        },
+        "network_exposure": "Public internet with HTTPS enforced",
+        "scalability": "Automatic via Vercel’s global edge caching"
+      },
+      "environments": {
+        "development": {
+          "location": "Local workstation",
+          "tools": [
+            "VS Code",
+            "Git",
+            "Vercel CLI"
+          ],
+          "build_process": "Manual or automated push to Git main branch"
+        },
+        "staging": {
+          "location": "Vercel preview deployments",
+          "purpose": "Pre-launch validation, accessibility and performance testing"
+        },
+        "production": {
+          "location": "Vercel production environment",
+          "deployment_trigger": "Git push to main branch",
+          "security": "Automatic HTTPS, CDN caching, immutable builds"
+        }
+      },
+      "ci_cd_design": {
+        "version_control": "GitHub or GitLab repository integrated with Vercel",
+        "pipeline": {
+          "trigger": "Push or merge to main branch",
+          "steps": [
+            "Static build validation",
+            "HTML/CSS linting",
+            "Accessibility and performance checks",
+            "Deploy to Vercel"
+          ],
+          "deployment": "Automated via Vercel Git integration"
+        },
+        "release_management": {
+          "strategy": "Continuous deployment with preview environments for pull requests",
+          "rollback_support": "Instant revert to previous deployment via Vercel dashboard"
+        }
+      },
+      "observability_stack": {
+        "logging": "Vercel deployment logs and build output",
+        "metrics": [
+          "Request latency",
+          "Uptime",
+          "Error rates"
+        ],
+        "monitoring_tools": [
+          "Vercel Analytics",
+          "Optional Plausible or UptimeRobot"
+        ],
+        "alerting": "Email or dashboard alerts for deployment failures or downtime",
+        "audit_events": "Git commit history and Vercel deployment logs"
+      },
+      "rollback_strategy": {
+        "method": "Vercel instant rollback to previous deployment snapshot",
+        "trigger_conditions": [
+          "Deployment failure",
+          "Defacement or content error",
+          "Performance regression"
+        ],
+        "verification": "Post-rollback validation using staging preview and Lighthouse audit"
+      },
+      "backup_and_recovery": {
+        "content_backup": "Git repository serves as primary backup for all site assets and content",
+        "recovery_process": "Clone repository and redeploy via Vercel",
+        "frequency": "Continuous via Git commits",
+        "disaster_recovery": "DNS and SSL verification followed by redeployment from latest stable commit"
+      },
+      "cost_controls": {
+        "hosting_cost": "Vercel free tier or minimal paid plan (~$0–$20/month)",
+        "domain_cost": "Annual domain registration (~$10–$20/year)",
+        "third_party_services": "Optional Formspree or Plausible (~$0–$10/month)",
+        "optimization_measures": [
+          "Use free tiers",
+          "Minimize external integrations",
+          "Monitor bandwidth usage"
+        ],
+        "budget_alerts": "Manual review of Vercel usage dashboard monthly"
+      },
+      "devops_risks": {
+        "R1": {
+          "description": "Undefined blog content update workflow may cause maintenance friction",
+          "mitigation": "Document manual Git-based update process or adopt Markdown workflow"
+        },
+        "R2": {
+          "description": "Accessibility and performance targets not formalized",
+          "mitigation": "Set WCAG 2.1 AA compliance and Lighthouse score ≥90 before launch"
+        },
+        "R3": {
+          "description": "Exposure of email address via static mailto link",
+          "mitigation": "Use obfuscation or third-party form service"
+        },
+        "R4": {
+          "description": "Limited observability beyond Vercel defaults",
+          "mitigation": "Integrate optional uptime monitoring and analytics"
+        },
+        "R5": {
+          "description": "Manual deployment errors or misconfiguration",
+          "mitigation": "Use automated CI/CD pipeline with preview validation"
+        }
+      }
+    }
+  }
+}

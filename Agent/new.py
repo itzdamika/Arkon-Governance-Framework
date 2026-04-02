@@ -1050,11 +1050,11 @@ class GovernanceHybridApp:
         if (risk == "high" or sensitivity in {"personal", "financial", "health", "confidential"} or "payments" in caps):
             required.append("compliance_context")
 
-        # mvp_scope is only meaningful for complex projects where MVP differs from full scope.
-        # For simple static sites and landing pages the MVP is trivially the full page — don't require it.
-        simple_classes = {"static_website", "landing_page", "cli_tool", "library_sdk", "research_prototype"}
-        if project_class not in simple_classes:
-            required.append("mvp_scope")
+        # mvp_scope is NEVER required from the user — it is always derivable from feature_scope
+        # and is always auto-filled in fill_internal_defaults before planning starts.
+        # Asking the user for it creates a loop whenever project_class canonicalization
+        # produces a non-standard value (e.g. "simple personal static site" instead of
+        # "static_website"), making the requirement impossible to satisfy.
 
         return unique_strs(required)
 
@@ -1104,14 +1104,22 @@ class GovernanceHybridApp:
                 "Adopt privacy-by-design with deletion support, retention enforcement, secret storage, auditability, and explicit handling of user data and logs."
             )
 
-        # Auto-derive mvp_scope for simple project types where MVP == full scope.
+        # Always auto-derive mvp_scope — it is never asked of the user directly
+        # because it is always derivable from feature_scope and project context.
+        # For simple projects (static site, landing page, CLI): MVP = full launch scope.
+        # For complex projects: the architect infers phase 1 scope from feature_scope.
         project_class = self.normalized_project_class()
         simple_classes = {"static_website", "landing_page", "cli_tool", "library_sdk", "research_prototype"}
-        if project_class in simple_classes:
-            feature_scope = self.get_contract_value("feature_scope")
+        feature_scope = self.get_contract_value("feature_scope")
+        if project_class in simple_classes or self.get_contract_value("risk_level") == "low":
             defaults["mvp_scope"] = (
                 f"Full feature set delivered at initial launch: {feature_scope}."
                 if feature_scope else "Complete project delivered at initial launch with all requested features."
+            )
+        else:
+            defaults["mvp_scope"] = (
+                f"Phase 1 MVP: core features from {feature_scope}, deferring advanced or optional features to post-launch."
+                if feature_scope else "Phase 1 MVP covering the most critical features; advanced features deferred post-launch."
             )
 
         for field_name, value in defaults.items():
@@ -1783,6 +1791,13 @@ class GovernanceHybridApp:
         if self.state.phase == PHASE_REQUIREMENTS:
             self.handle_requirement_turn(user_text)
             return
+        # Root Cause B safety net: if the phase is PLANNING but run_governance_cycle
+        # was never called (agent called advance_phase directly via tool and the
+        # _run_agent_step fix above didn't catch it), resume planning on next user input.
+        if self.state.phase == PHASE_PLANNING:
+            self.panel("System", "Resuming planning phase...", "cyan")
+            self.run_governance_cycle()
+            return
         if self.state.phase in {PHASE_APPROVED, PHASE_DEVELOPMENT}:
             msg = (
                 f"The validated plan is already approved.\n"
@@ -1867,6 +1882,7 @@ class GovernanceHybridApp:
             self._run_agent_step()
 
     def _run_agent_step(self) -> None:
+        phase_before = self.state.phase
         hops = 0
         emitted = False
         while hops < self.state.max_requirement_hops and self.state.phase == PHASE_REQUIREMENTS:
@@ -1875,8 +1891,16 @@ class GovernanceHybridApp:
                 break
             hops += 1
 
-        # Bug fix: if the agent exhausted all hops without producing a visible reply,
-        # show a safe recovery message so the conversation never goes silent.
+        # Root Cause B fix: the agent may have called advance_phase via tool during
+        # single_requirement_step. That sets phase=PLANNING but returns False (no text).
+        # run_governance_cycle() was never called because _start_planning() was bypassed.
+        # Detect this and resume the governance cycle now.
+        if phase_before == PHASE_REQUIREMENTS and self.state.phase == PHASE_PLANNING:
+            self.run_governance_cycle()
+            return
+
+        # Safety fallback: if the agent exhausted all hops without producing a visible reply,
+        # show a recovery message so the conversation never goes completely silent.
         if not emitted and self.state.phase == PHASE_REQUIREMENTS:
             missing = self.missing_required_fields()
             if missing:
