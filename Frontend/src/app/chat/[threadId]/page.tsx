@@ -834,7 +834,7 @@ export default function ThreadPage() {
         : branchPlanningTranscript;
   const showPlanningActivityPanel =
     phase === "PLANNING" ||
-    (planningStreamOpen && phase !== "REQUIREMENTS") ||
+    planningStreamOpen ||
     (phase === "DEVELOPMENT" && planningPanelEvents.length > 0);
   const mustUseDev = phase === "DEVELOPMENT" && mode === "main";
   const authTok = getToken();
@@ -1247,7 +1247,7 @@ export default function ThreadPage() {
                   type="button"
                   disabled={loading}
                   onClick={() => send(q.value)}
-                  className="group/qr flex w-fit max-w-full items-start gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-[#141414] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                  className="group/qr flex w-fit max-w-full items-start gap-3 rounded-xl px-1 py-2.5 text-left transition-colors hover:bg-[#141414] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <span
                     className="mt-[3px] shrink-0 font-sans text-[15px] leading-none text-[#5c5c5c] transition-colors group-hover/qr:text-[#8a8a8a]"
