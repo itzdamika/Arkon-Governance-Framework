@@ -396,14 +396,9 @@ def development_answer(
     bid = _resolve_branch_id(thread, branch_id)
     eng = get_engine(db, thread, bid, user_settings)
     rp = eng.state.report_package
-    if eng.state.phase != PHASE_DEVELOPMENT:
-        if rp:
-            eng.state.phase = PHASE_DEVELOPMENT
-            persist_engine(db, thread, bid, eng)
-        else:
-            return {"error": "forbidden", "detail": "Development chat is only available after planning completes."}
-    if not rp:
-        return {"error": "forbidden", "detail": "No report package yet."}
+    
+    eng.state.phase = PHASE_DEVELOPMENT
+    persist_engine(db, thread, bid, eng)
     import json
 
     ctx = json.dumps(rp, ensure_ascii=False)[:100000]
