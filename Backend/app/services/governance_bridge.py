@@ -9,7 +9,7 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
-_REPO = Path(__file__).resolve().parents[4]
+_REPO = Path(__file__).resolve().parents[2]
 _PKG = _REPO / "packages"
 if str(_PKG) not in sys.path:
     sys.path.insert(0, str(_PKG))

@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: "Arkon",
   description: "Architectural governance assistant",
   icons: {
-    icon: "/favicon.ico",
+    icon: "/web-app-manifest-512x512.png",
   },
 };
 

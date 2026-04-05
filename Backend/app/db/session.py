@@ -18,7 +18,20 @@ SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 
 def init_db() -> None:
-    Base.metadata.create_all(bind=engine)
+    import time
+    from sqlalchemy.exc import OperationalError
+
+    for i in range(5):
+        try:
+            Base.metadata.create_all(bind=engine)
+            break
+        except OperationalError as e:
+            if "already exists" in str(e) or "database is locked" in str(e):
+                time.sleep(0.5)
+                if i == 4:
+                    pass  # If it fails on the last try, let the other workers handle it or crash organically later
+            else:
+                raise
     try:
         from .migrate import backfill_branches, ensure_branch_extra_column
 
