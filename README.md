@@ -1,4 +1,4 @@
-# Architect & Auditor: Phase-Locked Multi-Agent System
+# Arkon-Governance-Framework
 
 > **A Validated, Phase-Locked Multi-Agent System for Enforcing Engineering Discipline in AI-Assisted Software Development**
 > 
