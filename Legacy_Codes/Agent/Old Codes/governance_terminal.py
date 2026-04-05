@@ -389,8 +389,8 @@ class SharedState:
 
 class AzureLLM:
     def __init__(self) -> None:
-        api_key = os.getenv("AZURE_OPENAI_API_KEY","F79rr24XOyTKAprSSVMiQuo8j99MQM9gzJD3oEIAmlfn4vrsj0TVJQQJ99CBACHYHv6XJ3w3AAABACOGX5Md")
-        endpoint = os.getenv("AZURE_OPENAI_ENDPOINT","https://cmg-ai-poc-eu2.openai.azure.com/")
+        api_key = os.getenv("AZURE_OPENAI_API_KEY","AZURE_OPEN_AI_KEY")
+        endpoint = os.getenv("AZURE_OPENAI_ENDPOINT","https://palceholder.openai.azure.com/")
         chat_deployment = os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT","gpt-5-chat")
         reasoning_deployment = os.getenv("AZURE_OPENAI_REASONING_DEPLOYMENT", chat_deployment)
         if not api_key or not endpoint or not chat_deployment:

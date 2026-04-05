@@ -16,7 +16,7 @@ def _azure_openai_error_hint(exc: Exception) -> str:
     msg = str(exc)
     if "404" in msg or "Resource not found" in msg:
         dep = os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT", _DEFAULT_DEPLOYMENT)
-        ep = os.getenv("AZURE_OPENAI_ENDPOINT", "https://cmg-ai-poc-eu2.openai.azure.com/s")
+        ep = os.getenv("AZURE_OPENAI_ENDPOINT", "https://palceholder.openai.azure.com/s")
         return (
             f"{msg}\n\n"
             "Azure returned 404 — the deployment name usually does not exist on this resource.\n"
@@ -39,8 +39,8 @@ def _normalize_endpoint(raw: str) -> str:
 
 class AzureLLM:
     def __init__(self) -> None:
-        api_key = os.getenv("AZURE_OPENAI_API_KEY", "F79rr24XOyTKAprSSVMiQuo8j99MQM9gzJD3oEIAmlfn4vrsj0TVJQQJ99CBACHYHv6XJ3w3AAABACOGX5Md")
-        endpoint = _normalize_endpoint(os.getenv("AZURE_OPENAI_ENDPOINT", "https://cmg-ai-poc-eu2.openai.azure.com/s"))
+        api_key = os.getenv("AZURE_OPENAI_API_KEY", "AZURE_OPEN_AI_KEY")
+        endpoint = _normalize_endpoint(os.getenv("AZURE_OPENAI_ENDPOINT", "https://palceholder.openai.azure.com/s"))
         chat_deployment = os.getenv(
             "AZURE_OPENAI_CHAT_DEPLOYMENT", _DEFAULT_DEPLOYMENT
         )
